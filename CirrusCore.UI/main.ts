@@ -8,42 +8,29 @@ if (os.arch() === 'arm') {
 }
 
 // Set to true if you want to build Core for sidechains
-const buildForSidechain = false;
-const daemonName = buildForSidechain ? 'Stratis.CirrusD' : 'Stratis.StratisD';
+const daemonName = 'Stratis.CirrusD';
+const applicationName = 'Cirrus Core';
 
 let serve;
 let testnet;
-let sidechain;
 let nodaemon;
 let devtools;
+let sidechain = true;
 
 const args = process.argv.slice(1);
 
 args.push('--enableSignalR');
 
-console.log(args);
-
 serve = args.some(val => val === '--serve' || val === '-serve');
 testnet = args.some(val => val === '--testnet' || val === '-testnet');
-sidechain = args.some(val => val === '--sidechain' || val === '-sidechain');
 nodaemon = args.some(val => val === '--nodaemon' || val === '-nodaemon');
 devtools = args.some(val => val === '--devtools' || val === '-devtools');
 
-if (buildForSidechain) {
-  sidechain = true;
-}
-
-const applicationName = sidechain ? 'Cirrus Core' : 'Stratis Core';
-
 // Set default API port according to network
 let apiPortDefault;
-if (testnet && !sidechain) {
-  apiPortDefault = 38221;
-} else if (!testnet && !sidechain) {
-  apiPortDefault = 37221;
-} else if (sidechain && testnet) {
+if (testnet) {
   apiPortDefault = 38223;
-} else if (sidechain && !testnet) {
+} else {
   apiPortDefault = 37223;
 }
 
@@ -144,7 +131,7 @@ function createWindow() {
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
   if (serve) {
-    console.log('Stratis UI was started in development mode. This requires the user to be running the Stratis Full Node Daemon himself.');
+    console.log('Cirrus UI was started in development mode. This requires the user to be running the StratisFullNode daemon himself.');
   } else {
     if (!nodaemon) {
       startDaemon();
@@ -242,10 +229,7 @@ function startDaemon() {
 
 function createTray() {
   // Put the app in system tray
-  let iconPath = 'stratis/icon-16.png';
-  if (sidechain) {
-    iconPath = 'cirrus/icon-16.png';
-  }
+  let iconPath = 'cirrus/icon-16.png';
   let trayIcon;
   if (serve) {
     trayIcon = nativeImage.createFromPath('./src/assets/images/' + iconPath);
