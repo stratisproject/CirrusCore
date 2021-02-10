@@ -289,12 +289,12 @@ Thumbs.db
 
 *.user
 project.lock.json
-/StratisCore/.vscode
-/StratisCore.UI/daemon
-/StratisCore.UI/app-builds
-/StratisCore.UI/dist
-/StratisCore.UI/main.js
-/StratisCore.UI/main.js.map
+/CirrusCore/.vscode
+/CirrusCore.UI/daemon
+/CirrusCore.UI/app-builds
+/CirrusCore.UI/dist
+/CirrusCore.UI/main.js
+/CirrusCore.UI/main.js.map
 .vscode/
-StratisCore.UI/.idea/.idea.StratisCore.UI.dir/.idea/
+CirrusCore.UI/.idea/.idea.CirrusCore.UI.dir/.idea/
 version.ts
