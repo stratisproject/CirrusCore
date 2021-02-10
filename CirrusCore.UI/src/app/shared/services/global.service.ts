@@ -39,7 +39,7 @@ export class GlobalService {
 
   public setApplicationVersion() {
     if (this.electronService.isElectronApp) {
-      this.applicationVersion = this.electronService.remote.app.getVersion();
+      //this.applicationVersion = this.electronService.remote.app.getVersion();
     }
   }
 

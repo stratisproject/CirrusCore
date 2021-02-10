@@ -52,9 +52,6 @@ import { StakingService } from '@shared/services/staking-service';
     AutoFocusDirective,
     PasswordValidationDirective,
     LoadingModalComponent,
-    ConfirmationModalComponent],
-  entryComponents: [
-    GenericModalComponent,
     ConfirmationModalComponent]
 })
 

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@shared/shared.module';
-import { BsDatepickerModule } from 'ngx-bootstrap';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 import { AddressBookComponent } from './address-book/address-book.component';
 import { AddNewAddressComponent } from './address-book/modals/add-new-address/add-new-address.component';
@@ -59,13 +59,6 @@ import { StakingComponent } from './staking/staking.component';
   ],
   providers: [
     AccountSelectedGuard
-  ],
-  entryComponents: [
-    SendComponent,
-    SendConfirmationComponent,
-    ReceiveComponent,
-    TransactionDetailsComponent,
-    LogoutConfirmationComponent
   ]
 })
 
