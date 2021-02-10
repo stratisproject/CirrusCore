@@ -21,6 +21,10 @@ const args = process.argv.slice(1);
 
 args.push('--enableSignalR');
 
+if (os.platform() === 'darwin') {
+  args.push('-dbtype=rocksdb');
+}
+
 serve = args.some(val => val === '--serve' || val === '-serve');
 testnet = args.some(val => val === '--testnet' || val === '-testnet');
 nodaemon = args.some(val => val === '--nodaemon' || val === '-nodaemon');
