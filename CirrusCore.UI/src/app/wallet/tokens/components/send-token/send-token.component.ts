@@ -40,6 +40,7 @@ export class SendTokenComponent implements OnInit {
 
   recommendedGasLimit = 15000;
   gasCallLimitMinimum = 10000;
+  gasCreateLimitMinimum = 12000;
   gasLimitMaximum = 250000;
   gasPriceMinimum = 1;
   gasPriceMaximum = 10000;
