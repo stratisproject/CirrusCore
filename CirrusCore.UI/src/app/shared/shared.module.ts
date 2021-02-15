@@ -6,7 +6,7 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
 import { PasswordValidationDirective } from './directives/password-validation.directive';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxElectronModule } from 'ngx-electron';
-import { NgxQRCodeModule } from 'ngx-qrcode2';
+import { NgxQRCodeModule } from '@techiediaries/ngx-qrcode';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ClipboardModule } from 'ngx-clipboard';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -52,9 +52,6 @@ import { StakingService } from '@shared/services/staking-service';
     AutoFocusDirective,
     PasswordValidationDirective,
     LoadingModalComponent,
-    ConfirmationModalComponent],
-  entryComponents: [
-    GenericModalComponent,
     ConfirmationModalComponent]
 })
 

@@ -15,7 +15,7 @@ export class GlobalService {
     this.setDaemonIP();
   }
 
-  private applicationVersion = '1.5.0';
+  private applicationVersion = '1.5.1';
   private testnet = false;
   private sidechain = false;
   private mainApiPort = 37221;
@@ -39,7 +39,7 @@ export class GlobalService {
 
   public setApplicationVersion() {
     if (this.electronService.isElectronApp) {
-      this.applicationVersion = this.electronService.remote.app.getVersion();
+      //this.applicationVersion = this.electronService.remote.app.getVersion();
     }
   }
 

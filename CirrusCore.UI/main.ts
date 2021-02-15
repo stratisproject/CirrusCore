@@ -7,7 +7,6 @@ if (os.arch() === 'arm') {
   app.disableHardwareAcceleration();
 }
 
-// Set to true if you want to build Core for sidechains
 const daemonName = 'Stratis.CirrusD';
 const applicationName = 'Cirrus Core';
 
@@ -20,6 +19,10 @@ let sidechain = true;
 const args = process.argv.slice(1);
 
 args.push('--enableSignalR');
+
+if (os.platform() === 'darwin') {
+  args.push('--dbtype=rocksdb');
+}
 
 serve = args.some(val => val === '--serve' || val === '-serve');
 testnet = args.some(val => val === '--testnet' || val === '-testnet');
@@ -219,7 +222,7 @@ function startDaemon() {
   console.log(spawnArgs);
 
   daemonProcess = spawnDaemon(daemonPath, spawnArgs, {
-    detached: true
+    detached: false
   });
 
   daemonProcess.stdout.on('data', (data) => {

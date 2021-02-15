@@ -74,8 +74,8 @@ export class SendComponent implements OnInit, OnDestroy {
   // Validation rules.
   public confirmationText: string;
   private subscriptions: Subscription[] = [];
-  private sendFormErrors: any = {};
-  private sendToSidechainFormErrors: any = {};
+  public sendFormErrors: any = {};
+  public sendToSidechainFormErrors: any = {};
 
   public ngOnInit() {
     this.testnetEnabled = this.globalService.getTestnetEnabled();

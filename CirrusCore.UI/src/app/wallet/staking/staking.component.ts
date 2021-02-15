@@ -12,15 +12,15 @@ import { WalletService } from '@shared/services/wallet.service';
   styleUrls: ['./staking.component.css']
 })
 export class StakingComponent implements OnInit {
-  private stakingForm: FormGroup;
+  public stakingForm: FormGroup;
   public wallet: Observable<WalletBalance>;
   public stakingInfo: Observable<StakingInfo>;
 
   constructor(
     private fb: FormBuilder,
-    private stakingService: StakingService,
+    public stakingService: StakingService,
     private walletService: WalletService,
-    private globalService: GlobalService) {
+    public globalService: GlobalService) {
   }
 
   public ngOnInit() {

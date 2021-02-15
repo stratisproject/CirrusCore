@@ -61,9 +61,10 @@ export class TransactionComponent implements OnInit {
   apiError: string;
 
   gasCallLimitMinimum = 10000;
+  gasCallRecommendedLimit = 50000;
   gasCreateLimitMinimum = 12000;
   gasCreateTokenLimitMinimum = 15000;
-  gasLimitMaximum = 100000;
+  gasLimitMaximum = 250000;
   gasPriceMinimum = 1;
   gasPriceMaximum = 10000;
 
@@ -221,7 +222,7 @@ export class TransactionComponent implements OnInit {
 
     if (this.mode === Mode.Call) {
       // tslint:disable-next-line:max-line-length
-      this.gasLimit = new FormControl(this.gasCallLimitMinimum, [Validators.required, integerValidator, Validators.pattern('^[+]?([0-9]{0,})*[.]?([0-9]{0,2})?$'), gasLimitValidator, gasLimitMaximumValidator, Validators.min(0)]);
+      this.gasLimit = new FormControl(this.gasCallRecommendedLimit, [Validators.required, integerValidator, Validators.pattern('^[+]?([0-9]{0,})*[.]?([0-9]{0,2})?$'), gasLimitValidator, gasLimitMaximumValidator, Validators.min(0)]);
     }
 
     if (this.mode === Mode.Create) {

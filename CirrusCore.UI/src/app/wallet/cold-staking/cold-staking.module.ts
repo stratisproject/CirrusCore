@@ -26,11 +26,6 @@ import { ColdStakingCreateSuccessComponent } from './components/modals/create-su
         ColdStakingCreateAddressComponent,
         ColdStakingWithdrawComponent,
         ColdStakingCreateComponent,
-        ColdStakingCreateSuccessComponent],
-
-    entryComponents: [ColdStakingCreateAddressComponent,
-        ColdStakingWithdrawComponent,
-        ColdStakingCreateComponent,
         ColdStakingCreateSuccessComponent]
 })
 export class ColdStakingModule { }

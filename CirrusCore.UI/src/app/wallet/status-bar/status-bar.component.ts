@@ -19,8 +19,8 @@ export class StatusBarComponent implements OnInit {
 
   constructor(
     private nodeService: NodeService,
-    private stakingService: StakingService,
-    private globalService: GlobalService) {
+    public stakingService: StakingService,
+    public globalService: GlobalService) {
   }
 
   public ngOnInit(): void {
