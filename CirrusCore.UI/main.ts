@@ -175,31 +175,32 @@ app.on('activate', () => {
 });
 
 function shutdownDaemon(daemonAddr, portNumber) {
+  writeLog('Sending POST request to shut down daemon.');
   const http = require('http');
-  const body = JSON.stringify({});
-
-  const request = new http.ClientRequest({
-    method: 'POST',
+  const options = {
     hostname: daemonAddr,
     port: portNumber,
     path: '/api/node/shutdown',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(body)
+    method: 'POST'
+  };
+
+  const req = http.request(options);
+
+  req.on('response', (res) => {
+    if (res.statusCode === 200) {
+      writeLog('Request to shutdown daemon returned HTTP success code.');
+    } else {
+      writeError('Request to shutdown daemon returned HTTP failure code: ' + res.statusCode);
     }
   });
 
-  request.write('true');
-  request.on('error', function (e) {
-  });
-  request.on('timeout', function (e) {
-    request.abort();
-  });
-  request.on('uncaughtException', function (e) {
-    request.abort();
+  req.on('error', (err) => {
+    writeError('Request to shutdown daemon failed.');
   });
 
-  request.end(body);
+  req.setHeader('content-type', 'application/json-patch+json');
+  req.write('true');
+  req.end();
 }
 
 function startDaemon() {
@@ -276,6 +277,10 @@ function createTray() {
 
 function writeLog(msg) {
   console.log(msg);
+}
+
+function writeError(msg) {
+  console.log("Error: " + msg);
 }
 
 function createMenu() {
