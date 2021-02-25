@@ -2,14 +2,11 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from '@shared/shared.module';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TabsModule } from 'ngx-bootstrap/tabs';
-import { AddressBookComponent } from './address-book/address-book.component';
-import { AddNewAddressComponent } from './address-book/modals/add-new-address/add-new-address.component';
 import { AdvancedComponent } from './advanced/advanced.component';
 import { AboutComponent } from './advanced/components/about/about.component';
 import { ExtPubkeyComponent } from './advanced/components/ext-pubkey/ext-pubkey.component';
 import { GenerateAddressesComponent } from './advanced/components/generate-addresses/generate-addresses.component';
 import { ResyncComponent } from './advanced/components/resync/resync.component';
-import { ColdStakingModule } from './cold-staking/cold-staking.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HistoryComponent } from './history/history.component';
 import { LogoutConfirmationComponent } from './logout-confirmation/logout-confirmation.component';
@@ -25,13 +22,11 @@ import { WalletRoutingModule } from './wallet-routing.module';
 import { WalletComponent } from './wallet.component';
 import { AccountSelectedGuard } from '@shared/guards/account-selected.guard';
 import { TransactionsComponent } from './transactions/transactions.component';
-import { StakingComponent } from './staking/staking.component';
 
 @NgModule({
   imports: [
     SharedModule,
     WalletRoutingModule,
-    ColdStakingModule,
     SmartContractsModule.forRoot(),
     TokensModule,
     BsDatepickerModule.forRoot(),
@@ -49,14 +44,11 @@ import { StakingComponent } from './staking/staking.component';
     HistoryComponent,
     StatusBarComponent,
     AdvancedComponent,
-    AddressBookComponent,
-    AddNewAddressComponent,
     ExtPubkeyComponent,
     AboutComponent,
     GenerateAddressesComponent,
     ResyncComponent,
-    TransactionsComponent,
-    StakingComponent
+    TransactionsComponent
   ],
   providers: [
     AccountSelectedGuard

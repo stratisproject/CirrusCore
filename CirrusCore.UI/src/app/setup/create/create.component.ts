@@ -24,7 +24,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   public createWalletForm: FormGroup;
-  public sidechainEnabled: boolean;
   private newWallet: WalletCreation;
   private mnemonic: string;
   private formValueChanges$: Subscription;
@@ -32,7 +31,6 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getNewMnemonic();
-    this.sidechainEnabled = this.globalService.getSidechainEnabled();
   }
 
   private buildCreateForm(): void {

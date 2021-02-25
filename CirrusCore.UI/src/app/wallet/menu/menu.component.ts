@@ -17,13 +17,11 @@ export class MenuComponent implements OnInit {
   }
 
   public testnet: boolean;
-  public sidechainEnabled: boolean;
   public walletName: string;
 
   ngOnInit() {
     this.testnet = this.globalService.getTestnetEnabled();
-    this.sidechainEnabled = this.globalService.getSidechainEnabled();
-    this.accountsEnabled = this.sidechainEnabled && this.currentAccountService.hasActiveAddress();
+    this.accountsEnabled = this.currentAccountService.hasActiveAddress();
   }
 
   openAddressBook() {

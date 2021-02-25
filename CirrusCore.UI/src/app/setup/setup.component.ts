@@ -11,10 +11,8 @@ import { GlobalService } from '@shared/services/global.service';
 export class SetupComponent implements OnInit {
   constructor(private router: Router, private globalService: GlobalService) {}
 
-  public sidechainEnabled: boolean;
-
   ngOnInit() {
-    this.sidechainEnabled = this.globalService.getSidechainEnabled();
+
   }
 
   public onCreateClicked() {

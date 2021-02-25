@@ -64,7 +64,7 @@ export class WalletService extends RestApi {
     });
 
     currentAccountService.currentAddress.subscribe((address) => {
-      this.accountsEnabled = globalService.getSidechainEnabled();
+      this.accountsEnabled = true;
       if (null != address) {
         this.updateWalletForCurrentAddress();
       }
@@ -230,7 +230,7 @@ export class WalletService extends RestApi {
 
     if (this.accountsEnabled) {
       transaction.shuffleOutputs = !this.accountsEnabled;
-      if (this.globalService.getSidechainEnabled() && this.currentAccountService.hasActiveAddress()) {
+      if (this.currentAccountService.hasActiveAddress()) {
         // Only set a change address if we're on a sidechain and there's a current account selected
         transaction.sender = this.currentAccountService.address;
       }

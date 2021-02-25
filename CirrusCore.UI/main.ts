@@ -14,7 +14,6 @@ let serve;
 let testnet;
 let nodaemon;
 let devtools;
-let sidechain = true;
 
 const args = process.argv.slice(1);
 
@@ -62,10 +61,6 @@ ipcMain.on('get-port', (event, arg) => {
 
 ipcMain.on('get-testnet', (event, arg) => {
   event.returnValue = testnet;
-});
-
-ipcMain.on('get-sidechain', (event, arg) => {
-  event.returnValue = sidechain;
 });
 
 ipcMain.on('get-daemonip', (event, arg) => {

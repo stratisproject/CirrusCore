@@ -12,11 +12,5 @@
       <i class="lnr lnr-earth text-black"></i>
       <small class="text-black">{{ _generalInfo.connectedNodes }}</small>
     </li>
-    <li *ngIf="!stakingService.stakingEnabled && !globalService.getSidechainEnabled()" class="list-inline-item mx-1" placement="top" ngbTooltip="Not staking">
-      <i class="lnr lnr-lock text-danger"></i>
-    </li>
-    <li *ngIf="stakingService.stakingEnabled && !globalService.getSidechainEnabled()" class="list-inline-item mx-1" placement="top" ngbTooltip="Staking">
-      <i class="lnr lnr-lock text-success"></i>
-    </li>
   </ul>
 </div>

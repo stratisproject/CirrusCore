@@ -12,7 +12,6 @@ export class SendConfirmationComponent implements OnInit {
 
   @Input() transaction: any;
   @Input() transactionFee: any;
-  @Input() sidechainEnabled: boolean;
   @Input() hasOpReturn: boolean;
 
   constructor(private globalService: GlobalService, public activeModal: NgbActiveModal) {

@@ -2,30 +2,22 @@
   <nav class="navbar navbar-light bg-light justify-content-between">
     <ul class="nav list-inline col-5">
       <li class="nav-item list-inline-item">
-        <a class="nav-link" [class.nav-link-stratis-green]="sidechainEnabled" routerLink="dashboard"
-          routerLinkActive="sidechainEnabled ? active-stratis-green : active">Dashboard</a>
+        <a class="nav-link nav-link-stratis-green" routerLink="dashboard" routerLinkActive="active-stratis-green">Dashboard</a>
       </li>
       <li class="nav-item list-inline-item">
-        <a class="nav-link" [class.nav-link-stratis-green]="sidechainEnabled" routerLink="history"
-          routerLinkActive="sidechainEnabled ? active-stratis-green : active">History</a>
+        <a class="nav-link nav-link-stratis-green" routerLink="history" routerLinkActive="active-stratis-green">History</a>
       </li>
-      <!-- <li *ngIf="testnet && !sidechainEnabled" class="nav-item list-inline-item">
-          <a class="nav-link" routerLink="staking" routerLinkActive="active">Cold Staking</a>
-        </li> -->
-      <li *ngIf="sidechainEnabled" class="nav-item list-inline-item">
-        <a class="nav-link" [class.nav-link-stratis-green]="sidechainEnabled" routerLink="smart-contracts"
-          routerLinkActive="sidechainEnabled ? active-stratis-green : active">Smart Contracts</a>
+      <li class="nav-item list-inline-item">
+        <a class="nav-link nav-link-stratis-green" routerLink="smart-contracts" routerLinkActive="active-stratis-green">Smart Contracts</a>
       </li>
-      <li *ngIf="sidechainEnabled" class="nav-item list-inline-item">
-        <a class="nav-link" [class.nav-link-stratis-green]="sidechainEnabled" routerLink="tokens"
-          routerLinkActive="sidechainEnabled ? active-stratis-green : active">Token Management</a>
+      <li class="nav-item list-inline-item">
+        <a class="nav-link nav-link-stratis-green" routerLink="tokens" routerLinkActive="active-stratis-green">Token Management</a>
       </li>
     </ul>
 
     <span class="navbar-brand mx-auto">
       <a>
-        <img *ngIf="!sidechainEnabled" src="./assets/images/stratis/logo.svg" width="36" height="36" alt="Stratis">
-        <img *ngIf="sidechainEnabled" src="./assets/images/cirrus/logo.svg" width="36" height="36" alt="Cirrus">
+        <img src="./assets/images/cirrus/logo.svg" width="36" height="36" alt="Cirrus">
       </a>
     </span>
 
@@ -36,8 +28,6 @@
           <div ngbDropdownMenu class="dropdown-menu-right">
               <button *ngIf="accountsEnabled" class="dropdown-item d-flex align-items-center" type="button"
               (click)="switchAddress()"><i class="lnr lnr-users"></i>Switch Address</button>
-            <button *ngIf="!sidechainEnabled" class="dropdown-item d-flex align-items-center" type="button"
-              (click)="openAddressBook()"><i class="lnr lnr-book"></i>Address Book</button>
             <button class="dropdown-item d-flex align-items-center" type="button" (click)="openAdvanced()"><i
                 class="lnr lnr-cog"></i>Advanced</button>
             <div class="dropdown-divider"></div>

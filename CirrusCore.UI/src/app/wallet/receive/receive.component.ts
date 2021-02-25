@@ -34,11 +34,9 @@ export class ReceiveComponent implements OnInit {
   public pageNumberUsed = 1;
   public pageNumberUnused = 1;
   public pageNumberChange = 1;
-  public sidechainEnabled: boolean;
 
   public ngOnInit(): void {
-    this.sidechainEnabled = this.globalService.getSidechainEnabled();
-    this.accountsEnabled = this.sidechainEnabled && this.currentAccountService.hasActiveAddress();
+    this.accountsEnabled = this.currentAccountService.hasActiveAddress();
 
     if (!this.accountsEnabled) {
       this.getUnusedReceiveAddresses();
@@ -80,7 +78,6 @@ export class ReceiveComponent implements OnInit {
   }
 
   private setQrString(address: string) {
-    // TODO: fix this later to use the actual sidechain name instead of 'cirrus'
     this.qrString = `${this.globalService.networkName}:${address}`;
   }
 

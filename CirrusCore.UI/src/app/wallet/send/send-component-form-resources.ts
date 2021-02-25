@@ -70,14 +70,6 @@ export class SendComponentFormResources {
     });
   }
 
-  public static stratisNetworks: Network[] = [
-    { destinationName: 'Cirrus', federationAddress: 'yU2jNwiac7XF8rQvSk2bgibmwsNLkkhsHV', description: 'Cirrus Sidechain'}
-  ];
-
-  public static stratisTestNetworks: Network[] = [
-    // { destinationName: 'CirrusTest', federationAddress: '2N1wrNv5NDayLrKuph9YDVk8Fip8Wr8F8nX', description: 'Cirrus Test Sidechain'}
-  ];
-
   public static cirrusNetworks: Network[] = [
     { destinationName: 'Stratis', federationAddress: 'cYTNBJDbgjRgcKARAvi2UCSsDdyHkjUqJ2', description: 'Stratis Mainnet'}
   ];
@@ -85,5 +77,4 @@ export class SendComponentFormResources {
   public static cirrusTestNetworks: Network[] = [
     // { destinationName: 'StratisTest', federationAddress: 'xH1GHWVNKwdebkgiFPtQtM4qb3vrvNX2Rg', description: 'Stratis Testnet'}
   ];
-
 }

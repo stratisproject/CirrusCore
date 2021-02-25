@@ -59,7 +59,6 @@ export class SendComponent implements OnInit, OnDestroy {
 
   public sendForm: FormGroup;
   public sendToSidechainForm: FormGroup;
-  public sidechainEnabled: boolean;
   public coinUnit: string;
   public isSending = false;
   public estimatedFee = 0;
@@ -79,39 +78,24 @@ export class SendComponent implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.testnetEnabled = this.globalService.getTestnetEnabled();
-    this.sidechainEnabled = this.globalService.getSidechainEnabled();
-    this.accountsEnabled = this.sidechainEnabled && this.currentAccountService.hasActiveAddress();
+    this.accountsEnabled = this.currentAccountService.hasActiveAddress();
 
-    if (this.sidechainEnabled) {
-      if (this.testnetEnabled) {
-        this.networks = SendComponentFormResources.cirrusTestNetworks;
-      } else {
-        this.networks = SendComponentFormResources.cirrusNetworks;
-      }
+    if (this.testnetEnabled) {
+      this.networks = SendComponentFormResources.cirrusTestNetworks;
     } else {
-      if (this.testnetEnabled) {
-        this.networks = SendComponentFormResources.stratisTestNetworks;
-      } else {
-        this.networks = SendComponentFormResources.stratisNetworks;
-      }
+      this.networks = SendComponentFormResources.cirrusNetworks;
     }
 
-    if (this.sidechainEnabled) {
-      this.firstTitle = 'Sidechain';
-      this.secondTitle = 'Mainchain';
-    } else {
-      this.firstTitle = 'Mainchain';
-      this.secondTitle = 'Sidechain';
-    }
+    this.firstTitle = 'Sidechain';
+    this.secondTitle = 'Mainchain';
+
     this.getWalletBalance();
     this.coinUnit = this.globalService.getCoinUnit();
     if (this.address) {
       this.sendForm.patchValue({'address': this.address});
     }
 
-    this.confirmationText = this.sidechainEnabled
-      ? "Amounts less than 50 Cirrus clear in 25 confirmations<br>Amounts between 50 and 1000 Cirrus clear in 80 confirmations<br>Amounts more than 1000 Cirrus clear in 500 confirmations"
-      : 'Please note that sending from the mainchain to a sidechain requires 500 confirmations.';
+    this.confirmationText = "Amounts less than 50 Cirrus clear in 25 confirmations<br>Amounts between 50 and 1000 Cirrus clear in 80 confirmations<br>Amounts more than 1000 Cirrus clear in 500 confirmations"
   }
 
   public ngOnDestroy() {
@@ -238,7 +222,6 @@ export class SendComponent implements OnInit, OnDestroy {
 
     component.transaction = transactionResponse.transaction;
     component.transactionFee = this.estimatedFee ? this.estimatedFee : this.estimatedSidechainFee;
-    component.sidechainEnabled = this.sidechainEnabled;
     component.hasOpReturn = transactionResponse.isSideChain;
   }
 

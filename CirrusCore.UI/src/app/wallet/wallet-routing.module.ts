@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AddressBookComponent } from './address-book/address-book.component';
 import { AdvancedComponent } from './advanced/advanced.component';
 import { AboutComponent } from './advanced/components/about/about.component';
 import { ExtPubkeyComponent } from './advanced/components/ext-pubkey/ext-pubkey.component';
 import { GenerateAddressesComponent } from './advanced/components/generate-addresses/generate-addresses.component';
 import { ResyncComponent } from './advanced/components/resync/resync.component';
-import { ColdStakingOverviewComponent } from './cold-staking/components/overview/overview.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HistoryComponent } from './history/history.component';
 import { SmartContractsComponent } from './smart-contracts/components/smart-contracts.component';
@@ -21,7 +19,6 @@ const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'history', component: HistoryComponent },
-      { path: 'staking', component: ColdStakingOverviewComponent },
       {
         path: 'advanced', component: AdvancedComponent,
         children: [
@@ -34,7 +31,6 @@ const routes: Routes = [
       },
       { path: 'smart-contracts', component: SmartContractsComponent, canActivate: [AccountSelectedGuard] },
       { path: 'tokens', component: TokensComponent, canActivate: [AccountSelectedGuard] },
-      { path: 'address-book', component: AddressBookComponent }
     ]
   },
 ];
