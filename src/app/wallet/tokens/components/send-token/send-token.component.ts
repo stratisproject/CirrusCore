@@ -4,7 +4,7 @@ import { FormControl, FormArray, Validators, FormGroup } from '@angular/forms';
 import { Mixin } from '../../models/mixin';
 import { Disposable } from '../../models/disposable';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { SmartContractsService } from 'src/app/wallet/smart-contracts/smart-contracts.service';
+import { SmartContractsService } from '../../../smart-contracts/smart-contracts.service';
 
 @Component({
   selector: 'app-send-token',

@@ -10,7 +10,7 @@ import { WalletLoad } from '../models/wallet-load';
 import { WalletInfo, WalletInfoRequest } from '../models/wallet-info';
 import { NodeStatus } from '../models/node-status';
 import { LocalExecutionResult } from '@shared/models/local-execution-result';
-import { TokenBalanceRequest } from 'src/app/wallet/tokens/models/token-balance-request';
+import { TokenBalanceRequest } from '../../wallet/tokens/models/token-balance-request';
 import { RestApi } from '@shared/services/rest-api';
 import { IApiService } from '@shared/services/interfaces/services.i';
 import { WalletHistory } from '@shared/services/interfaces/api.i';
