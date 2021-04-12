@@ -1,7 +1,3 @@
-| Windows | Mac OS | Linux
-| :---- | :------ | :---- |
-| [![Build Status](https://dev.azure.com/StratisProject/StratisCore/_apis/build/status/Hosted%20Windows%20Container)](https://dev.azure.com/StratisProject/StratisCore/_build/latest?definitionId=16) | [![Build Status](https://dev.azure.com/StratisProject/StratisCore/_apis/build/status/Hosted%20macOS)](https://dev.azure.com/StratisProject/StratisCore/_build/latest?definitionId=18) | [![Build Status](https://dev.azure.com/StratisProject/StratisCore/_apis/build/status/Hosted%20Ubuntu%201604)](https://dev.azure.com/StratisProject/StratisCore/_build/latest?definitionId=17)
-
 # Cirrus Core
 
 This is the repository of the Cirrus Core Wallet, our sidechain wallet using Electron and Angular at the front-end and .NET Core with C# in the back-end.
@@ -13,13 +9,13 @@ The StratisFullNode daemon is hosted in another repository. All information on b
 
 # Building and running the Cirrus Core user interface
 
-## Install NodeJS
-
-Download and install the latest Long Term Support (LTS) version of NodeJS at: https://nodejs.org/. 
+## Install prerequisites
+Download and install the latest version of Git [here](https://git-scm.com/).  
+Download and install the latest Long Term Support (LTS) version of NodeJS [here](https://nodejs.org/). 
 
 ## Getting Started
 
-Clone this repository locally:
+Clone the repository locally:
 
 ``` bash
 git clone https://www.github.com/stratisproject/CirrusCore
