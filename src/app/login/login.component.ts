@@ -118,7 +118,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.apiService.loadStratisWallet(walletLoad)
       .subscribe(
         response => {
-          this.router.navigate(['address-selection'])
+          this.router.navigate(['address-selection']);
         },
         error => {
           this.isDecrypting = false;

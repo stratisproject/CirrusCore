@@ -21,7 +21,7 @@ export class ContractTypePipe implements PipeTransform {
         case 5:
           return "Gas Refund";
         default:
-            return "";                  
+          return "";                  
       }
     }
 

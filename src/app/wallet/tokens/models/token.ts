@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 
 export class Token {
-  constructor(ticker: string, address: string, name: string, decimals: number = 0) {
+  constructor(ticker: string, address: string, name: string, decimals = 0) {
     this.ticker = ticker;
     this.address = address;
     this.name = name || this.ticker;
@@ -15,7 +15,7 @@ export class Token {
 }
 
 export class SavedToken extends Token {
-  constructor(ticker: string, address: string, balance: string, name: string, decimals: number = 0) {
+  constructor(ticker: string, address: string, balance: string, name: string, decimals = 0) {
     super(ticker, address, name, decimals);
     this.setBalance(balance);
   }

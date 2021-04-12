@@ -25,7 +25,7 @@ export class FeeEstimation {
     this.feeType = feeType;
     this.allowUnconfirmed = allowUnconfirmed;
     this.shuffleOutputs = shuffleOutputs;
-    this.changeAddress = changeAddress
+    this.changeAddress = changeAddress;
   }
 
   walletName: string;

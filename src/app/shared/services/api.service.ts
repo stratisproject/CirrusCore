@@ -131,10 +131,10 @@ export class ApiService extends RestApi implements IApiService {
    */
   public getMaximumBalance(data: WalletInfoRequest): Observable<any> {
     return this.get('wallet/maxbalance',
-      this.getWalletParams(data, {
-        feeType: data.feeType,
-        allowUnconfirmed: 'true'
-      })).pipe(
+                    this.getWalletParams(data, {
+                      feeType: data.feeType,
+                      allowUnconfirmed: 'true'
+                    })).pipe(
       catchError(err => this.handleHttpError(err))
     );
   }
@@ -239,7 +239,7 @@ export class ApiService extends RestApi implements IApiService {
     );
   }
 
-  public getReceipt(hash: string, silent: boolean = false): any {
+  public getReceipt(hash: string, silent = false): any {
     const params = new HttpParams().set('txHash', hash);
     return this.get('smartcontracts/receipt', params).pipe(
       catchError(err => this.handleHttpError(err, silent))

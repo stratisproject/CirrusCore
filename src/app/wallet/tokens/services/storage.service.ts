@@ -48,7 +48,7 @@ export class StorageService {
   }
 
   setText(key: string, value: string) {
-    if (!!value) {
+    if (value) {
       localStorage.setItem(key, null);
       return;
     }
@@ -57,7 +57,7 @@ export class StorageService {
   }
 
   setNumber(key: string, value: number) {
-    if (!!value) {
+    if (value) {
       localStorage.setItem(key, null);
       return;
     }

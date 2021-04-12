@@ -22,7 +22,7 @@ export class RecoverComponent implements OnInit {
 
   public recoverWalletForm: FormGroup;
   public creationDate: Date;
-  public isRecovering: boolean = false;
+  public isRecovering = false;
   public minDate = new Date("2009-08-09");
   public maxDate = new Date();
   public bsConfig: Partial<BsDatepickerConfig>;
@@ -35,11 +35,11 @@ export class RecoverComponent implements OnInit {
   private buildRecoverForm(): void {
     this.recoverWalletForm = this.fb.group({
       "walletName": ["", [
-          Validators.required,
-          Validators.minLength(1),
-          Validators.maxLength(24),
-          Validators.pattern(/^[a-zA-Z0-9]*$/)
-        ]
+        Validators.required,
+        Validators.minLength(1),
+        Validators.maxLength(24),
+        Validators.pattern(/^[a-zA-Z0-9]*$/)
+      ]
       ],
       "walletMnemonic": ["", Validators.required],
       "walletDate": ["", Validators.required],
@@ -104,7 +104,7 @@ export class RecoverComponent implements OnInit {
   public onRecoverClicked(){
     this.isRecovering = true;
 
-    let recoveryDate = new Date(this.recoverWalletForm.get("walletDate").value);
+    const recoveryDate = new Date(this.recoverWalletForm.get("walletDate").value);
     recoveryDate.setDate(recoveryDate.getDate() - 1);
 
     this.walletRecovery = new WalletRecovery(
@@ -121,9 +121,9 @@ export class RecoverComponent implements OnInit {
     this.apiService.recoverStratisWallet(recoverWallet)
       .subscribe(
         response => {
-          let body = "Your wallet has been recovered. \nYou will be redirected to the decryption page.";
+          const body = "Your wallet has been recovered. \nYou will be redirected to the decryption page.";
           this.genericModalService.openModal("Wallet Recovered", body);
-          this.router.navigate([''])
+          this.router.navigate(['']);
         },
         error => {
           this.isRecovering = false;

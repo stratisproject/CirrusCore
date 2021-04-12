@@ -7,7 +7,7 @@ export class WalletInfo {
 
 export class WalletInfoRequest extends WalletInfo {
   constructor(walletName: string,
-              account: number = 0,
+              account = 0,
               public feeType?: string) {
     super(walletName, account);
   }

@@ -10,7 +10,7 @@ describe('SmartContractsComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ SmartContractsComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

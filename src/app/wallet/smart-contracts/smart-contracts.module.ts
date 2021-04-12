@@ -12,29 +12,29 @@ import { ContractTypePipe } from './components/contract-type.pipe';
 import { AddressSelectionComponent } from './components/address-selection/address-selection.component';
 
 @NgModule({
-    imports: [
-        CommonModule, NgbModalModule, ClipboardModule, FormsModule, ReactiveFormsModule, SharedModule
-    ],
+  imports: [
+    CommonModule, NgbModalModule, ClipboardModule, FormsModule, ReactiveFormsModule, SharedModule
+  ],
 
-    providers: [{ provide: SmartContractsServiceBase, useClass: SmartContractsService }],
-    exports: [
-        ScBalanceComponent
-    ],
-    declarations: [
-        SmartContractsComponent,
-        TransactionComponent,
-        ScBalanceComponent,
-        ContractTypePipe,
-        AddressSelectionComponent
-    ]
+  providers: [{ provide: SmartContractsServiceBase, useClass: SmartContractsService }],
+  exports: [
+    ScBalanceComponent
+  ],
+  declarations: [
+    SmartContractsComponent,
+    TransactionComponent,
+    ScBalanceComponent,
+    ContractTypePipe,
+    AddressSelectionComponent
+  ]
 })
 export class SmartContractsModule {
-    static forRoot(): ModuleWithProviders<SmartContractsModule> {
-        return {
-          ngModule: SmartContractsModule,
-          providers: [
-            { provide: SmartContractsServiceBase, useClass: SmartContractsService }
-          ]
-        };
-    }
+  static forRoot(): ModuleWithProviders<SmartContractsModule> {
+    return {
+      ngModule: SmartContractsModule,
+      providers: [
+        { provide: SmartContractsServiceBase, useClass: SmartContractsService }
+      ]
+    };
+  }
 }

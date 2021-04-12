@@ -24,7 +24,7 @@ export class ShowMnemonicComponent implements OnInit, OnDestroy {
         params["mnemonic"],
         params["password"],
         params["passphrase"]
-      )
+      );
     });
 
     this.showMnemonic();

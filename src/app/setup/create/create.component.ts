@@ -50,7 +50,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         // Validators.compose([
         //   Validators.required,
         //   Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{10,})/)])
-        ],
+      ],
       walletPasswordConfirmation: ['', Validators.required],
       selectNetwork: ["test", Validators.required]
     }, {

@@ -94,18 +94,18 @@ export class SendTokenComponent implements OnInit {
         this.loading = false;
         this.activeModal.close({ request: result, callResponse, amount: this.tokenAmount.value, recipientAddress: this.recipientAddress.value });
       },
-        error => {
-          this.loading = false;
-          if (!error.error.errors) {
-            if (error.error.value.message) {
-              this.apiError = error.error.value.message;
-            } else {
-              console.log(error);
-            }
-          } else {
-            this.apiError = error.error.errors[0].message;
-          }
-        });
+            error => {
+              this.loading = false;
+              if (!error.error.errors) {
+                if (error.error.value.message) {
+                  this.apiError = error.error.value.message;
+                } else {
+                  console.log(error);
+                }
+              } else {
+                this.apiError = error.error.errors[0].message;
+              }
+            });
   }
 
   setTokenAmount(tokenBalance: string) {

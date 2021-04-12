@@ -10,7 +10,7 @@ describe('TokensComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ TokensComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

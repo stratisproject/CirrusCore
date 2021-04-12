@@ -53,7 +53,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
   maxTimeout = 1.5 * 60 * 1000; // wait for about 1.5 minutes
   tokens: SavedToken[] = [];
   tokenLoading: { [address: string]: string; } = {};
-  public tooltipText = "This is the token contract address. Tokens sent to this address will be lost, do not use this as your receive address."
+  public tooltipText = "This is the token contract address. Tokens sent to this address will be lost, do not use this as your receive address.";
 
   constructor(
     private tokenService: TokensService,
@@ -73,12 +73,12 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
 
     this.smartContractsService.GetHistory(this.walletName, this.selectedAddress)
       .pipe(catchError(error => {
-          this.showApiError(`Error retrieving transactions. ${error}`);
-          return of([]);
-        }),
-        take(1)
+        this.showApiError(`Error retrieving transactions. ${error}`);
+        return of([]);
+      }),
+            take(1)
       )
-    .subscribe(history => this.history = history);
+      .subscribe(history => this.history = history);
 
     this.smartContractsService.GetAddressBalance(this.selectedAddress)
       .pipe(
@@ -118,18 +118,18 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
           Log.log(`Error getting token balance for token address ${token.address}`);
           return of(null);
         }),
-        tap(balance => {
-          if (balance === null) {
-            token.clearBalance();
-            this.tokenLoading[token.address] = 'error';
-            return;
-          }
+              tap(balance => {
+                if (balance === null) {
+                  token.clearBalance();
+                  this.tokenLoading[token.address] = 'error';
+                  return;
+                }
 
-          this.tokenLoading[token.address] = 'loaded';
-          if (balance !== token.balance) {
-            token.setBalance(balance);
-          }
-        }));
+                this.tokenLoading[token.address] = 'loaded';
+                if (balance !== token.balance) {
+                  token.setBalance(balance);
+                }
+              }));
     }));
   }
 
@@ -216,7 +216,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
 
             return of(result);
           }),
-          switchMap(receipt => !!receipt.error ? throwError(receipt.error) : of(receipt)),
+          switchMap(receipt => receipt.error ? throwError(receipt.error) : of(receipt)),
           takeUntil(this.disposed$)
         )
         .subscribe(
@@ -305,7 +305,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
         .subscribe(
           receipt => {
 
-            if (!!receipt.error) {
+            if (receipt.error) {
               this.showError(receipt.error);
               Log.error(new Error(receipt.error));
             }

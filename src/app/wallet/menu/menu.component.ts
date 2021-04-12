@@ -6,14 +6,14 @@ import { LogoutConfirmationComponent } from '../logout-confirmation/logout-confi
 import { CurrentAccountService } from '@shared/services/current-account.service';
 
 @Component({
-    selector: 'app-menu',
-    templateUrl: './menu.component.html',
-    styleUrls: ['./menu.component.css'],
+  selector: 'app-menu',
+  templateUrl: './menu.component.html',
+  styleUrls: ['./menu.component.css'],
 })
 export class MenuComponent implements OnInit {
   accountsEnabled: boolean;
   constructor(private modalService: NgbModal, private globalService: GlobalService, private router: Router, private currentAccountService: CurrentAccountService) {
-      this.walletName = this.globalService.getWalletName();
+    this.walletName = this.globalService.getWalletName();
   }
 
   public testnet: boolean;
@@ -38,6 +38,6 @@ export class MenuComponent implements OnInit {
   }
 
   logoutClicked() {
-      this.modalService.open(LogoutConfirmationComponent, { backdrop: "static" });
+    this.modalService.open(LogoutConfirmationComponent, { backdrop: "static" });
   }
 }

@@ -41,10 +41,10 @@ export class SendComponent implements OnInit, OnDestroy {
     private fb: FormBuilder) {
 
     this.sendForm = SendComponentFormResources.buildSendForm(fb,
-      () => (this.spendableBalance - this.estimatedFee) / 100000000);
+                                                             () => (this.spendableBalance - this.estimatedFee) / 100000000);
 
     this.sendToSidechainForm = SendComponentFormResources.buildSendToSidechainForm(fb,
-      () => (this.spendableBalance - this.estimatedSidechainFee) / 100000000);
+                                                                                   () => (this.spendableBalance - this.estimatedSidechainFee) / 100000000);
 
     this.subscriptions.push(this.sendForm.valueChanges.pipe(debounceTime(300))
       .subscribe(data => this.onSendValueChanged(data, false)));
@@ -95,7 +95,7 @@ export class SendComponent implements OnInit, OnDestroy {
       this.sendForm.patchValue({'address': this.address});
     }
 
-    this.confirmationText = "Amounts less than 50 Cirrus clear in 25 confirmations<br>Amounts between 50 and 1000 Cirrus clear in 80 confirmations<br>Amounts more than 1000 Cirrus clear in 500 confirmations"
+    this.confirmationText = "Amounts less than 50 Cirrus clear in 25 confirmations<br>Amounts between 50 and 1000 Cirrus clear in 80 confirmations<br>Amounts more than 1000 Cirrus clear in 500 confirmations";
   }
 
   public ngOnDestroy() {
@@ -109,12 +109,12 @@ export class SendComponent implements OnInit, OnDestroy {
     }
 
     FormHelper.ValidateForm(form,
-      isSideChain
-        ? this.sendToSidechainFormErrors
-        : this.sendFormErrors,
-      isSideChain
-        ? SendComponentFormResources.sendToSidechainValidationMessages
-        : SendComponentFormResources.sendValidationMessages
+                            isSideChain
+                              ? this.sendToSidechainFormErrors
+                              : this.sendFormErrors,
+                            isSideChain
+                              ? SendComponentFormResources.sendToSidechainValidationMessages
+                              : SendComponentFormResources.sendValidationMessages
     );
 
     this.apiError = '';
@@ -159,15 +159,15 @@ export class SendComponent implements OnInit, OnDestroy {
 
     this.walletService.estimateFee(transaction).toPromise()
       .then(response => {
-          if (isSideChain) {
-            this.estimatedSidechainFee = response;
-          } else {
-            this.estimatedFee = response;
-          }
-        },
-        error => {
-          this.apiError = error.error.errors[0].message;
+        if (isSideChain) {
+          this.estimatedSidechainFee = response;
+        } else {
+          this.estimatedFee = response;
         }
+      },
+            error => {
+              this.apiError = error.error.errors[0].message;
+            }
       );
   }
 
@@ -180,9 +180,9 @@ export class SendComponent implements OnInit, OnDestroy {
         this.openConfirmationModal(transactionResponse);
         this.isSending = false;
       }).catch(error => {
-      this.isSending = false;
-      this.apiError = error.error.errors[0].message;
-    });
+        this.isSending = false;
+        this.apiError = error.error.errors[0].message;
+      });
   }
 
   private getTransaction(isSideChain?: boolean): Transaction {
@@ -227,9 +227,9 @@ export class SendComponent implements OnInit, OnDestroy {
 
   private networkSelectChanged(data: any): void {
     if (this.sendToSidechainForm.get('networkSelect').value && this.sendToSidechainForm.get('networkSelect').value !== 'customNetwork') {
-      this.sendToSidechainForm.patchValue({'federationAddress': this.sendToSidechainForm.get('networkSelect').value})
+      this.sendToSidechainForm.patchValue({'federationAddress': this.sendToSidechainForm.get('networkSelect').value});
     } else if (this.sendToSidechainForm.get('networkSelect').value && this.sendToSidechainForm.get('networkSelect').value === 'customNetwork') {
-      this.sendToSidechainForm.patchValue({'federationAddress': ''})
+      this.sendToSidechainForm.patchValue({'federationAddress': ''});
     }
   }
 }

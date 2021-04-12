@@ -10,7 +10,7 @@ describe('MenuComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ MenuComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

@@ -10,12 +10,12 @@ export class Recipient {
 
 export class SidechainFeeEstimation {
   constructor(walletName: string, accountName: string, federationAddress: string, destinationAddress: string, amount: string, feeType: string, allowUnconfirmed: boolean) {
-      this.walletName = walletName;
-      this.accountName = accountName;
-      this.recipients = [new Recipient(federationAddress, amount)];
-      this.opreturndata = destinationAddress;
-      this.feeType = feeType;
-      this.allowUnconfirmed = allowUnconfirmed;
+    this.walletName = walletName;
+    this.accountName = accountName;
+    this.recipients = [new Recipient(federationAddress, amount)];
+    this.opreturndata = destinationAddress;
+    this.feeType = feeType;
+    this.allowUnconfirmed = allowUnconfirmed;
   }
 
   walletName: string;

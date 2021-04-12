@@ -60,17 +60,17 @@ export class NodeService extends RestApi {
     // This feels a little weak as we could un-sync? + Other properties we don't update
     // So maybe we should just get all the data once in a while?
     signalRService.registerOnMessageEventHandler<BlockConnectedSignalREvent>(SignalREvents.BlockConnected,
-      (message) => {
-        const generalInfo = this.generalInfoSubject.value;
-        if (generalInfo.isChainSynced) {
-          if (generalInfo.chainTip < message.height) {
-            this.patchAndUpdateGeneralInfo({
-              chainTip: message.height,
-              lastBlockSyncedHeight: message.height
-            });
-          }
-        }
-      });
+                                                                             (message) => {
+                                                                               const generalInfo = this.generalInfoSubject.value;
+                                                                               if (generalInfo.isChainSynced) {
+                                                                                 if (generalInfo.chainTip < message.height) {
+                                                                                   this.patchAndUpdateGeneralInfo({
+                                                                                     chainTip: message.height,
+                                                                                     lastBlockSyncedHeight: message.height
+                                                                                   });
+                                                                                 }
+                                                                               }
+                                                                             });
   }
 
   public generalInfo(): Observable<GeneralInfo> {
@@ -94,9 +94,9 @@ export class NodeService extends RestApi {
       this.get<GeneralInfo>('wallet/general-info', params).pipe(
         catchError(err => this.handleHttpError(err)))
         .toPromise().then(generalInfo => {
-        this.applyPercentSynced(generalInfo);
-        this.generalInfoSubject.next(generalInfo);
-      });
+          this.applyPercentSynced(generalInfo);
+          this.generalInfoSubject.next(generalInfo);
+        });
     }
   }
 

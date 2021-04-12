@@ -23,13 +23,13 @@ export class RestApi {
     contentType: string,
     httpParams?: HttpParams,
   ): {
-    headers?: HttpHeaders | {
-      [header: string]: string | string[];
-    };
-    params?: HttpParams | {
-      [param: string]: string | string[];
-    };
-  } {
+      headers?: HttpHeaders | {
+        [header: string]: string | string[];
+      };
+      params?: HttpParams | {
+        [param: string]: string | string[];
+      };
+    } {
     return {
       headers: new HttpHeaders({
         'Accept': accept,
@@ -40,12 +40,12 @@ export class RestApi {
     };
   }
 
-  public get<TResult>(path: string, params?: HttpParams, accept: string = 'application/json', contentType: string = 'application/json'): Observable<TResult> {
+  public get<TResult>(path: string, params?: HttpParams, accept = 'application/json', contentType = 'application/json'): Observable<TResult> {
     const options = this.getHttpOptions(accept, contentType, params);
     return <Observable<TResult>>this.httpClient.get(`${this.API_URL}/${path}`, options);
   }
 
-  public delete<TResult>(path: string, params?: HttpParams, accept: string = 'application/json', contentType: string = 'application/json'): Observable<TResult> {
+  public delete<TResult>(path: string, params?: HttpParams, accept = 'application/json', contentType = 'application/json'): Observable<TResult> {
     const options = this.getHttpOptions(accept, contentType, params);
     return <Observable<TResult>>this.httpClient.delete(`${this.API_URL}/${path}`, options);
   }

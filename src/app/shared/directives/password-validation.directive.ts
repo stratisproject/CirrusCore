@@ -8,8 +8,8 @@ export class PasswordValidationDirective {
   constructor() { }
 
   static MatchPassword(AC: AbstractControl) {
-    let password = AC.get('walletPassword').value;
-    let confirmPassword = AC.get('walletPasswordConfirmation').value;
+    const password = AC.get('walletPassword').value;
+    const confirmPassword = AC.get('walletPasswordConfirmation').value;
 
     if(confirmPassword !== password) {
       AC.get('walletPasswordConfirmation').setErrors({ walletPasswordConfirmation: true });
@@ -20,8 +20,8 @@ export class PasswordValidationDirective {
   }
 
   static MatchPassphrase(AC: AbstractControl) {
-    let passphrase = AC.get('walletPassphrase').value;
-    let confirmPassphrase = AC.get('walletPassphraseConfirmation').value;
+    const passphrase = AC.get('walletPassphrase').value;
+    const confirmPassphrase = AC.get('walletPassphraseConfirmation').value;
 
     if(passphrase !== confirmPassphrase) {
       AC.get('walletPassphraseConfirmation').setErrors({ walletPassphraseConfirmation: true });
