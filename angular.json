@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "stratis-core": {
+    "cirrus-core": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -84,24 +84,24 @@
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
-            "browserTarget": "stratis-core:build"
+            "browserTarget": "cirrus-core:build"
           },
           "configurations": {
             "dev": {
-              "browserTarget": "stratis-core:build:dev"
+              "browserTarget": "cirrus-core:build:dev"
             },
             "web": {
-              "browserTarget": "stratis-core:build:web"
+              "browserTarget": "cirrus-core:build:web"
             },
             "production": {
-              "browserTarget": "stratis-core:build:production"
+              "browserTarget": "cirrus-core:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "stratis-core:build"
+            "browserTarget": "cirrus-core:build"
           }
         },
         "test": {
@@ -135,7 +135,7 @@
         }
       }
     },
-    "stratis-core-e2e": {
+    "cirrus-core-e2e": {
       "root": "e2e",
       "projectType": "application",
       "architect": {
@@ -151,7 +151,7 @@
       }
     }
   },
-  "defaultProject": "stratis-core",
+  "defaultProject": "cirrus-core",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

@@ -289,12 +289,11 @@ Thumbs.db
 
 *.user
 project.lock.json
-/CirrusCore/.vscode
-/CirrusCore.UI/daemon
-/CirrusCore.UI/app-builds
-/CirrusCore.UI/dist
-/CirrusCore.UI/main.js
-/CirrusCore.UI/main.js.map
+.vscode
+daemon
+app-builds
+dist
+main.js
+main.js.map
 .vscode/
-CirrusCore.UI/.idea/.idea.CirrusCore.UI.dir/.idea/
 version.ts
