@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@shared/shared.module';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { AdvancedComponent } from './advanced/advanced.component';
 import { AboutComponent } from './advanced/components/about/about.component';
@@ -29,7 +28,6 @@ import { TransactionsComponent } from './transactions/transactions.component';
     WalletRoutingModule,
     SmartContractsModule.forRoot(),
     TokensModule,
-    BsDatepickerModule.forRoot(),
     TabsModule.forRoot(),
   ],
   declarations: [
