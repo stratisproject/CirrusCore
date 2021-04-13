@@ -1,0 +1,25 @@
+<div *ngIf="loading">
+  <div class="login">
+    <div class="row align-items-center h-100">
+      <div id="logoAnim" class="mx-auto">
+        <app-wallet-initializing></app-wallet-initializing>
+        <div class="loadingText mt-5 text-center">{{ currentMessage }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loadingFailed">
+  <div class="login">
+    <div class="row align-items-center h-50">
+      <div id="logoAnim" class="mx-auto">
+        <app-wallet-initializing-failed class=""></app-wallet-initializing-failed>
+      </div>
+    </div>
+    <div class="loadingText text-center">{{ currentMessage }}</div>
+    <div class="loadingText text-center" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="text-danger text-center mt-20">If you continue to receive this message after restarting, please join our <a class="text-primary" (click)="openSupport()"><u>Discord support channel</u></a>.</div>
+  </div>
+</div>
+
+<router-outlet *ngIf="!loading && !loadingFailed"></router-outlet>

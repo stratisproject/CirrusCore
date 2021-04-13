@@ -1,0 +1,39 @@
+<section id="GUI" class="container-fluid light">
+  <div class="row">
+    <div class="col-4 left-login-green d-flex align-items-center">
+      <img src="./assets/images/cirrus/home-cirrus-logo.svg" width="160px" height="auto">
+    </div>
+    <!-- /col -->
+    <div class="col-8 right-login d-flex align-content-center flex-wrap">
+      <div class="col-7 mx-auto d-flex align-content-center flex-wrap">
+        <div class="col-12 text-center">
+          <h3 class="display-4 mb-4">Secret Words</h3>
+        </div>
+        <div class="col-12 mnemonics">
+          <div class="alert alert-warning" role="alert">
+            <h4 class="alert-heading">Warning!</h4>
+            Please write down your secret words and passphrase if you chose to have one.
+            You will need <strong>both</strong> to recover your wallet in the future.
+          </div>
+          <div class="row d-flex justify-content-center my-4">
+            <ul class="list-inline list-unstyled col">
+              <li *ngFor="let word of mnemonicArray; let i=index" class="list-inline-item">
+                <span class="badge-info badge">{{ i + 1 }}. {{ word }}</span>
+              </li>
+              <li>
+                <button type="button" class="btn btn-outline-primary btn-right-100" (click)="copyToClipboard()">Copy</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-footer col-12">
+          <button type="button" class="btn btn-outline-light" (click)="onCancelClicked()">Cancel</button>
+          <button type="button" class="btn btn-stratis-green btn-block" (click)="onContinueClicked()">Continue</button>
+        </div>
+      </div>
+    </div>
+    <!-- /col-8 -->
+  </div>
+  <!-- /row -->
+</section>
+<!-- /GUI-->
