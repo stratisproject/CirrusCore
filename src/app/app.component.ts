@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { retryWhen, delay, tap } from 'rxjs/operators';
 
 import { ApiService } from '@shared/services/api.service';
-import { ElectronService } from 'ngx-electron';
+import { ElectronService } from '@shared/services/electron.service';
 import { GlobalService } from '@shared/services/global.service';
 
 import { NodeStatus } from '@shared/models/node-status';
@@ -85,7 +85,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.titleService.setTitle(title);
   }
 
-  public openSupport() {
-    this.electronService.shell.openExternal('https://github.com/stratisproject/StratisCore/');
+  public openSupport(): void {
+    this.electronService.shell.openExternal('https://discord.gg/yb8SbycNQf');
   }
 }

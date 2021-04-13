@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { ApiService } from '@shared/services/api.service';
 import { NodeStatus } from '@shared/models/node-status';
 import { GlobalService } from '@shared/services/global.service';
-import { ElectronService } from 'ngx-electron';
+import { ElectronService } from '@shared/services/electron.service';
 
 @Component({
   selector: 'app-about',
@@ -22,7 +22,7 @@ export class AboutComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.isElectron = this.electron.isElectronApp;
+    this.isElectron = this.electron.isElectron;
     this.applicationVersion = this.globalService.getApplicationVersion();
     this.nodeStatusSubscription$ = this.apiService.getNodeStatusInterval();
   }
