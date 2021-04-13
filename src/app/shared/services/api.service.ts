@@ -15,6 +15,7 @@ import { RestApi } from '@shared/services/rest-api';
 import { IApiService } from '@shared/services/interfaces/services.i';
 import { WalletHistory } from '@shared/services/interfaces/api.i';
 import { ErrorService } from '@shared/services/error-service';
+import { LoggerService } from '@shared/services/logger.service';
 
 @Injectable({
   providedIn: 'root'
@@ -25,8 +26,9 @@ export class ApiService extends RestApi implements IApiService {
   constructor(
     http: HttpClient,
     globalService: GlobalService,
-    errorService: ErrorService) {
-    super(globalService, http, errorService);
+    errorService: ErrorService,
+    loggerService: LoggerService) {
+    super(globalService, http, errorService, loggerService);
   }
 
   public getNodeStatus(silent?: boolean): Observable<NodeStatus> {

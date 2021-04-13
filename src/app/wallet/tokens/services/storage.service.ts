@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Log } from './logger.service';
+import { LoggerService } from '@shared/services/logger.service';
 
 
 @Injectable()
@@ -29,7 +29,7 @@ export class StorageService {
       const item = JSON.parse(serialisedItemData);
       return <T>item;
     } catch (e) {
-      Log.error(e);
+      LoggerService.error(e);
       return undefined;
     }
   }

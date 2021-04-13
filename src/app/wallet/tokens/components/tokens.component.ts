@@ -23,7 +23,7 @@ import { Disposable } from '../models/disposable';
 import { Mixin } from '../models/mixin';
 import { SavedToken, Token } from '../models/token';
 import { TokenBalanceRequest } from '../models/token-balance-request';
-import { Log } from '../services/logger.service';
+import { LoggerService } from '@shared/services/logger.service';
 import { pollWithTimeOut } from '../services/polling';
 import { TokensService } from '../services/tokens.service';
 import { AddTokenComponent } from './add-token/add-token.component';
@@ -62,7 +62,8 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     private genericModalService: ModalService,
     private modalService: NgbModal,
     private globalService: GlobalService,
-    private currentAccountService: CurrentAccountService) {
+    private currentAccountService: CurrentAccountService,
+    private loggerService: LoggerService) {
 
     this.walletName = this.globalService.getWalletName();
 
@@ -114,8 +115,8 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
       return this.tokenService
         .GetTokenBalance(new TokenBalanceRequest(token.address, this.selectedAddress))
         .pipe(catchError(error => {
-          Log.error(error);
-          Log.log(`Error getting token balance for token address ${token.address}`);
+          this.loggerService.error(error);
+          this.loggerService.log(`Error getting token balance for token address ${token.address}`);
           return of(null);
         }),
               tap(balance => {
@@ -153,13 +154,13 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
 
   clipboardAddressClicked() {
     if (this.selectedAddress && this.clipboardService.copyFromContent(this.selectedAddress)) {
-      Log.info(`Copied ${this.selectedAddress} to clipboard`);
+      this.loggerService.info(`Copied ${this.selectedAddress} to clipboard`);
     }
   }
 
   copyTokenAddress(address: string) {
     if (this.clipboardService.copyFromContent(address)) {
-      Log.info(`Copied ${this.selectedAddress} to clipboard`);
+      this.loggerService.info(`Copied ${this.selectedAddress} to clipboard`);
     }
   }
 
@@ -169,7 +170,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     modal.result.then(value => {
       if (value) {
 
-        Log.info('Refresh token list');
+        this.loggerService.info('Refresh token list');
 
         this.tokens.push(value);
         this.tokenBalanceRefreshRequested$.next([value]);
@@ -199,7 +200,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
         .pipe(
           catchError(error => {
             // Receipt API returns a 400 if the receipt is not found.
-            Log.log(`Receipt not found yet`);
+            this.loggerService.log(`Receipt not found yet`);
             return of(undefined);
           })
         );
@@ -230,7 +231,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
           },
           error => {
             this.showError(error);
-            Log.error(error);
+            this.loggerService.error(error);
             progressModal.close('ok');
           }
         );
@@ -283,7 +284,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
         .pipe(
           catchError(error => {
             // Receipt API returns a 400 if the receipt is not found.
-            Log.log(`Receipt not found yet`);
+            this.loggerService.log(`Receipt not found yet`);
             return of(undefined);
           })
         );
@@ -307,13 +308,13 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
 
             if (receipt.error) {
               this.showError(receipt.error);
-              Log.error(new Error(receipt.error));
+              this.loggerService.error(new Error(receipt.error));
             }
 
             if (receipt.returnValue === 'False') {
               const sendFailedError = 'Sending tokens failed! Check the amount you are trying to send is correct.';
               this.showError(sendFailedError);
-              Log.error(new Error(sendFailedError));
+              this.loggerService.error(new Error(sendFailedError));
             }
 
             progressModal.close('ok');
@@ -321,7 +322,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
           },
           error => {
             this.showError(error);
-            Log.error(error);
+            this.loggerService.error(error);
             progressModal.close('ok');
           }
         );

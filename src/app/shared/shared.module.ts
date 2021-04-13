@@ -18,6 +18,7 @@ import { ApiService } from '@shared/services/api.service';
 import { SignalRService } from '@shared/services/signalr-service';
 import { WalletService } from '@shared/services/wallet.service';
 import { StakingService } from '@shared/services/staking-service';
+import { LoggerService } from '@shared/services/logger.service';
 
 @NgModule({
   imports: [CommonModule],
@@ -34,7 +35,8 @@ import { StakingService } from '@shared/services/staking-service';
     ApiService,
     WalletService,
     SignalRService,
-    StakingService
+    StakingService,
+    LoggerService
   ],
   exports: [
     CommonModule,

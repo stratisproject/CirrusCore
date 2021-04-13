@@ -13,6 +13,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { RestApi } from '@shared/services/rest-api';
 import { GlobalService } from '@shared/services/global.service';
 import { ErrorService } from '@shared/services/error-service';
+import { LoggerService } from '@shared/services/logger.service';
 import { Transaction } from '@shared/models/transaction';
 import { TransactionSending } from '@shared/models/transaction-sending';
 import { BuildTransactionResponse, TransactionResponse } from '@shared/models/transaction-response';
@@ -56,8 +57,9 @@ export class WalletService extends RestApi {
     globalService: GlobalService,
     http: HttpClient,
     errorService: ErrorService,
+    loggerService: LoggerService,
     signalRService: SignalRService) {
-    super(globalService, http, errorService);
+    super(globalService, http, errorService, loggerService);
 
     globalService.currentWallet.subscribe(wallet => {
       this.currentWallet = wallet;

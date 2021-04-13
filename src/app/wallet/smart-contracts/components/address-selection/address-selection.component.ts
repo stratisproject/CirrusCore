@@ -7,7 +7,7 @@ import { CurrentAccountService } from '@shared/services/current-account.service'
 import { Router } from '@angular/router';
 import { WalletInfo } from '@shared/models/wallet-info';
 import { WalletService } from '@shared/services/wallet.service';
-import { Log } from '../../../tokens/services/logger.service';
+import { LoggerService } from '@shared/services/logger.service';
 
 @Component({
   selector: 'app-address-selection',
@@ -27,7 +27,8 @@ export class AddressSelectionComponent implements OnInit, OnDestroy {
               private walletService: WalletService,
               private currentAccountService: CurrentAccountService,
               private router: Router,
-              private clipboardService: ClipboardService) {
+              private clipboardService: ClipboardService,
+              private loggerService: LoggerService) {
 
     this.coinUnit = this.globalService.getCoinUnit();
     this.walletName = this.globalService.getWalletName();
@@ -37,7 +38,7 @@ export class AddressSelectionComponent implements OnInit, OnDestroy {
       .getAllAddressesForWallet(new WalletInfo(this.walletName))
       .pipe(
         catchError(error => {
-          Log.error(error);
+          this.loggerService.error(error);
           return of([]);
         }),
         takeUntil(this.unsubscribe))
@@ -81,7 +82,7 @@ export class AddressSelectionComponent implements OnInit, OnDestroy {
 
   clipboardAddressClicked() {
     if (this.selectedAddress && this.clipboardService.copyFromContent(this.selectedAddress)) {
-      Log.info(`Copied ${this.selectedAddress} to clipboard`);
+      this.loggerService.info(`Copied ${this.selectedAddress} to clipboard`);
     }
   }
 }

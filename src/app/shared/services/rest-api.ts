@@ -3,17 +3,19 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular
 import { Observable } from 'rxjs';
 import { GlobalService } from '@shared/services/global.service';
 import { ErrorService } from '@shared/services/error-service';
+import { LoggerService } from '@shared/services/logger.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RestApi {
-  protected API_URL;
+  protected API_URL: string;
 
   constructor(
     protected globalService: GlobalService,
     protected httpClient: HttpClient,
-    protected errorService: ErrorService
+    protected errorService: ErrorService,
+    protected loggerService: LoggerService
   ) {
     this.API_URL = `http://${globalService.getDaemonIP()}:${globalService.getApiPort()}/api`;
   }
