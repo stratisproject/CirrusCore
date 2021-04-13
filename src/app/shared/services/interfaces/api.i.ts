@@ -150,3 +150,7 @@ export interface GeneralInfo {
   percentSynced? : number;
 }
 
+export interface FullNodeEventModel {
+  message: string;
+  state: string;
+}
