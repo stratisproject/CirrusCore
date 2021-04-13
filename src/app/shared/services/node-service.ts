@@ -130,7 +130,7 @@ export class NodeService extends RestApi {
       });
 
       const timeLeft: number = Date.now()/1000 - this.lastBlockTimestamp;
-      const blocksLeft: number = timeLeft / 45;
+      const blocksLeft: number = timeLeft / 16;
       this.calculatedChainTip = (message.lastBlockSyncedHeight + blocksLeft) | 0;
       message.chainTip = this.calculatedChainTip;
     } else if (!message.isChainSynced && this.calculatedChainTip) {
