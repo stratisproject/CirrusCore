@@ -4,7 +4,6 @@ import { ApiService } from '@shared/services/api.service';
 import { GlobalService } from '@shared/services/global.service';
 import { ModalService } from '@shared/services/modal.service';
 import { CoinNotationPipe } from '@shared/pipes/coin-notation.pipe';
-import { NumberToStringPipe } from '@shared/pipes/number-to-string.pipe';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FeeEstimation } from '@shared/models/fee-estimation';
 import { Transaction } from '@shared/models/transaction';
@@ -52,7 +51,7 @@ export class SendComponent implements OnInit, OnDestroy {
     this.subscriptions.push(this.sendToSidechainForm.valueChanges.pipe(debounceTime(300))
       .subscribe(data => this.onSendValueChanged(data, true)));
 
-    this.subscriptions.push(this.sendToSidechainForm.get('networkSelect').valueChanges.subscribe(data => this.networkSelectChanged(data)));
+    this.subscriptions.push(this.sendToSidechainForm.get('networkSelect').valueChanges.subscribe(() => this.networkSelectChanged()));
   }
 
   @Input() address: string;
@@ -76,7 +75,7 @@ export class SendComponent implements OnInit, OnDestroy {
   public sendFormErrors: any = {};
   public sendToSidechainFormErrors: any = {};
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     this.testnetEnabled = this.globalService.getTestnetEnabled();
     this.accountsEnabled = this.currentAccountService.hasActiveAddress();
 
@@ -98,7 +97,7 @@ export class SendComponent implements OnInit, OnDestroy {
     this.confirmationText = "Amounts less than 50 Cirrus clear in 25 confirmations<br>Amounts between 50 and 1000 Cirrus clear in 80 confirmations<br>Amounts more than 1000 Cirrus clear in 500 confirmations";
   }
 
-  public ngOnDestroy() {
+  public ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
@@ -209,8 +208,10 @@ export class SendComponent implements OnInit, OnDestroy {
     this.subscriptions.push(this.walletService.wallet()
       .subscribe(
         response => {
-          this.totalBalance = response.amountConfirmed + response.amountUnconfirmed;
-          this.spendableBalance = response.spendableAmount;
+          if (response) {
+            this.totalBalance = response.amountConfirmed + response.amountUnconfirmed;
+            this.spendableBalance = response.spendableAmount;
+          }
         },
       ));
   }
@@ -225,7 +226,7 @@ export class SendComponent implements OnInit, OnDestroy {
     component.hasOpReturn = transactionResponse.isSideChain;
   }
 
-  private networkSelectChanged(data: any): void {
+  private networkSelectChanged(): void {
     if (this.sendToSidechainForm.get('networkSelect').value && this.sendToSidechainForm.get('networkSelect').value !== 'customNetwork') {
       this.sendToSidechainForm.patchValue({'federationAddress': this.sendToSidechainForm.get('networkSelect').value});
     } else if (this.sendToSidechainForm.get('networkSelect').value && this.sendToSidechainForm.get('networkSelect').value === 'customNetwork') {
