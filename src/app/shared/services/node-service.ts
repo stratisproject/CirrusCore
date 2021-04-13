@@ -23,7 +23,7 @@ import { LoggerService } from '@shared/services/logger.service';
   providedIn: 'root'
 })
 export class NodeService extends RestApi {
-  private fullNodeEventSubject: BehaviorSubject<FullNodeEventModel> = new BehaviorSubject<FullNodeEventModel>({message: "Initializing"});
+  private fullNodeEventSubject: BehaviorSubject<FullNodeEventModel> = new BehaviorSubject<FullNodeEventModel>({message: "Initializing...", state: ""});
 
   private generalInfoSubject: BehaviorSubject<GeneralInfo> = new BehaviorSubject<GeneralInfo>({
     walletName: '',

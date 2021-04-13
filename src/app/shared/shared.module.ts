@@ -17,8 +17,11 @@ import { ApiService } from '@shared/services/api.service';
 import { SignalRService } from '@shared/services/signalr-service';
 import { WalletService } from '@shared/services/wallet.service';
 import { StakingService } from '@shared/services/staking-service';
-import { LoggerService } from '@shared/services/logger.service';
-import { ElectronService } from '@shared/services/electron.service';
+import { WalletInitializingComponent } from './components/wallet-initializing/wallet-initializing.component';
+import { WalletInitializingFailedComponent } from './components/wallet-initializing-failed/wallet-initializing-failed.component';
+import { LoggerService } from './services/logger.service';
+import { ElectronService } from './services/electron.service';
+
 
 @NgModule({
   imports: [CommonModule],
@@ -30,7 +33,10 @@ import { ElectronService } from '@shared/services/electron.service';
     PasswordValidationDirective,
     GenericModalComponent,
     LoadingModalComponent,
-    ConfirmationModalComponent],
+    ConfirmationModalComponent,
+    WalletInitializingComponent,
+    WalletInitializingFailedComponent
+  ],
   providers : [
     ApiService,
     WalletService,
@@ -54,7 +60,10 @@ import { ElectronService } from '@shared/services/electron.service';
     AutoFocusDirective,
     PasswordValidationDirective,
     LoadingModalComponent,
-    ConfirmationModalComponent]
+    ConfirmationModalComponent,
+    WalletInitializingComponent,
+    WalletInitializingFailedComponent
+  ]
 })
 
 export class SharedModule {
