@@ -21,6 +21,7 @@ import { WalletRoutingModule } from './wallet-routing.module';
 import { WalletComponent } from './wallet.component';
 import { AccountSelectedGuard } from '@shared/guards/account-selected.guard';
 import { TransactionsComponent } from './transactions/transactions.component';
+import { RemoveWalletComponent } from './advanced/components/remove-wallet/remove-wallet.component';
 
 @NgModule({
   imports: [
@@ -46,7 +47,8 @@ import { TransactionsComponent } from './transactions/transactions.component';
     AboutComponent,
     GenerateAddressesComponent,
     ResyncComponent,
-    TransactionsComponent
+    TransactionsComponent,
+    RemoveWalletComponent
   ],
   providers: [
     AccountSelectedGuard
