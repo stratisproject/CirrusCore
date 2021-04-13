@@ -29,35 +29,35 @@ export class GlobalService {
   public currentWallet: Observable<WalletInfo> = new BehaviorSubject<WalletInfo>(null);
 
 
-  public getApplicationVersion() {
+  public getApplicationVersion(): string {
     return this.applicationVersion;
   }
 
-  public setApplicationVersion() {
+  public setApplicationVersion(): void {
     if (this.electronService.isElectron) {
-      //this.applicationVersion = this.electronService.remote.app.getVersion();
+      this.applicationVersion = this.electronService.remote.app.getVersion();
     }
   }
 
-  public getTestnetEnabled() {
+  public getTestnetEnabled(): boolean {
     return this.testnet;
   }
 
-  public setTestnetEnabled() {
+  public setTestnetEnabled(): void {
     if (this.electronService.isElectron) {
       this.testnet = this.electronService.ipcRenderer.sendSync('get-testnet');
     }
   }
 
-  public get networkName() {
+  public get networkName(): string {
     return 'cirrus';
   }
 
-  public getApiPort() {
+  public getApiPort(): number {
     return this.apiPort;
   }
 
-  public setApiPort() {
+  public setApiPort(): void {
     if (this.electronService.isElectron) {
       this.apiPort = this.electronService.ipcRenderer.sendSync('get-port');
     } else if (this.testnet) {
@@ -67,44 +67,44 @@ export class GlobalService {
     }
   }
 
-  public getWalletPath() {
+  public getWalletPath(): string {
     return this.walletPath;
   }
 
-  public setWalletPath(walletPath: string) {
+  public setWalletPath(walletPath: string): void {
     this.walletPath = walletPath;
   }
 
-  public getNetwork() {
+  public getNetwork(): string {
     return this.network;
   }
 
-  public setNetwork(network: string) {
+  public setNetwork(network: string): void {
     this.network = network;
   }
 
-  public getWalletName() {
+  public getWalletName(): string {
     return this.currentWalletName;
   }
 
-  public setWalletName(currentWalletName: string) {
+  public setWalletName(currentWalletName: string): void {
     this.currentWalletName = currentWalletName;
     (<BehaviorSubject<WalletInfo>>this.currentWallet).next(new WalletInfo(currentWalletName));
   }
 
-  public getCoinUnit() {
+  public getCoinUnit(): string {
     return this.coinUnit;
   }
 
-  public setCoinUnit(coinUnit: string) {
+  public setCoinUnit(coinUnit: string): void {
     this.coinUnit = coinUnit;
   }
 
-  public getDaemonIP() {
+  public getDaemonIP(): string {
     return this.daemonIP;
   }
 
-  public setDaemonIP() {
+  public setDaemonIP(): void {
     if (this.electronService.isElectron) {
       this.daemonIP = this.electronService.ipcRenderer.sendSync('get-daemonip');
     } else {
