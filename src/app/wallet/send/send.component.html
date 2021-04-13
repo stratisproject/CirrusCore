@@ -62,9 +62,10 @@
             </div>
             <small *ngIf="apiError" class="text-danger">{{ apiError }}</small>
           </form>
+          <div *ngIf="walletService.isSyncing || walletService.ibdMode || walletService.rescanInProgress" class="alert alert-warning">Please note that you can only send transactions when your wallet is completely synchronised.</div>
           <div class="modal-footer p-0">
             <button *ngIf="!isSending" type="button" [disabled]="isSending" class="btn btn-outline-light" (click)="activeModal.close('Close click')">Cancel</button>
-            <button *ngIf="!isSending" type="button" class="btn btn-primary btn-block" [disabled]="!sendForm.valid || isSending || !estimatedFee" (click)="send()">Send</button>
+            <button *ngIf="!isSending" type="button" class="btn btn-primary btn-block" [disabled]="!sendForm.valid || isSending || !estimatedFee || walletService.isSyncing || walletService.ibdMode || walletService.rescanInProgress" (click)="send()">Send</button>
             <!-- SVG -->
             <div *ngIf="isSending" class="Loading LoadingSend col-2 mx-auto">
               <svg width="30px" height="30px" viewBox="0 0 359 359" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -155,9 +156,10 @@
             </div>
             <small *ngIf="apiError" class="text-danger">{{ apiError }}</small>
           </form>
+          <div *ngIf="walletService.isSyncing || walletService.ibdMode || walletService.rescanInProgress" class="alert alert-warning">Please note that you can only send transactions when your wallet is completely synchronised.</div>
           <div class="modal-footer p-0">
             <button *ngIf="!isSending" type="button" [disabled]="isSending" class="btn btn-outline-light" (click)="activeModal.close('Close click')">Cancel</button>
-            <button *ngIf="!isSending" type="button" class="btn btn-stratis-green btn-block" [disabled]="!sendToSidechainForm.valid || isSending || !estimatedSidechainFee" (click)="send(true)">Send</button>
+            <button *ngIf="!isSending" type="button" class="btn btn-stratis-green btn-block" [disabled]="!sendToSidechainForm.valid || isSending || !estimatedSidechainFee || walletService.isSyncing || walletService.ibdMode || walletService.rescanInProgress" (click)="send(true)">Send</button>
             <!-- SVG -->
             <div *ngIf="isSending" class="Loading LoadingSend col-2 mx-auto">
               <svg width="30px" height="30px" viewBox="0 0 359 359" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">

@@ -32,7 +32,7 @@ export class SendComponent implements OnInit, OnDestroy {
 
   constructor(
     private apiService: ApiService,
-    private walletService: WalletService,
+    public walletService: WalletService,
     private globalService: GlobalService,
     private modalService: NgbModal,
     private genericModalService: ModalService,
