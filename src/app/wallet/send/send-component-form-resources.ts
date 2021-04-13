@@ -46,26 +46,36 @@ export class SendComponentFormResources {
 
   public static buildSendForm(fb: FormBuilder, balanceCalculator: () => number): FormGroup {
     return fb.group({
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       'address': ['', Validators.compose([Validators.required, Validators.minLength(26)])],
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       'amount': ['', Validators.compose([Validators.required,
         Validators.pattern(/^([0-9]+)?(\.[0-9]{0,8})?$/),
         Validators.min(0.00001),
         (control: AbstractControl) => Validators.max(balanceCalculator())(control)])],
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       'fee': ['medium', Validators.required],
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       'password': ['', Validators.required]
     });
   }
 
   public static buildSendToSidechainForm(fb: FormBuilder, balanceCalculator: () => number): FormGroup {
     return fb.group({
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       federationAddress: ['', Validators.compose([Validators.required, Validators.minLength(26)])],
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       networkSelect: ['', Validators.compose([Validators.required])],
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       destinationAddress: ['', Validators.compose([Validators.required, Validators.minLength(26)])],
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       amount: ['', Validators.compose([Validators.required,
         Validators.pattern(/^([0-9]+)?(\.[0-9]{0,8})?$/),
         Validators.min(1),
         (control: AbstractControl) => Validators.max(balanceCalculator())(control)])],
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       fee: ['medium', Validators.required],
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       password: ['', Validators.required]
     });
   }

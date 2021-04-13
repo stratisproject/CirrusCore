@@ -15,13 +15,13 @@ export class ProgressComponent implements OnInit, OnDestroy {
 
   constructor() { }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
   }
 
-  closeClicked() {
+  closeClicked(): void {
     this.close.emit();
   }
 }

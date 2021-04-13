@@ -50,27 +50,27 @@ export class AddTokenComponent implements OnInit, OnDestroy, Disposable {
     }));
   }
 
-  get customTokenSelected() {
+  get customTokenSelected(): boolean {
     return !!this.addTokenForm && !!this.addTokenForm.get('token').value && this.addTokenForm.get('token').value.toLowerCase() === 'custom';
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
-  public ngOnDestroy() {
+  public ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
     this.dispose();
   }
 
-  closeClicked() {
+  closeClicked(): void {
     this.activeModal.close();
   }
 
-  onSubmit() {
+  onSubmit(): void {
     // Check that this token isn't already in the list
     const addedTokens = this.tokenService.GetSavedTokens().find(token => token.address === this.address.value);
     if (addedTokens) {
-      this.showApiError(`Token ${this.ticker.value} is already added`);
+      this.showApiError(`Token ${String(this.ticker.value)} is already added`);
       return;
     }
 
@@ -95,7 +95,7 @@ export class AddTokenComponent implements OnInit, OnDestroy, Disposable {
         }
 
         if (typeof (methodCallResult) === 'string' && methodCallResult !== this.ticker.value) {
-          this.showApiError(`Token contract symbol ${methodCallResult} does not match given symbol ${this.ticker.value}.`);
+          this.showApiError(`Token contract symbol ${methodCallResult} does not match given symbol ${String(this.ticker.value)}.`);
           return;
         }
 
@@ -111,16 +111,20 @@ export class AddTokenComponent implements OnInit, OnDestroy, Disposable {
       });
   }
 
-  showApiError(error: string) {
+  showApiError(error: string): void {
     this.genericModalService.openModal('Error', error);
   }
 
   private registerControls() {
     const integerValidator = Validators.pattern('^[0-9][0-9]*$');
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.token = new FormControl(0, [Validators.required]);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.address = new FormControl('', [Validators.required]);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.ticker = new FormControl('', [Validators.required]);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.name = new FormControl('', [Validators.required]);
     this.decimals = new FormControl(0, [Validators.min(0), integerValidator, Validators.max(8)]);
 

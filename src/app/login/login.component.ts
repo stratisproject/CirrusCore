@@ -7,7 +7,7 @@ import { ModalService } from '@shared/services/modal.service';
 import { WalletLoad } from '@shared/models/wallet-load';
 import { Subscription } from 'rxjs';
 import { WalletService } from '@shared/services/wallet.service';
-import { AuthenticationService } from '@shared/services/auth.service'
+import { AuthenticationService } from '@shared/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -53,17 +53,19 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private buildDecryptForm(): void {
     this.openWalletForm = this.fb.group({
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       'selectWallet': [{value: '', disabled: this.isDecrypting}, Validators.required],
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       'password': [{value: '', disabled: this.isDecrypting}, Validators.required]
     });
 
     this.subscriptions.push(this.openWalletForm.valueChanges
-      .subscribe(data => this.onValueChanged(data)));
+      .subscribe(() => this.onValueChanged()));
 
     this.onValueChanged();
   }
 
-  private onValueChanged(data?: any): void {
+  private onValueChanged(): void {
     if (!this.openWalletForm) {
       return;
     }
@@ -74,7 +76,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
         for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
+          this.formErrors[field] += `${String(messages[key])} `;
         }
       }
     }

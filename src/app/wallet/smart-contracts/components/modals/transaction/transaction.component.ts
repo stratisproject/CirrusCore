@@ -84,16 +84,16 @@ export class TransactionComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.registerControls();
     this.walletName = this.globalService.getWalletName();
   }
 
-  closeClicked() {
+  closeClicked(): void {
     this.activeModal.close();
   }
 
-  addParameterClicked() {
+  addParameterClicked(): void {
     this.parameters.push(this.createParameter());
   }
 
@@ -134,11 +134,11 @@ export class TransactionComponent implements OnInit {
     });
   }
 
-  removeParameterClicked(index: number) {
+  removeParameterClicked(index: number): void {
     this.parameters.removeAt(index);
   }
 
-  onSubmit() {
+  onSubmit(): void {
     // Hack the parameters into a format the API expects
     const result = this.createModel();
 
@@ -181,9 +181,9 @@ export class TransactionComponent implements OnInit {
         gasPrice: this.gasPrice.value,
         gasLimit: this.gasLimit.value,
         parameters: [
-          `7#${totalSupply}`,
-          `4#${this.tokenName.value}`,
-          `4#${this.tokenSymbol.value.toUpperCase()}`
+          `7#${String(totalSupply)}`,
+          `4#${String(this.tokenName.value)}`,
+          `4#${String(this.tokenSymbol.value.toUpperCase())}`
         ],
         contractCode: this.newTokenByteCode,
         password: this.password.value,
@@ -194,7 +194,7 @@ export class TransactionComponent implements OnInit {
 
     return {
       ...this.transactionForm.value,
-      parameters: this.transactionForm.value.parameters.map(p => `${p.type}#${p.value}`),
+      parameters: this.transactionForm.value.parameters.map(p => `${String(p.type)}#${String(p.value)}`),
       walletName: this.walletName,
       sender: this.selectedSenderAddress
     };
@@ -216,38 +216,50 @@ export class TransactionComponent implements OnInit {
     const gasLimitValidator = (this.mode === Mode.Call ? gasCallLimitMinimumValidator : gasCreateLimitMinimumValidator);
 
     this.amount = new FormControl(0, [amountValidator, Validators.min(0)]);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.feeAmount = new FormControl(0.001, [Validators.required, amountValidator, Validators.min(0)]);
     // tslint:disable-next-line:max-line-length
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.gasPrice = new FormControl(100, [Validators.required, integerValidator, Validators.pattern('^[+]?([0-9]{0,})*[.]?([0-9]{0,2})?$'), gasPriceTooLowValidator, gasPriceTooHighValidator, Validators.min(0)]);
 
     if (this.mode === Mode.Call) {
       // tslint:disable-next-line:max-line-length
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       this.gasLimit = new FormControl(this.gasCallRecommendedLimit, [Validators.required, integerValidator, Validators.pattern('^[+]?([0-9]{0,})*[.]?([0-9]{0,2})?$'), gasLimitValidator, gasLimitMaximumValidator, Validators.min(0)]);
     }
 
     if (this.mode === Mode.Create) {
       // tslint:disable-next-line:max-line-length
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       this.gasLimit = new FormControl(this.gasCreateLimitMinimum, [Validators.required, integerValidator, Validators.pattern('^[+]?([0-9]{0,})*[.]?([0-9]{0,2})?$'), gasLimitValidator, gasLimitMaximumValidator, Validators.min(0)]);
     }
 
     if (this.mode === Mode.IssueToken) {
       // tslint:disable-next-line:max-line-length
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       this.gasLimit = new FormControl(this.gasCreateTokenLimitMinimum, [Validators.required, integerValidator, Validators.pattern('^[+]?([0-9]{0,})*[.]?([0-9]{0,2})?$'), gasLimitValidator, gasLimitMaximumValidator, Validators.min(0)]);
     }
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.methodName = new FormControl('', [Validators.required, Validators.nullValidator]);
     const contractCode = this.mode === Mode.IssueToken ? this.newTokenByteCode : '';
     // tslint:disable-next-line:max-line-length
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.contractCode = new FormControl(contractCode, [Validators.required, Validators.nullValidator, Validators.pattern('[0-9a-fA-F]*'), oddValidator]);
     this.parameters = new FormArray([]);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.password = new FormControl('', [Validators.required, Validators.nullValidator]);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.decimals = new FormControl(0, [Validators.min(0), Validators.max(8), integerValidator, Validators.required]);
-
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.totalSupply = new FormControl(21 * 1000 * 1000, [Validators.min(1), Validators.max(ULONG_MAXVALUE), integerValidator, Validators.required]);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.tokenName = new FormControl('My token', [Validators.required]);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.tokenSymbol = new FormControl('MTK', [Validators.required]);
 
     if (this.mode === Mode.Call) {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       this.contractAddress = new FormControl('', [Validators.required, Validators.nullValidator]);
 
       this.transactionForm = new FormGroup({
@@ -282,7 +294,7 @@ export class TransactionComponent implements OnInit {
         tokenSymbol: this.tokenSymbol,
         decimals: this.decimals
       });
-
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       this.transactionForm.setValidators(this.maxSupplyValidator);
     }
   }

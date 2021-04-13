@@ -5,8 +5,6 @@ import { GlobalService } from '@shared/services/global.service';
 import { ModalService } from '@shared/services/modal.service';
 import { ClipboardService } from 'ngx-clipboard';
 import {
-  BehaviorSubject,
-  combineLatest,
   forkJoin,
   interval,
   Observable,
@@ -15,7 +13,7 @@ import {
   Subject,
   throwError,
 } from 'rxjs';
-import { catchError, first, map, switchMap, takeUntil, distinctUntilChanged, tap, take, startWith } from 'rxjs/operators';
+import { catchError, first, switchMap, takeUntil, tap, take } from 'rxjs/operators';
 
 import { Mode, TransactionComponent } from '../../smart-contracts/components/modals/transaction/transaction.component';
 import { SmartContractsServiceBase } from '../../smart-contracts/smart-contracts.service';
@@ -74,7 +72,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
 
     this.smartContractsService.GetHistory(this.walletName, this.selectedAddress)
       .pipe(catchError(error => {
-        this.showApiError(`Error retrieving transactions. ${error}`);
+        this.showApiError(`Error retrieving transactions. ${String(error)}`);
         return of([]);
       }),
             take(1)
@@ -84,7 +82,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     this.smartContractsService.GetAddressBalance(this.selectedAddress)
       .pipe(
         catchError(error => {
-          this.showApiError(`Error retrieving balance. ${error}`);
+          this.showApiError(`Error retrieving balance. ${String(error)}`);
           return of(0);
         }),
         take(1)
@@ -134,7 +132,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     }));
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     // Clear all the balances to start with
     const tokens = this.tokenService.GetSavedTokens();
     tokens.forEach(t => t.clearBalance());
@@ -144,27 +142,27 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     this.tokenBalanceRefreshRequested$.next(this.tokens);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.dispose();
   }
 
-  showApiError(error: string) {
+  showApiError(error: string): void {
     this.genericModalService.openModal('Error', error);
   }
 
-  clipboardAddressClicked() {
+  clipboardAddressClicked(): void {
     if (this.selectedAddress && this.clipboardService.copyFromContent(this.selectedAddress)) {
       this.loggerService.info(`Copied ${this.selectedAddress} to clipboard`);
     }
   }
 
-  copyTokenAddress(address: string) {
+  copyTokenAddress(address: string): void {
     if (this.clipboardService.copyFromContent(address)) {
       this.loggerService.info(`Copied ${this.selectedAddress} to clipboard`);
     }
   }
 
-  addToken() {
+  addToken(): void {
     const modal = this.modalService.open(AddTokenComponent, { backdrop: 'static', keyboard: false });
     (<AddTokenComponent>modal.componentInstance).tokens = this.availableTokens;
     modal.result.then(value => {
@@ -178,7 +176,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     });
   }
 
-  issueToken() {
+  issueToken(): void {
     const modal = this.modalService.open(TransactionComponent, { backdrop: 'static', keyboard: false });
     (<TransactionComponent>modal.componentInstance).mode = Mode.IssueToken;
     (<TransactionComponent>modal.componentInstance).selectedSenderAddress = this.selectedAddress;
@@ -198,7 +196,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
 
       const receiptQuery = this.smartContractsService.GetReceiptSilent(value.transactionHash)
         .pipe(
-          catchError(error => {
+          catchError(() => {
             // Receipt API returns a 400 if the receipt is not found.
             this.loggerService.log(`Receipt not found yet`);
             return of(undefined);
@@ -238,11 +236,11 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     });
   }
 
-  showError(error: string) {
+  showError(error: string): void {
     this.genericModalService.openModal('Error', error);
   }
 
-  delete(item: SavedToken) {
+  delete(item: SavedToken): void {
     const modal = this.modalService.open(ConfirmationModalComponent, { backdrop: 'static', keyboard: false });
     (<ConfirmationModalComponent>modal.componentInstance).body = `Are you sure you want to remove "${item.ticker}" token`;
     modal.result.then(value => {
@@ -257,7 +255,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     });
   }
 
-  send(item: SavedToken) {
+  send(item: SavedToken): void {
 
     const modal = this.modalService.open(SendTokenComponent, { backdrop: 'static', keyboard: false });
     (<SendTokenComponent>modal.componentInstance).walletName = this.walletName;
@@ -278,11 +276,11 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
       (<ProgressComponent>progressModal.componentInstance).title = 'Waiting For Confirmation';
       // tslint:disable-next-line:max-line-length
       (<ProgressComponent>progressModal.componentInstance).message = 'Your token transfer transaction has been broadcast and is waiting to be mined. This window will close once the transaction receives one confirmation.';
-      (<ProgressComponent>progressModal.componentInstance).summary = `Send ${value.amount} ${item.name} to ${value.recipientAddress}`;
+      (<ProgressComponent>progressModal.componentInstance).summary = `Send ${String(value.amount)} ${item.name} to ${String(value.recipientAddress)}`;
 
       const receiptQuery = this.smartContractsService.GetReceiptSilent(value.callResponse.transactionId)
         .pipe(
-          catchError(error => {
+          catchError(() => {
             // Receipt API returns a 400 if the receipt is not found.
             this.loggerService.log(`Receipt not found yet`);
             return of(undefined);

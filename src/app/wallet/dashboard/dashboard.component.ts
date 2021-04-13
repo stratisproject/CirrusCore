@@ -27,16 +27,16 @@ export class DashboardComponent implements OnInit {
     private modalService: NgbModal) {
   }
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     this.wallet = this.walletService.wallet();
     this.transactionCount = this.walletService.walletHistory().pipe(map(items => items ? items.length : 0));
   }
 
-  public openSendDialog() {
+  public openSendDialog(): void {
     this.modalService.open(SendComponent, {backdrop: 'static', keyboard: false});
   }
 
-  public openReceiveDialog() {
+  public openReceiveDialog(): void {
     this.modalService.open(ReceiveComponent, {backdrop: 'static', keyboard: false});
   }
 }

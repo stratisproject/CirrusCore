@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {Location} from '@angular/common';
 import { Router } from '@angular/router';
 import { GlobalService } from '@shared/services/global.service';
 

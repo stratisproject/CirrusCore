@@ -20,13 +20,13 @@ export class SendConfirmationComponent implements OnInit {
   public showDetails = false;
   public coinUnit: string;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.coinUnit = this.globalService.getCoinUnit();
     this.transactionFee = new CoinNotationPipe().transform(this.transactionFee);
     this.transaction.amount = +this.transaction.recipients[0].amount + +this.transactionFee;
   }
 
-  toggleDetails() {
+  toggleDetails(): void {
     this.showDetails = !this.showDetails;
   }
 }

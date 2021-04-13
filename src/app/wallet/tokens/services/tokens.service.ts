@@ -12,7 +12,9 @@ import { TokenBalanceRequest } from '../models/token-balance-request';
 import { StorageService } from './storage.service';
 import { GlobalService } from '@shared/services/global.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class TokensService {
   private savedTokens = 'savedTokens';
   private defaultTokens = [];

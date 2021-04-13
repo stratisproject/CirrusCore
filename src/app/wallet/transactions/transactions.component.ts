@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TransactionInfo } from '@shared/models/transaction-info';
 import { TransactionDetailsComponent } from '../transaction-details/transaction-details.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GlobalService } from '@shared/services/global.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { WalletService } from '@shared/services/wallet.service';
 
 @Component({
@@ -38,9 +38,6 @@ export class TransactionsComponent implements OnInit {
       .pipe(
         map((items) => {
           return this.stakingOnly ? items.filter(i => i.transactionType === 'staked') : items;
-        }),
-        tap(items => {
-          const history = items;
         }));
   }
 

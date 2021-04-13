@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, CanActivate, Router } from '@angular/router';
 import { CurrentAccountService } from '@shared/services/current-account.service';
-import { GlobalService } from '@shared/services/global.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +8,6 @@ import { GlobalService } from '@shared/services/global.service';
 export class AccountSelectedGuard implements CanActivate {
   constructor(
     private router: Router,
-    private globalService: GlobalService,
     private currentAccountService: CurrentAccountService) {
   }
 

@@ -49,14 +49,14 @@ export class SendTokenComponent implements OnInit {
 
   constructor(private activeModal: NgbActiveModal, private smartContractsService: SmartContractsService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.title = 'Send token ' + this.token.ticker;
     this.registerControls();
     this.contractAddress.setValue(this.token.address);
     this.contractAddress.disable();
   }
 
-  closeClicked() {
+  closeClicked(): void {
     this.activeModal.close();
   }
 
@@ -69,7 +69,7 @@ export class SendTokenComponent implements OnInit {
       gasPrice: this.gasPrice.value,
       gasLimit: this.gasLimit.value,
       parameters: [
-        `9#${this.recipientAddress.value}`,
+        `9#${String(this.recipientAddress.value)}`,
         `7#${this.token.toScaledAmount(this.tokenAmount.value).toFixed()}`
       ],
       methodName: 'TransferTo',
@@ -79,7 +79,7 @@ export class SendTokenComponent implements OnInit {
     };
   }
 
-  onSubmit() {
+  onSubmit(): void {
     // Hack the parameters into a format the API expects
     const result = this.createModel();
 
@@ -108,7 +108,7 @@ export class SendTokenComponent implements OnInit {
             });
   }
 
-  setTokenAmount(tokenBalance: string) {
+  setTokenAmount(tokenBalance: string): void {
     this.tokenAmount.setValue(tokenBalance);
   }
 
@@ -126,15 +126,22 @@ export class SendTokenComponent implements OnInit {
 
     const gasLimitValidator = (gasCallLimitMinimumValidator);
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.tokenAmount = new FormControl(0, [Validators.required, Validators.min(0), Validators.max(Number(this.token.balance)), decimalPlaceValidator]);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.feeAmount = new FormControl(0.001, [Validators.required, amountValidator, Validators.min(0)]);
     // tslint:disable-next-line:max-line-length
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.gasPrice = new FormControl(100, [Validators.required, integerValidator, Validators.pattern('^[+]?([0-9]{0,})*[.]?([0-9]{0,2})?$'), gasPriceTooLowValidator, gasPriceTooHighValidator, Validators.min(0)]);
     // tslint:disable-next-line:max-line-length
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.gasLimit = new FormControl(this.recommendedGasLimit, [Validators.required, integerValidator, Validators.pattern('^[+]?([0-9]{0,})*[.]?([0-9]{0,2})?$'), gasLimitValidator, gasLimitMaximumValidator, Validators.min(0)]);
     this.parameters = new FormArray([]);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.password = new FormControl('', [Validators.required, Validators.nullValidator]);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.contractAddress = new FormControl('', [Validators.required, Validators.nullValidator]);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.recipientAddress = new FormControl('', [Validators.required, Validators.nullValidator]);
     this.transactionForm = new FormGroup({
       feeAmount: this.feeAmount,

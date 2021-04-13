@@ -32,7 +32,9 @@ export abstract class SmartContractsServiceBase {
   PostCall(createTransaction: any): Observable<any> { return of(); }
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SmartContractsService implements SmartContractsServiceBase {
   constructor(private apiService: ApiService) { }
 

@@ -24,18 +24,18 @@ export class TransactionDetailsComponent implements OnInit, OnDestroy {
   private generalWalletInfoSubscription: Subscription;
   private lastBlockSyncedHeight: number;
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     this.coinUnit = this.globalService.getCoinUnit();
     this.subscribeToGeneralWalletInfo();
   }
 
-  public ngOnDestroy() {
+  public ngOnDestroy(): void {
     if (this.generalWalletInfoSubscription) {
       this.generalWalletInfoSubscription.unsubscribe();
     }
   }
 
-  public onCopiedClick() {
+  public onCopiedClick(): void {
     this.copied = true;
   }
 
