@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import { AuthenticationService } from '@shared/services/auth.service';
 
 @Component({
   selector: 'app-logout-confirmation',
@@ -11,13 +12,15 @@ export class LogoutConfirmationComponent implements OnInit {
 
   constructor(
     public activeModal: NgbActiveModal,
-    private router: Router) { }
+    private router: Router,
+    private authenticationService: AuthenticationService) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
-  public onLogout() {
+  public onLogout(): void {
     this.activeModal.close();
+    this.authenticationService.SignOut();
     this.router.navigate(['/login']);
   }
 }

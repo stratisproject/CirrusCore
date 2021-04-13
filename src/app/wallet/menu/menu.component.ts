@@ -19,25 +19,25 @@ export class MenuComponent implements OnInit {
   public testnet: boolean;
   public walletName: string;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.testnet = this.globalService.getTestnetEnabled();
     this.accountsEnabled = this.currentAccountService.hasActiveAddress();
   }
 
-  openAddressBook() {
+  openAddressBook(): void {
     this.router.navigate(['/wallet/address-book']);
   }
 
-  openAdvanced() {
+  openAdvanced(): void {
     this.router.navigate(['/wallet/advanced']);
   }
 
-  switchAddress() {
+  switchAddress(): void {
     this.currentAccountService.clearAddress();
     this.router.navigate(['/address-selection']);
   }
 
-  logoutClicked() {
+  logoutClicked(): void {
     this.modalService.open(LogoutConfirmationComponent, { backdrop: "static" });
   }
 }

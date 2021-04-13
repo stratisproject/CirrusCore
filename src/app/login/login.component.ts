@@ -7,6 +7,7 @@ import { ModalService } from '@shared/services/modal.service';
 import { WalletLoad } from '@shared/models/wallet-load';
 import { Subscription } from 'rxjs';
 import { WalletService } from '@shared/services/wallet.service';
+import { AuthenticationService } from '@shared/services/auth.service'
 
 @Component({
   selector: 'app-login',
@@ -35,7 +36,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private walletService: WalletService,
     private genericModalService: ModalService,
     private router: Router,
-    private fb: FormBuilder) {
+    private fb: FormBuilder,
+    private authenticationService: AuthenticationService) {
 
     this.buildDecryptForm();
   }
@@ -94,7 +96,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.subscriptions.push(subscription);
   }
 
-  public onCreateClicked() {
+  public onCreateClicked(): void {
     this.router.navigate(['setup']);
   }
 
@@ -117,10 +119,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   private loadWallet(walletLoad: WalletLoad): void {
     this.apiService.loadStratisWallet(walletLoad)
       .subscribe(
-        response => {
+        () => {
+          this.authenticationService.SignIn();
           this.router.navigate(['address-selection']);
         },
-        error => {
+        () => {
           this.isDecrypting = false;
         }
       )

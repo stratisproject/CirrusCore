@@ -9,6 +9,8 @@ import { LoginComponent } from './login/login.component';
 import { SetupModule } from './setup/setup.module';
 import { WalletModule } from './wallet/wallet.module';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { AuthenticationService } from './shared/services/auth.service';
+import { AuthenticationGuard } from './shared/guards/auth.guard';
 
 @NgModule({
   imports: [
@@ -24,7 +26,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
     AppComponent,
     LoginComponent
   ],
-  providers: [ { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true} ],
+  providers: [ { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true}, AuthenticationService, AuthenticationGuard ],
   bootstrap: [ AppComponent ]
 })
 

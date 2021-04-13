@@ -12,25 +12,26 @@ import { SmartContractsComponent } from './smart-contracts/components/smart-cont
 import { TokensComponent } from './tokens/components/tokens.component';
 import { WalletComponent } from './wallet.component';
 import { AccountSelectedGuard } from '@shared/guards/account-selected.guard';
+import { AuthenticationGuard } from '@shared/guards/auth.guard';
 
 const routes: Routes = [
   {
-    path: 'wallet', component: WalletComponent, children: [
+    path: 'wallet', component: WalletComponent, canActivate: [AuthenticationGuard], children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'history', component: HistoryComponent },
+      { path: 'dashboard', component: DashboardComponent, canActivate: [AuthenticationGuard] },
+      { path: 'history', component: HistoryComponent, canActivate: [AuthenticationGuard] },
       {
-        path: 'advanced', component: AdvancedComponent,
+        path: 'advanced', component: AdvancedComponent, canActivate: [AuthenticationGuard],
         children: [
           { path: '', redirectTo: 'about', pathMatch: 'full' },
-          { path: 'about', component: AboutComponent },
-          { path: 'extpubkey', component: ExtPubkeyComponent },
-          { path: 'generate-addresses', component: GenerateAddressesComponent },
-          { path: 'resync', component: ResyncComponent }
+          { path: 'about', component: AboutComponent, canActivate: [AuthenticationGuard] },
+          { path: 'extpubkey', component: ExtPubkeyComponent, canActivate: [AuthenticationGuard] },
+          { path: 'generate-addresses', component: GenerateAddressesComponent, canActivate: [AuthenticationGuard] },
+          { path: 'resync', component: ResyncComponent, canActivate: [AuthenticationGuard] }
         ]
       },
-      { path: 'smart-contracts', component: SmartContractsComponent, canActivate: [AccountSelectedGuard] },
-      { path: 'tokens', component: TokensComponent, canActivate: [AccountSelectedGuard] },
+      { path: 'smart-contracts', component: SmartContractsComponent, canActivate: [AccountSelectedGuard, AuthenticationGuard] },
+      { path: 'tokens', component: TokensComponent, canActivate: [AccountSelectedGuard, AuthenticationGuard] },
     ]
   },
 ];
