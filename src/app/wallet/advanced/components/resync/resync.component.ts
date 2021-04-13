@@ -35,7 +35,7 @@ export class ResyncComponent implements OnInit {
       .rescanWallet(rescanData)
       .toPromise().then(
         () => {
-          this.genericModalService.openModal('Resyncing', 'Your wallet is now resyncing. The time remaining depends on the size and creation time of your wallet. The wallet dashboard shows your progress.');
+          this.genericModalService.openModal('Resynchronizing', 'Your wallet is now resynchronizing. The time remaining depends on the size and creation time of your wallet. The wallet dashboard shows your progress.');
         }
       );
   }
