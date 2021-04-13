@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 
 import { ApiService } from '@shared/services/api.service';
 import { GlobalService } from '@shared/services/global.service';
@@ -33,21 +33,22 @@ export class GenerateAddressesComponent implements OnInit {
     }
   };
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
-  private buildGenerateAddressesForm() {
+  private buildGenerateAddressesForm(): void {
     this.generateAddressesForm = this.fb.group({
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       'generateAddresses': ['', Validators.compose([Validators.required, Validators.pattern('^[0-9]*$'), Validators.min(1), Validators.max(1000)])]
     });
 
     this.generateAddressesForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+      .subscribe(() => this.onValueChanged());
 
     this.onValueChanged();
   }
 
-  onValueChanged(data?: any) {
+  onValueChanged(): void {
     if (!this.generateAddressesForm) { return; }
     const form = this.generateAddressesForm;
     for (const field in this.formErrors) {
@@ -56,13 +57,13 @@ export class GenerateAddressesComponent implements OnInit {
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
         for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
+          this.formErrors[field] += `${String(messages[key])} `;
         }
       }
     }
   }
 
-  public onGenerateClicked() {
+  public onGenerateClicked(): void {
     const walletInfo = new WalletInfo(this.globalService.getWalletName());
     this.apiService.getUnusedReceiveAddresses(walletInfo, this.generateAddressesForm.get('generateAddresses').value)
       .subscribe(
@@ -72,7 +73,7 @@ export class GenerateAddressesComponent implements OnInit {
       );
   }
 
-  public onBackClicked() {
+  public onBackClicked(): void {
     this.addresses = [''];
   }
 }

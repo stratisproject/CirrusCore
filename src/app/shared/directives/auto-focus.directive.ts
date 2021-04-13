@@ -7,7 +7,7 @@ export class AutoFocusDirective implements OnInit {
 
   constructor(private renderer: Renderer2, private elementRef: ElementRef) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.renderer.selectRootElement(this.elementRef).focus();
   }
 }

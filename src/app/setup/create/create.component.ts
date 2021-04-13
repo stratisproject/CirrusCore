@@ -29,7 +29,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   private formValueChanges$: Subscription;
   private passphrase$: Subscription;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getNewMnemonic();
   }
 
@@ -70,7 +70,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.onValueChanged();
   }
 
-  onValueChanged(data?: any) {
+  onValueChanged(data?: any): void {
     if (!this.createWalletForm) { return; }
     const form = this.createWalletForm;
     for (const field in this.formErrors) {
@@ -114,11 +114,11 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   };
 
-  public onBackClicked() {
+  public onBackClicked(): void {
     this.router.navigate(["/setup"]);
   }
 
-  public onContinueClicked() {
+  public onContinueClicked(): void {
     if (this.mnemonic) {
       this.newWallet = new WalletCreation(
         this.createWalletForm.get("walletName").value,

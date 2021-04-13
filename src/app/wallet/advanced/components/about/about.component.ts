@@ -13,23 +13,27 @@ import { ElectronService } from '@shared/services/electron.service';
 export class AboutComponent implements OnInit {
   nodeStatusSubscription$: Observable<NodeStatus>;
   applicationVersion: string;
+  applicationVersionFull: string;
+  gitCommit: string;
   isElectron: boolean;
 
   constructor(
     private globalService: GlobalService,
     private apiService: ApiService,
-    private electron: ElectronService
+    private electronService: ElectronService
   ) { }
 
-  ngOnInit() {
-    this.isElectron = this.electron.isElectron;
+  ngOnInit(): void {
+    this.isElectron = this.electronService.isElectron;
     this.applicationVersion = this.globalService.getApplicationVersion();
+    this.gitCommit = this.globalService.getGitCommit();
     this.nodeStatusSubscription$ = this.apiService.getNodeStatusInterval();
+    this.applicationVersionFull = this.gitCommit ? `${this.applicationVersion}-${this.gitCommit}` : `${this.applicationVersion}`;
   }
 
   openWalletDirectory(directory: string): void {
-    if (!this.isElectron) return;
+    if (!this.isElectron) { return; }
 
-    this.electron.shell.showItemInFolder(directory);
+    this.electronService.shell.showItemInFolder(directory);
   }
 }

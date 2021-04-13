@@ -7,21 +7,19 @@ import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angu
 })
 export class LoadingModalComponent implements OnInit, OnDestroy {
 
-  @Input()
-  loading = true;
+  @Input() public loading = true;
 
-  @Output()
-  close = new EventEmitter();
+  @Output() public close = new EventEmitter();
 
   constructor() { }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
   }
 
-  closeClicked() {
+  closeClicked(): void {
     this.close.emit();
   }
 }

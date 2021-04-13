@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ElectronService } from '@shared/services/electron.service';
 import { WalletInfo } from '@shared/models/wallet-info';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { VERSION } from '../../../environments/version';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class GlobalService {
   }
 
   private applicationVersion = '1.6.0';
+  private gitCommit = "";
   private testnet = false;
   private cirrusMainApiPort = 37223;
   private cirrusTestApiPort = 38223;
@@ -23,6 +25,7 @@ export class GlobalService {
   private currentWalletName: string;
   private network: string;
   private daemonIP: string;
+  private version = VERSION;
 
   public coinUnit: string;
 
@@ -39,6 +42,14 @@ export class GlobalService {
     }
   }
 
+  public getGitCommit(): string {
+    return this.gitCommit;
+  }
+
+  public setGitCommit(): void {
+    this.gitCommit = this.version.hash;
+  }
+
   public getTestnetEnabled(): boolean {
     return this.testnet;
   }
@@ -47,10 +58,6 @@ export class GlobalService {
     if (this.electronService.isElectron) {
       this.testnet = this.electronService.ipcRenderer.sendSync('get-testnet');
     }
-  }
-
-  public get networkName(): string {
-    return 'cirrus';
   }
 
   public getApiPort(): number {

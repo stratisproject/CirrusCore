@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -29,7 +29,8 @@ export class ConfirmMnemonicComponent implements OnInit, OnDestroy {
 
   public secretWordIndexGenerator = new SecretWordIndexGenerator();
   private newWallet: WalletCreation;
-  private subscription: Subscription;
+  private mnemonicForm$: Subscription;
+  private queryParams$: Subscription;
   public mnemonicForm: FormGroup;
   public matchError = '';
   public isCreating: boolean;
@@ -61,8 +62,8 @@ export class ConfirmMnemonicComponent implements OnInit, OnDestroy {
     }
   };
 
-  ngOnInit() {
-    this.subscription = this.route.queryParams.subscribe(params => {
+  ngOnInit(): void {
+    this.queryParams$ = this.route.queryParams.subscribe(params => {
       this.newWallet = new WalletCreation(
         params['name'],
         params['mnemonic'],
@@ -76,6 +77,7 @@ export class ConfirmMnemonicComponent implements OnInit, OnDestroy {
     this.mnemonicForm = this.fb.group({
       'word1': ['',
         Validators.compose([
+          // eslint-disable-next-line @typescript-eslint/unbound-method
           Validators.required,
           Validators.minLength(1),
           Validators.maxLength(24),
@@ -84,6 +86,7 @@ export class ConfirmMnemonicComponent implements OnInit, OnDestroy {
       ],
       'word2': ['',
         Validators.compose([
+          // eslint-disable-next-line @typescript-eslint/unbound-method
           Validators.required,
           Validators.minLength(1),
           Validators.maxLength(24),
@@ -92,6 +95,7 @@ export class ConfirmMnemonicComponent implements OnInit, OnDestroy {
       ],
       'word3': ['',
         Validators.compose([
+          // eslint-disable-next-line @typescript-eslint/unbound-method
           Validators.required,
           Validators.minLength(1),
           Validators.maxLength(24),
@@ -100,13 +104,13 @@ export class ConfirmMnemonicComponent implements OnInit, OnDestroy {
       ]
     });
 
-    this.mnemonicForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.mnemonicForm$ = this.mnemonicForm.valueChanges
+      .subscribe(() => this.onValueChanged());
 
     this.onValueChanged();
   }
 
-  onValueChanged(data?: any) {
+  onValueChanged(): void {
     if (!this.mnemonicForm) {
       return;
     }
@@ -117,7 +121,7 @@ export class ConfirmMnemonicComponent implements OnInit, OnDestroy {
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
         for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
+          this.formErrors[field] += `${String(messages[key])} `;
         }
       }
     }
@@ -125,7 +129,7 @@ export class ConfirmMnemonicComponent implements OnInit, OnDestroy {
     this.matchError = '';
   }
 
-  public onConfirmClicked() {
+  public onConfirmClicked(): void {
     this.checkMnemonic();
     if (this.checkMnemonic()) {
       this.isCreating = true;
@@ -133,7 +137,7 @@ export class ConfirmMnemonicComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onBackClicked() {
+  public onBackClicked(): void {
     this.router.navigate(['/setup/create/show-mnemonic'], {
       queryParams: {
         name: this.newWallet.name,
@@ -158,21 +162,24 @@ export class ConfirmMnemonicComponent implements OnInit, OnDestroy {
     }
   }
 
-  private createWallet(wallet: WalletCreation) {
+  private createWallet(wallet: WalletCreation): void {
     this.apiService.createStratisWallet(wallet)
-      .subscribe(
-        response => {
+      .toPromise()
+      .then(
+        () => {
+          this.isCreating = false;
           this.genericModalService.openModal(
             'Wallet Created', 'Your wallet has been created.<br>Keep your secret words, password and passphrase safe!');
           this.router.navigate(['']);
         },
-        error => {
+        () => {
           this.isCreating = false;
         }
       );
   }
 
-  public ngOnDestroy(): void {
-
+  ngOnDestroy(): void {
+    this.queryParams$.unsubscribe();
+    this.mnemonicForm$.unsubscribe();
   }
 }

@@ -13,7 +13,7 @@ export class ConfirmationModalComponent implements OnInit {
 
   constructor(public activeModal: NgbActiveModal) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
 }

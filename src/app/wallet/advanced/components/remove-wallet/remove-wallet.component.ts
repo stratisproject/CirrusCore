@@ -4,7 +4,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationModalComponent } from '@shared/components/confirmation-modal/confirmation-modal.component';
 import { AuthenticationService } from '@shared/services/auth.service';
 import { GlobalService } from '@shared/services/global.service';
-import { StakingService } from '@shared/services/staking-service';
 import { WalletService } from '@shared/services/wallet.service';
 
 @Component({
@@ -18,7 +17,6 @@ export class RemoveWalletComponent implements OnInit {
     private globalService: GlobalService,
     private modalService: NgbModal,
     private router: Router,
-    private stakingService: StakingService,
     private authenticationService: AuthenticationService
   ) { }
 
@@ -41,7 +39,6 @@ export class RemoveWalletComponent implements OnInit {
     modal.result.then(confirmed => {
       if (confirmed) {
         this.walletService.removeWallet(this.currentWalletName).toPromise().then(() => {
-          this.stakingService.stopStaking();
           this.walletService.clearWalletHistory();
           this.authenticationService.SignOut();
           this.router.navigate(['/login']);

@@ -78,7 +78,7 @@ export class ReceiveComponent implements OnInit {
   }
 
   private setQrString(address: string) {
-    this.qrString = `${this.globalService.networkName}:${address}`;
+    this.qrString = `${address}`;
   }
 
   private getAddresses() {

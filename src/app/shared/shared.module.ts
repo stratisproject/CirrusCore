@@ -16,7 +16,6 @@ import { SecondsToStringPipe } from '@shared/pipes/seconds-to-string.pipe';
 import { ApiService } from '@shared/services/api.service';
 import { SignalRService } from '@shared/services/signalr-service';
 import { WalletService } from '@shared/services/wallet.service';
-import { StakingService } from '@shared/services/staking-service';
 import { WalletInitializingComponent } from './components/wallet-initializing/wallet-initializing.component';
 import { WalletInitializingFailedComponent } from './components/wallet-initializing-failed/wallet-initializing-failed.component';
 import { LoggerService } from './services/logger.service';
@@ -41,7 +40,6 @@ import { ElectronService } from './services/electron.service';
     ApiService,
     WalletService,
     SignalRService,
-    StakingService,
     LoggerService,
     ElectronService
   ],

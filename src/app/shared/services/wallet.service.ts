@@ -3,11 +3,7 @@ import { Injectable } from '@angular/core';
 import { SignalRService } from '@shared/services/signalr-service';
 import { WalletInfo } from '@shared/models/wallet-info';
 import { Balances, TransactionsHistoryItem, WalletBalance, WalletHistory, WalletNamesData } from '@shared/services/interfaces/api.i';
-import {
-  SignalREvent,
-  SignalREvents,
-  WalletInfoSignalREvent
-} from '@shared/services/interfaces/signalr-events.i';
+import { SignalREvent, SignalREvents, WalletInfoSignalREvent } from '@shared/services/interfaces/signalr-events.i';
 import { catchError, map, flatMap, tap } from 'rxjs/operators';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { RestApi } from '@shared/services/rest-api';
@@ -23,6 +19,7 @@ import { WalletLoad } from '@shared/models/wallet-load';
 import { WalletResync } from '@shared/models/wallet-rescan';
 import { NodeService } from '@shared/services/node-service';
 import { TransactionInfo } from '@shared/models/transaction-info';
+import { ExtPubKeyImport } from '@shared/models/extpubkey-import';
 
 @Injectable({
   providedIn: 'root'
@@ -158,6 +155,12 @@ export class WalletService extends RestApi {
     );
   }
 
+  public importExtPubKey(data: ExtPubKeyImport): Observable<any> {
+    return this.post('wallet/recover-via-extpubkey', data).pipe(
+      catchError(err => this.handleHttpError(err))
+    );
+  }
+
   public wallet(): Observable<WalletBalance> {
     return this.getWalletSubject().asObservable();
   }
@@ -229,6 +232,12 @@ export class WalletService extends RestApi {
     });
     const set = existingItems.concat(newItems);
     subject.next(set.sort((a, b) => b.timestamp - a.timestamp));
+  }
+
+  public broadcastTransaction(transactionHex: string): Observable<string> {
+    return this.post('wallet/send-transaction', new TransactionSending(transactionHex)).pipe(
+      catchError(err => this.handleHttpError(err))
+    );
   }
 
   public sendTransaction(transaction: Transaction): Promise<TransactionResponse> {

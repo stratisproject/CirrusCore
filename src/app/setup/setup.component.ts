@@ -11,19 +11,19 @@ import { GlobalService } from '@shared/services/global.service';
 export class SetupComponent implements OnInit {
   constructor(private router: Router, private globalService: GlobalService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
 
   }
 
-  public onCreateClicked() {
+  public onCreateClicked(): void {
     this.router.navigate(['setup/create']);
   }
 
-  public onRecoverClicked() {
+  public onRecoverClicked(): void {
     this.router.navigate(['setup/recover']);
   }
 
-  public onBackClicked() {
+  public onBackClicked(): void {
     this.router.navigate(['login']);
   }
 }
