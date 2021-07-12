@@ -106,7 +106,7 @@
                 <label for="federationAddress">{{ firstTitle }} federation address</label>
                 <input type="text" class="form-control"
                         [class.is-invalid]="sendToSidechainFormErrors.federationAddress"
-                        [class.is-valid]="!sendToSidechainFormErrors.federaionAddress && sendToSidechainForm.get('federationAddress').valid"
+                        [class.is-valid]="!sendToSidechainFormErrors.federationAddress && sendToSidechainForm.get('federationAddress').valid"
                         formControlName="federationAddress" placeholder="Please enter the federation address here.">
                 <div *ngIf="sendToSidechainFormErrors.federationAddress"
                       class="invalid-feedback">{{ sendToSidechainFormErrors.federationAddress }}</div>
