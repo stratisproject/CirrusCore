@@ -189,12 +189,21 @@ export class WalletService extends RestApi {
   }
 
   public getHistory(): void {
+
     let extra = Object.assign({}, {}) as { [key: string]: any };
 
     if (this.accountsEnabled) {
       extra = Object.assign(extra, {
-        address: this.currentAccountService.address
+        address: this.currentAccountService.address,
+        skip: 0,
+        take: 1000      
       });
+    }else
+    {
+      extra = Object.assign(extra, {
+        skip: 0,
+        take: 1000      
+      });      
     }
 
     this.loadingSubject.next(true);
