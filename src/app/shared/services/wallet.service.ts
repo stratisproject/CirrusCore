@@ -69,12 +69,11 @@ export class WalletService extends RestApi {
       }
     });
 
-    // When we get a TransactionReceived event get the WalletBalance and History using the RestApi
-    signalRService.registerOnMessageEventHandler<SignalREvent>(SignalREvents.TransactionReceived,
-                                                               (message) => {
-                                                                 this.transactionReceivedSubject.next(message);
-                                                                 this.refreshWallet();
-                                                               });
+    // This covers sending and receiving as well as staking/mining events.
+    signalRService.registerOnMessageEventHandler<SignalREvent>(SignalREvents.WalletProcessedTransactionOfInterestEvent,
+      () => {
+        this.refreshWallet();
+      });
 
     nodeService.generalInfo().subscribe(generalInfo => {
       if (generalInfo.percentSynced === 100 && this.rescanInProgress) {
