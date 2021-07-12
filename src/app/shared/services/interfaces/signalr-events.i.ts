@@ -25,5 +25,6 @@ export enum SignalREvents {
   TransactionReceived = 'TransactionReceived',
   WalletGeneralInfo = 'WalletGeneralInfo',
   StakingInfo = 'StakingInfo',
-  FullNodeEvent = 'FullNodeEvent'
+  FullNodeEvent = 'FullNodeEvent',
+  WalletProcessedTransactionOfInterestEvent = 'WalletProcessedTransactionOfInterestEvent'
 }
