@@ -45,11 +45,9 @@ export class SendComponent implements OnInit, OnDestroy {
     this.sendToSidechainForm = SendComponentFormResources.buildSendToSidechainForm(fb,
                                                                                    () => (this.spendableBalance - this.estimatedSidechainFee) / 100000000);
 
-    this.subscriptions.push(this.sendForm.valueChanges.pipe(debounceTime(300))
-      .subscribe(data => this.onSendValueChanged(data, false)));
+    this.subscriptions.push(this.sendForm.valueChanges.pipe(debounceTime(300)).subscribe(data => this.onSendValueChanged(data, false)));
 
-    this.subscriptions.push(this.sendToSidechainForm.valueChanges.pipe(debounceTime(300))
-      .subscribe(data => this.onSendValueChanged(data, true)));
+    this.subscriptions.push(this.sendToSidechainForm.valueChanges.pipe(debounceTime(300)).subscribe(data => this.onSendValueChanged(data, true)));
 
     this.subscriptions.push(this.sendToSidechainForm.get('networkSelect').valueChanges.subscribe(() => this.networkSelectChanged()));
   }

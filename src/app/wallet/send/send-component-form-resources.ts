@@ -81,10 +81,10 @@ export class SendComponentFormResources {
   }
 
   public static cirrusNetworks: Network[] = [
-    { destinationName: 'Stratis', federationAddress: 'cYTNBJDbgjRgcKARAvi2UCSsDdyHkjUqJ2', description: 'Stratis Mainnet'}
+    { destinationName: 'Strax', federationAddress: 'cYTNBJDbgjRgcKARAvi2UCSsDdyHkjUqJ2', description: 'Strax Mainnet'}
   ];
 
   public static cirrusTestNetworks: Network[] = [
-    // { destinationName: 'StratisTest', federationAddress: 'xH1GHWVNKwdebkgiFPtQtM4qb3vrvNX2Rg', description: 'Stratis Testnet'}
+    { destinationName: 'Strax Test', federationAddress: '"xHtgXLa3CSjAVtmydqNrrMU7nZw7qdq2w6",', description: 'Strax Testnet'}
   ];
 }
