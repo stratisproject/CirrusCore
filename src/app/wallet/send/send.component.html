@@ -7,13 +7,17 @@
   </button>
   <!-- /button close -->
 </div>
+
 <div class="modal-body ModalSend pt-0">
   <!-- TABS -->
   <div class="form-group clearfix mb-0">
     <div>
       <tabset type="pills" customClass="nav-fill">
+
         <tab customClass="nav-link blue" heading="{{ firstTitle }}">
+
           <form [formGroup]="sendForm">
+
             <!--<div class="form-group has-danger clearfix">-->
             <div class="form-group clearfix">
               <label class="float-left" for="amount">Amount</label>
@@ -22,12 +26,14 @@
               <input type="text" class="form-control" [class.is-invalid]="sendFormErrors.amount" [class.is-valid]="!sendFormErrors.amount && sendForm.get('amount').valid" formControlName="amount" placeholder="0.00 {{ coinUnit }}">
               <div *ngIf="sendFormErrors.amount" class="invalid-feedback">{{ sendFormErrors.amount }}</div>
             </div>
+
             <!--<div class="form-group has-success">-->
             <div class="form-group clearfix">
               <label for="destinationAddress">Destination address</label>
               <input type="text" class="form-control" [class.is-invalid]="sendFormErrors.address" [class.is-valid]="!sendFormErrors.address && sendForm.get('address').valid" formControlName="address" id="destinationAddress" placeholder="Please enter the destination address here.">
               <div *ngIf="sendFormErrors.address" class="invalid-feedback">{{ sendFormErrors.address }}</div>
             </div>
+
             <div class="form-group clearfix">
               <label>Transaction Fee</label>
               <div>
@@ -55,6 +61,7 @@
               </small>
             </div> -->
             </div>
+
             <div class="form-group clearfix">
               <label for="walletPassword">Wallet Password</label>
               <input type="password" class="form-control" [class.is-invalid]="sendFormErrors.password" [class.is-valid]="!sendFormErrors.password && sendForm.get('password').valid" formControlName="password" id="walletPassword" placeholder="Please enter your wallet password." >
@@ -62,6 +69,7 @@
             </div>
             <small *ngIf="apiError" class="text-danger">{{ apiError }}</small>
           </form>
+
           <div *ngIf="walletService.isSyncing || walletService.ibdMode || walletService.rescanInProgress" class="alert alert-warning">Please note that you can only send transactions when your wallet is completely synchronised.</div>
           <div class="modal-footer p-0">
             <button *ngIf="!isSending" type="button" [disabled]="isSending" class="btn btn-outline-light" (click)="activeModal.close('Close click')">Cancel</button>
@@ -79,8 +87,11 @@
             </div>
           </div>
         </tab>
+        
         <tab customClass="nav-link blue" heading="{{ secondTitle }}">
+
           <form [formGroup]="sendToSidechainForm">
+
             <!--<div class="form-group has-danger clearfix">-->
             <div class="form-group clearfix">
               <label class="float-left" for="amount">Amount</label>
@@ -89,6 +100,7 @@
               <input type="text" class="form-control" [class.is-invalid]="sendToSidechainFormErrors.amount" [class.is-valid]="!sendToSidechainFormErrors.amount && sendToSidechainForm.get('amount').valid" formControlName="amount" placeholder="0.00 {{ coinUnit }}">
               <div *ngIf="sendToSidechainFormErrors.amount" class="invalid-feedback">{{ sendToSidechainFormErrors.amount }}</div>
             </div>
+
             <!--<div class="form-group has-success">-->
               <div class="form-group clearfix">
                 <label for="networkSelect">Select destination network</label>
@@ -101,6 +113,7 @@
                 <div *ngIf="sendToSidechainFormErrors.networkSelect"
                       class="invalid-feedback">{{ sendToSidechainFormErrors.networkSelect }}</div>
               </div>
+
               <div class="form-group clearfix"
                     *ngIf="sendToSidechainForm.get('networkSelect').value === 'customNetwork'">
                 <label for="federationAddress">{{ firstTitle }} federation address</label>
@@ -111,12 +124,14 @@
                 <div *ngIf="sendToSidechainFormErrors.federationAddress"
                       class="invalid-feedback">{{ sendToSidechainFormErrors.federationAddress }}</div>
               </div>
+
             <!--<div class="form-group has-success">-->
             <div class="form-group clearfix">
               <label for="destinationAddress">{{ secondTitle }} destination address</label>
               <input type="text" class="form-control" [class.is-invalid]="sendToSidechainFormErrors.destinationAddress" [class.is-valid]="!sendToSidechainFormErrors.destinationAddress && sendToSidechainForm.get('destinationAddress').valid" formControlName="destinationAddress" id="destinationAddress" placeholder="Please enter the sidechain destination address here.">
               <div *ngIf="sendToSidechainFormErrors.destinationAddress" class="invalid-feedback">{{ sendToSidechainFormErrors.destinationAddress }}</div>
             </div>
+
             <div class="form-group clearfix">
               <label>Transaction Fee</label>
               <div>
@@ -144,11 +159,13 @@
               </small>
             </div> -->
             </div>
+
             <div class="form-group clearfix">
               <div>
                 <div class="alert alert-warning py-1" [innerHTML]="confirmationText"></div>
               </div>
             </div>
+
             <div class="form-group clearfix">
               <label for="walletPassword">Wallet Password</label>
               <input type="password" class="form-control" [class.is-invalid]="sendToSidechainFormErrors.password" [class.is-valid]="!sendToSidechainFormErrors.password && sendToSidechainForm.get('password').valid" formControlName="password" id="walletPassword" placeholder="Please enter your wallet password." >
@@ -156,7 +173,9 @@
             </div>
             <small *ngIf="apiError" class="text-danger">{{ apiError }}</small>
           </form>
+
           <div *ngIf="walletService.isSyncing || walletService.ibdMode || walletService.rescanInProgress" class="alert alert-warning">Please note that you can only send transactions when your wallet is completely synchronised.</div>
+          
           <div class="modal-footer p-0">
             <button *ngIf="!isSending" type="button" [disabled]="isSending" class="btn btn-outline-light" (click)="activeModal.close('Close click')">Cancel</button>
             <button *ngIf="!isSending" type="button" class="btn btn-stratis-green btn-block" [disabled]="!sendToSidechainForm.valid || isSending || !estimatedSidechainFee || walletService.isSyncing || walletService.ibdMode || walletService.rescanInProgress" (click)="send(true)">Send</button>
