@@ -85,6 +85,6 @@ export class SendComponentFormResources {
   ];
 
   public static cirrusTestNetworks: Network[] = [
-    { destinationName: 'Strax Test', federationAddress: '"xHtgXLa3CSjAVtmydqNrrMU7nZw7qdq2w6",', description: 'Strax Testnet'}
+    { destinationName: 'Strax Test', federationAddress: 'xHtgXLa3CSjAVtmydqNrrMU7nZw7qdq2w6', description: 'Strax Testnet'}
   ];
 }
