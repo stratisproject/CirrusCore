@@ -69,7 +69,7 @@ export class WalletService extends RestApi {
       }
     });
 
-    // This covers sending and receiving as well as staking/mining events.
+    // This covers sending and receiving as well as any smart contract events.
     signalRService.registerOnMessageEventHandler<SignalREvent>(SignalREvents.WalletProcessedTransactionOfInterestEvent,
       () => {
         this.refreshWallet();

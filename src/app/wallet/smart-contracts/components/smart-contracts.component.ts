@@ -15,6 +15,7 @@ import { CurrentAccountService } from '@shared/services/current-account.service'
   templateUrl: './smart-contracts.component.html',
   styleUrls: ['./smart-contracts.component.css']
 })
+
 export class SmartContractsComponent implements OnInit, OnDestroy {
 
   private walletName = '';
