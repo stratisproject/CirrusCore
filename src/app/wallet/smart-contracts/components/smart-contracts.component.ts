@@ -10,6 +10,9 @@ import { TransactionComponent, Mode } from './modals/transaction/transaction.com
 import { ModalService } from '@shared/services/modal.service';
 import { CurrentAccountService } from '@shared/services/current-account.service';
 
+import { Observable } from 'rxjs';
+import { WalletService } from '@shared/services/wallet.service';
+
 @Component({
   selector: 'app-smart-contracts',
   templateUrl: './smart-contracts.component.html',
@@ -17,6 +20,8 @@ import { CurrentAccountService } from '@shared/services/current-account.service'
 })
 
 export class SmartContractsComponent implements OnInit, OnDestroy {
+
+  public historyUpdated: Observable<boolean>;
 
   private walletName = '';
   addressChangedSubject: Subject<string>;
@@ -27,11 +32,12 @@ export class SmartContractsComponent implements OnInit, OnDestroy {
   unsubscribe: Subject<void> = new Subject();
 
   constructor(private globalService: GlobalService,
-              private smartContractsService: SmartContractsServiceBase,
-              private clipboardService: ClipboardService,
-              private modalService: NgbModal,
-              private genericModalService: ModalService,
-              private currentAccountService: CurrentAccountService) {
+    private smartContractsService: SmartContractsServiceBase,
+    private clipboardService: ClipboardService,
+    private modalService: NgbModal,
+    private genericModalService: ModalService,
+    private currentAccountService: CurrentAccountService,
+    public walletService: WalletService) {
 
     this.coinUnit = this.globalService.getCoinUnit();
     this.walletName = this.globalService.getWalletName();
@@ -42,22 +48,39 @@ export class SmartContractsComponent implements OnInit, OnDestroy {
         catchError(error => {
           this.showApiError(`Error retrieving balance. ${String(error)}`);
           return of(0);
-        }),
-        take(1)
-      )
+        }), take(1))
       .subscribe(balance => this.balance = balance);
 
     this.smartContractsService.GetHistory(this.walletName, this.selectedAddress)
-      .pipe(catchError(error => {
-        this.showApiError(`Error retrieving transactions. ${String(error)}`);
-        return of([]);
-      }),
-            take(1)
-      )
+      .pipe(
+        catchError(error => {
+          this.showApiError(`Error retrieving transactions. ${String(error)}`);
+          return of([]);
+        }), take(1))
       .subscribe(history => this.history = history);
   }
 
   ngOnInit(): void {
+    this.historyUpdated = this.walletService.historyRefreshed;
+    this.historyUpdated.subscribe(_ => {
+
+      // Update address balance
+      this.smartContractsService.GetAddressBalance(this.selectedAddress)
+        .pipe(
+          catchError(error => {
+            this.showApiError(`Error retrieving balance. ${String(error)}`);
+            return of(0);
+          }), take(1))
+        .subscribe(balance => this.balance = balance);
+
+      // Update history
+      this.smartContractsService.GetHistory(this.walletName, this.selectedAddress)
+        .pipe(catchError(error => {
+          this.showApiError(`Error retrieving smart contract transaction history. ${String(error)}`);
+          return of([]);
+        }), take(1))
+        .subscribe(history => this.history = history);
+    });
   }
 
   ngOnDestroy(): void {
@@ -100,8 +123,8 @@ export class SmartContractsComponent implements OnInit, OnDestroy {
         // tslint:disable-next-line:max-line-length
         this.genericModalService.openModal('Receipt', '<pre class=\'selectable\'>' + JSON.stringify(result, null, '    ') + '</pre>');
       },
-            error => {
-              this.showApiError(`Error retrieving receipt. ${String(error)}`);
-            });
+        error => {
+          this.showApiError(`Error retrieving receipt. ${String(error)}`);
+        });
   }
 }
