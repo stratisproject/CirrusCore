@@ -42,10 +42,10 @@ export class TransactionInfo {
   public static mapFromTransactionsHistoryItem(transaction: TransactionsHistoryItem): TransactionInfo {
     var txType = transaction.type;
 
-    if(txType === 'send')
+    if(txType == 'send')
       txType = 'sent';
 
-    if(txType === 'createorcall')
+    if(txType == 'createOrCall')
       txType = 'smart contract';
      
     return new TransactionInfo(

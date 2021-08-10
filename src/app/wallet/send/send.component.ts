@@ -153,10 +153,7 @@ export class SendComponent implements OnInit, OnDestroy {
     );
 
     this.walletService.estimateFee(transaction).toPromise()
-      .then(response => {
-        
-        writeLog('Request to shutdown daemon returned HTTP success code.');
-
+      .then(response => {    
         if (isSideChain) {
           this.estimatedSidechainFee = response;
         } else {
