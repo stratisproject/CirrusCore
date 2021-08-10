@@ -36,6 +36,13 @@ export class WalletService extends RestApi {
   public isSyncing: boolean;
   public ibdMode: boolean;
 
+  private historyUpdatedSubject = new Subject<boolean>();
+  public historyUpdated = this.historyUpdatedSubject.asObservable();
+
+  public get historyRefreshed() {
+    return this.historyUpdated;
+  }
+
   public get loading(): Observable<boolean> {
     return this.loadingSubject.asObservable();
   }
@@ -69,7 +76,7 @@ export class WalletService extends RestApi {
       }
     });
 
-    // This covers sending and receiving as well as staking/mining events.
+    // This covers sending and receiving as well as any smart contract events.
     signalRService.registerOnMessageEventHandler<SignalREvent>(SignalREvents.WalletProcessedTransactionOfInterestEvent,
       () => {
         this.refreshWallet();
@@ -82,22 +89,22 @@ export class WalletService extends RestApi {
     });
 
     signalRService.registerOnMessageEventHandler<WalletInfoSignalREvent>(SignalREvents.WalletGeneralInfo,
-                                                                         (message) => {
-                                                                           // Update wallet history after chain is synced or IBD mode completed
-                                                                           const syncCompleted = (this.isSyncing && message.lastBlockSyncedHeight === message.chainTip);
-                                                                           let historyRefreshed = false;
-                                                                           this.isSyncing = message.lastBlockSyncedHeight !== message.chainTip;
-                                                                           this.ibdMode = !message.isChainSynced;
+      (message) => {
+        // Update wallet history after chain is synced or IBD mode completed
+        const syncCompleted = (this.isSyncing && message.lastBlockSyncedHeight === message.chainTip);
+        let historyRefreshed = false;
+        this.isSyncing = message.lastBlockSyncedHeight !== message.chainTip;
+        this.ibdMode = !message.isChainSynced;
 
-                                                                           if (syncCompleted) {
-                                                                             historyRefreshed = true;
-                                                                           }
+        if (syncCompleted) {
+          historyRefreshed = true;
+        }
 
-                                                                           if (this.currentWallet && message.walletName === this.currentWallet.walletName) {
-                                                                             const walletBalance = message.accountsBalances.find(acc => acc.accountName === `account ${this.currentWallet.account}`);
-                                                                             this.updateWalletForCurrentAddress(walletBalance, historyRefreshed);
-                                                                           }
-                                                                         });
+        if (this.currentWallet && message.walletName === this.currentWallet.walletName) {
+          const walletBalance = message.accountsBalances.find(acc => acc.accountName === `account ${this.currentWallet.account}`);
+          this.updateWalletForCurrentAddress(walletBalance, historyRefreshed);
+        }
+      });
   }
 
   public getWalletNames(): Observable<WalletNamesData> {
@@ -196,14 +203,13 @@ export class WalletService extends RestApi {
       extra = Object.assign(extra, {
         address: this.currentAccountService.address,
         skip: 0,
-        take: 1000      
+        take: 1000
       });
-    }else
-    {
+    } else {
       extra = Object.assign(extra, {
         skip: 0,
-        take: 1000      
-      });      
+        take: 1000
+      });
     }
 
     this.loadingSubject.next(true);
@@ -212,12 +218,16 @@ export class WalletService extends RestApi {
       .pipe(map((response) => {
         return response.history[this.currentWallet.account].transactionsHistory;
       }),
-            catchError((err) => {
-              this.loadingSubject.next(false);
-              return this.handleHttpError(err);
-            })).toPromise().then(history => {
+        catchError((err) => {
+          this.loadingSubject.next(false);
+          return this.handleHttpError(err);
+        }))
+      .toPromise()
+      .then(history => {
         this.applyHistory(history);
         this.loadingSubject.next(false);
+
+        this.historyUpdatedSubject.next(true);
       });
   }
 
@@ -225,12 +235,17 @@ export class WalletService extends RestApi {
     const subject = this.getWalletHistorySubject();
     const existingItems = subject.value;
     const newItems = [];
+
+    // Determine whether or not each item already exists in the cached set.
     history.forEach(item => {
       const index = existingItems.findIndex(existing => existing.id === item.id);
+
+      // If it does not exist, add it.
       if (index === -1) {
         const mapped = TransactionInfo.mapFromTransactionsHistoryItem(item);
         newItems.push(mapped);
-      } else {
+      }
+      else {
         if (item.confirmedInBlock && !existingItems[index].transactionConfirmedInBlock) {
           existingItems.filter(existing => existing.id === item.id).forEach(existing => {
             existing.transactionConfirmedInBlock = item.confirmedInBlock;
@@ -351,15 +366,18 @@ export class WalletService extends RestApi {
       walletSubject.value ? walletSubject.value.currentAddress : null);
 
     if (this.accountsEnabled) {
-      if (null != this.currentAccountService.address
-        && (null == newBalance.currentAddress || newBalance.currentAddress.address !== this.currentAccountService.address)) {
+
+      if (null != this.currentAccountService.address && (null == newBalance.currentAddress || newBalance.currentAddress.address !== this.currentAccountService.address)) {
         newBalance.setCurrentAccountAddress(this.currentAccountService.address);
+
         this.clearWalletHistory();
         //this.paginateHistory();
         this.getHistory();
+
         if (!this.rescanInProgress && !this.isSyncing) {
           this.walletActivitySubject.next(true);
         }
+
         historyRefreshed = true;
       }
     }
@@ -378,10 +396,12 @@ export class WalletService extends RestApi {
   }
 
   private refreshWallet(): void {
-    this.getWalletBalance(this.currentWallet).toPromise().then(
-      wallet => {
-        this.updateWalletForCurrentAddress(wallet.balances[this.currentWallet.account]);
-      });
+    this.getWalletBalance(this.currentWallet)
+      .toPromise()
+      .then(
+        wallet => {
+          this.updateWalletForCurrentAddress(wallet.balances[this.currentWallet.account]);
+        });
   }
 
   public clearWalletHistory(): void {

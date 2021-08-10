@@ -75,8 +75,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private getStatusThroughApi(): void {
+
     console.log("Getting status from API.");
+    
     let retry = 0;
+
     const stream$ = this.apiService.getNodeStatus(true).pipe(
       retryWhen(errors =>
         errors.pipe(delay(this.TryDelayMilliseconds)).pipe(

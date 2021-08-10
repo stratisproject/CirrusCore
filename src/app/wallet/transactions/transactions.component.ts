@@ -22,7 +22,6 @@ export class TransactionsComponent implements OnInit {
   @Input() public enablePagination: boolean;
   @Input() public maxTransactionCount: number;
   @Input() public title: string;
-  @Input() public stakingOnly: boolean;
   @Output() public rowClicked: EventEmitter<TransactionInfo> = new EventEmitter();
   public pageNumber = 1;
 
@@ -37,7 +36,7 @@ export class TransactionsComponent implements OnInit {
     this.transactions = this.walletService.walletHistory()
       .pipe(
         map((items) => {
-          return this.stakingOnly ? items.filter(i => i.transactionType === 'staked') : items;
+          return items;
         }));
   }
 
