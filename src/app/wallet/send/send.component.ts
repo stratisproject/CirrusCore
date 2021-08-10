@@ -100,18 +100,15 @@ export class SendComponent implements OnInit, OnDestroy {
   }
 
   private onSendValueChanged(data: any, isSideChain: boolean): void {
+
     const form = isSideChain ? this.sendToSidechainForm : this.sendForm;
     if (!form) {
       return;
     }
 
     FormHelper.ValidateForm(form,
-                            isSideChain
-                              ? this.sendToSidechainFormErrors
-                              : this.sendFormErrors,
-                            isSideChain
-                              ? SendComponentFormResources.sendToSidechainValidationMessages
-                              : SendComponentFormResources.sendValidationMessages
+                            isSideChain ? this.sendToSidechainFormErrors : this.sendFormErrors,
+                            isSideChain ? SendComponentFormResources.sendToSidechainValidationMessages : SendComponentFormResources.sendValidationMessages
     );
 
     this.apiError = '';
@@ -145,6 +142,7 @@ export class SendComponent implements OnInit, OnDestroy {
   }
 
   public estimateFee(form: FormGroup, isSideChain: boolean): void {
+
     const transaction = new FeeEstimation(
       this.globalService.getWalletName(),
       'account 0',
@@ -156,6 +154,9 @@ export class SendComponent implements OnInit, OnDestroy {
 
     this.walletService.estimateFee(transaction).toPromise()
       .then(response => {
+        
+        writeLog('Request to shutdown daemon returned HTTP success code.');
+
         if (isSideChain) {
           this.estimatedSidechainFee = response;
         } else {
