@@ -4,7 +4,7 @@ import { FormControl, FormArray, Validators, FormGroup } from '@angular/forms';
 import { Mixin } from '../../models/mixin';
 import { Disposable } from '../../models/disposable';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { SmartContractsService } from '../../../smart-contracts/smart-contracts.service';
+import { SmartContractsService } from '@shared/services/smart-contracts.service';
 
 @Component({
   selector: 'app-send-token',
@@ -47,7 +47,7 @@ export class SendTokenComponent implements OnInit {
   transactionForm: FormGroup;
   tokenAmount: FormControl;
 
-  constructor(private activeModal: NgbActiveModal, private smartContractsService: SmartContractsService) {}
+  constructor(private activeModal: NgbActiveModal, private smartContractsService: SmartContractsService) { }
 
   ngOnInit(): void {
     this.title = 'Send token ' + this.token.ticker;
@@ -94,18 +94,18 @@ export class SendTokenComponent implements OnInit {
         this.loading = false;
         this.activeModal.close({ request: result, callResponse, amount: this.tokenAmount.value, recipientAddress: this.recipientAddress.value });
       },
-            error => {
-              this.loading = false;
-              if (!error.error.errors) {
-                if (error.error.value.message) {
-                  this.apiError = error.error.value.message;
-                } else {
-                  console.log(error);
-                }
-              } else {
-                this.apiError = error.error.errors[0].message;
-              }
-            });
+        error => {
+          this.loading = false;
+          if (!error.error.errors) {
+            if (error.error.value.message) {
+              this.apiError = error.error.value.message;
+            } else {
+              console.log(error);
+            }
+          } else {
+            this.apiError = error.error.errors[0].message;
+          }
+        });
   }
 
   setTokenAmount(tokenBalance: string): void {

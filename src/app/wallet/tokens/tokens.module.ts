@@ -11,7 +11,7 @@ import { SendTokenComponent } from './components/send-token/send-token.component
 import { TokensComponent } from './components/tokens.component';
 import { StorageService } from './services/storage.service';
 import { TokensService } from './services/tokens.service';
-import { SmartContractsService } from '../smart-contracts/smart-contracts.service';
+import { SmartContractsService } from '@shared/services/smart-contracts.service';
 
 @NgModule({
   imports: [

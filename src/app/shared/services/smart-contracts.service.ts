@@ -27,7 +27,6 @@ export abstract class SmartContractsServiceBase {
   GetContracts(walletName: string): Observable<SmartContractsContractItem[]> { return of(); }
   GetSenderAddresses(walletName: string): Observable<string[]> { return of(); }
   GetParameterTypes(walletName: string): Observable<string[]> { return of(); }
-  GetHistory(walletName: string, address: string): Observable<ContractTransactionItem[]> { return of(); }
   PostCreate(createTransaction: any): Observable<any> { return of(); }
   PostCall(createTransaction: any): Observable<any> { return of(); }
 }
@@ -52,10 +51,6 @@ export class SmartContractsService implements SmartContractsServiceBase {
 
   PostCreate(createTransaction: any): Observable<any> {
     return this.apiService.postCreateTransaction(createTransaction);
-  }
-
-  GetHistory(walletName: string, address: string): Observable<any> {
-    return this.apiService.getAccountHistory(walletName, address);
   }
 
   GetBalance(walletName: string): Observable<any> {

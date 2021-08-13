@@ -16,7 +16,7 @@ import {
 import { catchError, first, switchMap, takeUntil, tap, take } from 'rxjs/operators';
 
 import { Mode, TransactionComponent } from '../../smart-contracts/components/modals/transaction/transaction.component';
-import { SmartContractsServiceBase } from '../../smart-contracts/smart-contracts.service';
+import { SmartContractsServiceBase } from '@shared/services/smart-contracts.service';
 import { Disposable } from '../models/disposable';
 import { Mixin } from '../models/mixin';
 import { SavedToken, Token } from '../models/token';
@@ -70,14 +70,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     this.coinUnit = this.globalService.getCoinUnit();
     this.selectedAddress = this.currentAccountService.address;
 
-    this.smartContractsService.GetHistory(this.walletName, this.selectedAddress)
-      .pipe(catchError(error => {
-        this.showApiError(`Error retrieving transactions. ${String(error)}`);
-        return of([]);
-      }),
-            take(1)
-      )
-      .subscribe(history => this.history = history);
+    this.history = []; //this.smartContractsService.GetHistory(this.walletName, this.selectedAddress);
 
     this.smartContractsService.GetAddressBalance(this.selectedAddress)
       .pipe(
@@ -117,18 +110,18 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
           this.loggerService.log(`Error getting token balance for token address ${token.address}`);
           return of(null);
         }),
-              tap(balance => {
-                if (balance === null) {
-                  token.clearBalance();
-                  this.tokenLoading[token.address] = 'error';
-                  return;
-                }
+          tap(balance => {
+            if (balance === null) {
+              token.clearBalance();
+              this.tokenLoading[token.address] = 'error';
+              return;
+            }
 
-                this.tokenLoading[token.address] = 'loaded';
-                if (balance !== token.balance) {
-                  token.setBalance(balance);
-                }
-              }));
+            this.tokenLoading[token.address] = 'loaded';
+            if (balance !== token.balance) {
+              token.setBalance(balance);
+            }
+          }));
     }));
   }
 

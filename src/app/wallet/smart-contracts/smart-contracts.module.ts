@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { ClipboardModule } from 'ngx-clipboard';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SmartContractsServiceBase, SmartContractsService } from './smart-contracts.service';
+import { SmartContractsServiceBase, SmartContractsService } from '@shared/services/smart-contracts.service';
 import { SmartContractsComponent } from './components/smart-contracts.component';
 import { TransactionComponent } from './components/modals/transaction/transaction.component';
 import { SharedModule } from '@shared/shared.module';
