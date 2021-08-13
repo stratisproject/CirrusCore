@@ -367,6 +367,7 @@ export class WalletService extends RestApi {
         this.clearWalletHistory();
         //this.paginateHistory();
         this.getHistory();
+        this.updateSmartContractHistory();
 
         if (!this.rescanInProgress && !this.isSyncing) {
           this.walletActivitySubject.next(true);

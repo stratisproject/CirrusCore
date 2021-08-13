@@ -43,7 +43,6 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
   disposed$ = new ReplaySubject<boolean>();
   dispose: () => void;
   selectedAddress: string;
-  history = [];
   walletName: string;
   tokens$: Observable<SavedToken[]>;
   availableTokens: Token[] = [];
@@ -69,8 +68,6 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     this.availableTokens.push(new Token('Custom', 'custom', 'custom'));
     this.coinUnit = this.globalService.getCoinUnit();
     this.selectedAddress = this.currentAccountService.address;
-
-    this.history = []; //this.smartContractsService.GetHistory(this.walletName, this.selectedAddress);
 
     this.smartContractsService.GetAddressBalance(this.selectedAddress)
       .pipe(

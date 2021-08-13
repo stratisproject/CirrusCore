@@ -76,9 +76,9 @@ function createMenu() {
   const menuTemplate = [{
     label: app.getName(),
     submenu: [
-      {label: 'About ' + app.getName(), selector: 'orderFrontStandardAboutPanel:'},
+      { label: 'About ' + app.getName(), selector: 'orderFrontStandardAboutPanel:' },
       {
-        label: 'Quit', accelerator: 'Command+Q', click: function(): void {
+        label: 'Quit', accelerator: 'Command+Q', click: function (): void {
           app.quit();
         }
       }
@@ -86,12 +86,12 @@ function createMenu() {
   }, {
     label: 'Edit',
     submenu: [
-      {label: 'Undo', accelerator: 'CmdOrCtrl+Z', selector: 'undo:'},
-      {label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', selector: 'redo:'},
-      {label: 'Cut', accelerator: 'CmdOrCtrl+X', selector: 'cut:'},
-      {label: 'Copy', accelerator: 'CmdOrCtrl+C', selector: 'copy:'},
-      {label: 'Paste', accelerator: 'CmdOrCtrl+V', selector: 'paste:'},
-      {label: 'Select All', accelerator: 'CmdOrCtrl+A', selector: 'selectAll:'}
+      { label: 'Undo', accelerator: 'CmdOrCtrl+Z', selector: 'undo:' },
+      { label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', selector: 'redo:' },
+      { label: 'Cut', accelerator: 'CmdOrCtrl+X', selector: 'cut:' },
+      { label: 'Copy', accelerator: 'CmdOrCtrl+C', selector: 'copy:' },
+      { label: 'Paste', accelerator: 'CmdOrCtrl+V', selector: 'paste:' },
+      { label: 'Select All', accelerator: 'CmdOrCtrl+A', selector: 'selectAll:' }
     ]
   }
   ];
@@ -168,20 +168,20 @@ function createTray(): void {
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Hide/Show',
-      click: function(): void {
+      click: function (): void {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
       }
     },
     {
       label: 'Exit',
-      click: function(): void {
+      click: function (): void {
         app.quit();
       }
     }
   ]);
   systemTray.setToolTip(applicationName);
   systemTray.setContextMenu(contextMenu);
-  systemTray.on('click', function(): void {
+  systemTray.on('click', function (): void {
     if (!mainWindow.isVisible()) {
       mainWindow.show();
     }
@@ -191,7 +191,7 @@ function createTray(): void {
     }
   });
 
-  app.on('window-all-closed', function(): void {
+  app.on('window-all-closed', function (): void {
     if (systemTray) {
       systemTray.destroy();
     }
@@ -204,7 +204,7 @@ let mainWindow = null;
 
 function createWindow(): void {
   // Create the browser window.
-  const height =  screen.getPrimaryDisplay().bounds.height - 100;
+  const height = screen.getPrimaryDisplay().bounds.height - 100;
   const width = Math.round(height * 1.1);
 
   mainWindow = new BrowserWindow({
@@ -218,7 +218,7 @@ function createWindow(): void {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
       contextIsolation: false,  // false if you want to run 2e2 test with Spectron
-      enableRemoteModule : true // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
+      enableRemoteModule: true // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
     },
   });
 
@@ -275,15 +275,14 @@ var delayExecuted = false;
  * the signal to exit and wants to start closing windows */
 app.on('before-quit', (event) => {
 
-  if(!delayExecuted)
-  {
+  if (!delayExecuted) {
     if (!serve && !nodaemon) {
 
       shutdownDaemon(daemonIP, apiPort);
 
       console.log('Executing shutdown delay to ensure that the node is disposed properly.');
 
-      setTimeout(function() { delayExecutionComplete();}, 5000); 
+      setTimeout(function () { delayExecutionComplete(); }, 10000);
 
       event.preventDefault();
     }
@@ -293,7 +292,7 @@ app.on('before-quit', (event) => {
   }
 });
 
-function delayExecutionComplete () {
+function delayExecutionComplete() {
   console.log('Delay execution completed.');
   delayExecuted = true;
   app.quit();
