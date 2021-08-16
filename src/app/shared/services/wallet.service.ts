@@ -219,8 +219,6 @@ export class WalletService extends RestApi {
       .then(history => {
         this.applyHistory(history);
         this.loadingSubject.next(false);
-
-        //this.historyUpdatedSubject.next(true);
       });
   }
 
