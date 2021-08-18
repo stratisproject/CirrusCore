@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ApiService } from '@shared/services/api.service';
 import { GlobalService } from '@shared/services/global.service';
 import { SendComponent } from '../send/send.component';
 import { ReceiveComponent } from '../receive/receive.component';
@@ -22,7 +21,6 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private walletService: WalletService,
-    private apiService: ApiService,
     public globalService: GlobalService,
     private modalService: NgbModal) {
   }
@@ -33,10 +31,10 @@ export class DashboardComponent implements OnInit {
   }
 
   public openSendDialog(): void {
-    this.modalService.open(SendComponent, {backdrop: 'static', keyboard: false});
+    this.modalService.open(SendComponent, { backdrop: 'static', keyboard: false });
   }
 
   public openReceiveDialog(): void {
-    this.modalService.open(ReceiveComponent, {backdrop: 'static', keyboard: false});
+    this.modalService.open(ReceiveComponent, { backdrop: 'static', keyboard: false });
   }
 }

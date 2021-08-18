@@ -16,7 +16,7 @@ import {
 import { catchError, first, switchMap, takeUntil, tap, take } from 'rxjs/operators';
 
 import { Mode, TransactionComponent } from '../../smart-contracts/components/modals/transaction/transaction.component';
-import { SmartContractsServiceBase } from '../../smart-contracts/smart-contracts.service';
+import { SmartContractsServiceBase } from '@shared/services/smart-contracts.service';
 import { Disposable } from '../models/disposable';
 import { Mixin } from '../models/mixin';
 import { SavedToken, Token } from '../models/token';
@@ -28,6 +28,7 @@ import { AddTokenComponent } from './add-token/add-token.component';
 import { ProgressComponent } from './progress/progress.component';
 import { SendTokenComponent } from './send-token/send-token.component';
 import { CurrentAccountService } from '@shared/services/current-account.service';
+import { WalletService } from '@shared/services/wallet.service';
 
 @Component({
   selector: 'app-tokens',
@@ -43,7 +44,6 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
   disposed$ = new ReplaySubject<boolean>();
   dispose: () => void;
   selectedAddress: string;
-  history = [];
   walletName: string;
   tokens$: Observable<SavedToken[]>;
   availableTokens: Token[] = [];
@@ -61,7 +61,8 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     private modalService: NgbModal,
     private globalService: GlobalService,
     private currentAccountService: CurrentAccountService,
-    private loggerService: LoggerService) {
+    private loggerService: LoggerService,
+    private walletService: WalletService) {
 
     this.walletName = this.globalService.getWalletName();
 
@@ -70,24 +71,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     this.coinUnit = this.globalService.getCoinUnit();
     this.selectedAddress = this.currentAccountService.address;
 
-    this.smartContractsService.GetHistory(this.walletName, this.selectedAddress)
-      .pipe(catchError(error => {
-        this.showApiError(`Error retrieving transactions. ${String(error)}`);
-        return of([]);
-      }),
-            take(1)
-      )
-      .subscribe(history => this.history = history);
-
-    this.smartContractsService.GetAddressBalance(this.selectedAddress)
-      .pipe(
-        catchError(error => {
-          this.showApiError(`Error retrieving balance. ${String(error)}`);
-          return of(0);
-        }),
-        take(1)
-      )
-      .subscribe(balance => this.balance = balance);
+    this.walletService.getSmartContractAddressBalance().subscribe(balance => this.balance = balance);
 
     // Update requested token balances
     this.tokenBalanceRefreshRequested$
@@ -117,18 +101,18 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
           this.loggerService.log(`Error getting token balance for token address ${token.address}`);
           return of(null);
         }),
-              tap(balance => {
-                if (balance === null) {
-                  token.clearBalance();
-                  this.tokenLoading[token.address] = 'error';
-                  return;
-                }
+          tap(balance => {
+            if (balance === null) {
+              token.clearBalance();
+              this.tokenLoading[token.address] = 'error';
+              return;
+            }
 
-                this.tokenLoading[token.address] = 'loaded';
-                if (balance !== token.balance) {
-                  token.setBalance(balance);
-                }
-              }));
+            this.tokenLoading[token.address] = 'loaded';
+            if (balance !== token.balance) {
+              token.setBalance(balance);
+            }
+          }));
     }));
   }
 

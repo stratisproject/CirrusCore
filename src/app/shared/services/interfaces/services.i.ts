@@ -83,8 +83,6 @@ export interface IApiService {
 
   getAddressBalance(address: string): Observable<any>;
 
-  getAccountHistory(walletName: string, address: string): Observable<any>;
-
   postCreateTransaction(transaction: any): Observable<any>;
 
   postCallTransaction(transaction: any): Observable<any>;
@@ -94,6 +92,4 @@ export interface IApiService {
   getReceiptSilent(hash: string): any;
 
   localCall(localCall: TokenBalanceRequest): Observable<LocalExecutionResult>;
-
 }
-

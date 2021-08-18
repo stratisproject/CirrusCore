@@ -133,19 +133,19 @@ export class ApiService extends RestApi implements IApiService {
    */
   public getMaximumBalance(data: WalletInfoRequest): Observable<any> {
     return this.get('wallet/maxbalance',
-                    this.getWalletParams(data, {
-                      feeType: data.feeType,
-                      allowUnconfirmed: 'true'
-                    })).pipe(
-      catchError(err => this.handleHttpError(err))
-    );
+      this.getWalletParams(data, {
+        feeType: data.feeType,
+        allowUnconfirmed: 'true'
+      })).pipe(
+        catchError(err => this.handleHttpError(err))
+      );
   }
 
   /**
    * Get multiple unused receive addresses for a certain wallet from the API.
    */
   public getUnusedReceiveAddresses(data: WalletInfo, count: string): Observable<any> {
-    return this.get('wallet/unusedaddresses', this.getWalletParams(data, {count})).pipe(
+    return this.get('wallet/unusedaddresses', this.getWalletParams(data, { count })).pipe(
       catchError(err => this.handleHttpError(err))
     );
   }
@@ -201,23 +201,8 @@ export class ApiService extends RestApi implements IApiService {
     * Get the balance of the active smart contract address.
     */
   public getAddressBalance(address: string): Observable<any> {
-
     const params = new HttpParams().set('address', address);
-
     return this.get('smartcontractwallet/address-balance', params).pipe(
-      catchError(err => this.handleHttpError(err))
-    );
-  }
-
-  /*
-    * Gets the transaction history of the smart contract account.
-    */
-  public getAccountHistory(walletName: string, address: string): Observable<WalletHistory> {
-    const params = new HttpParams()
-      .set('walletName', walletName)
-      .set('address', address);
-     
-    return this.get<WalletHistory>('smartcontractwallet/history', params).pipe(
       catchError(err => this.handleHttpError(err))
     );
   }

@@ -1,16 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subject, of } from 'rxjs';
-import { catchError, take } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { ClipboardService } from 'ngx-clipboard';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { SmartContractsServiceBase, ContractTransactionItem } from '../smart-contracts.service';
+import { SmartContractsServiceBase, ContractTransactionItem } from '@shared/services/smart-contracts.service';
 import { GlobalService } from '@shared/services/global.service';
 import { TransactionComponent, Mode } from './modals/transaction/transaction.component';
 import { ModalService } from '@shared/services/modal.service';
 import { CurrentAccountService } from '@shared/services/current-account.service';
-
-import { Observable } from 'rxjs';
 import { WalletService } from '@shared/services/wallet.service';
 
 @Component({
@@ -21,9 +18,6 @@ import { WalletService } from '@shared/services/wallet.service';
 
 export class SmartContractsComponent implements OnInit, OnDestroy {
 
-  public historyUpdated: Observable<boolean>;
-
-  private walletName = '';
   addressChangedSubject: Subject<string>;
   balance: number;
   selectedAddress: string;
@@ -31,56 +25,22 @@ export class SmartContractsComponent implements OnInit, OnDestroy {
   coinUnit: string;
   unsubscribe: Subject<void> = new Subject();
 
-  constructor(private globalService: GlobalService,
+  constructor(
+    private globalService: GlobalService,
     private smartContractsService: SmartContractsServiceBase,
     private clipboardService: ClipboardService,
     private modalService: NgbModal,
     private genericModalService: ModalService,
     private currentAccountService: CurrentAccountService,
-    public walletService: WalletService) {
+    private walletService: WalletService) {
 
     this.coinUnit = this.globalService.getCoinUnit();
-    this.walletName = this.globalService.getWalletName();
     this.selectedAddress = this.currentAccountService.address;
-
-    this.smartContractsService.GetAddressBalance(this.selectedAddress)
-      .pipe(
-        catchError(error => {
-          this.showApiError(`Error retrieving balance. ${String(error)}`);
-          return of(0);
-        }), take(1))
-      .subscribe(balance => this.balance = balance);
-
-    this.smartContractsService.GetHistory(this.walletName, this.selectedAddress)
-      .pipe(
-        catchError(error => {
-          this.showApiError(`Error retrieving transactions. ${String(error)}`);
-          return of([]);
-        }), take(1))
-      .subscribe(history => this.history = history);
   }
 
   ngOnInit(): void {
-    this.historyUpdated = this.walletService.historyRefreshed;
-    this.historyUpdated.subscribe(_ => {
-
-      // Update address balance
-      this.smartContractsService.GetAddressBalance(this.selectedAddress)
-        .pipe(
-          catchError(error => {
-            this.showApiError(`Error retrieving balance. ${String(error)}`);
-            return of(0);
-          }), take(1))
-        .subscribe(balance => this.balance = balance);
-
-      // Update history
-      this.smartContractsService.GetHistory(this.walletName, this.selectedAddress)
-        .pipe(catchError(error => {
-          this.showApiError(`Error retrieving smart contract transaction history. ${String(error)}`);
-          return of([]);
-        }), take(1))
-        .subscribe(history => this.history = history);
-    });
+    this.walletService.getSmartContractAddressBalance().subscribe(balance => this.balance = balance);
+    this.walletService.getSmartContractHistory().subscribe(history => this.history = history);
   }
 
   ngOnDestroy(): void {

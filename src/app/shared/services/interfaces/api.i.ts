@@ -87,10 +87,6 @@ export class WalletBalance {
   public get hasBalance(): boolean {
     return (this.amountConfirmed + this.amountUnconfirmed) > 0;
   }
-
-  public get awaitingMaturityIfStaking(): number {
-    return (this.amountUnconfirmed + this.amountConfirmed) - this.spendableAmount;
-  }
 }
 
 export interface Balances {
@@ -121,21 +117,6 @@ export interface WalletHistory {
   history: WalletHistoryAccount[];
 }
 
-export interface StakingInfo {
-  enabled: boolean;
-  staking: boolean;
-  errors?: any;
-  currentBlockSize: number;
-  currentBlockTx: number;
-  pooledTx: number;
-  difficulty: number;
-  searchInterval: number;
-  weight: number;
-  netStakeWeight: number;
-  immature: number;
-  expectedTime: number;
-}
-
 export interface GeneralInfo {
   walletName: string;
   walletFilePath: string;
@@ -147,7 +128,7 @@ export interface GeneralInfo {
   isChainSynced: boolean;
   connectedNodes: number;
   accountsBalances?: WalletBalance[];
-  percentSynced? : number;
+  percentSynced?: number;
 }
 
 export interface FullNodeEventModel {

@@ -1,4 +1,4 @@
-import { GeneralInfo, StakingInfo } from '@shared/services/interfaces/api.i';
+import { GeneralInfo } from '@shared/services/interfaces/api.i';
 
 export interface SignalREvent {
   nodeEventType: string;
@@ -12,9 +12,6 @@ export interface BlockConnectedSignalREvent extends SignalREvent {
 export interface WalletInfoSignalREvent extends SignalREvent, GeneralInfo {
 }
 
-export interface StakingInfoSignalREvent extends SignalREvent, StakingInfo {
-}
-
 export interface FullNodeEvent extends SignalREvent {
   message: string;
   state: string;
@@ -22,9 +19,7 @@ export interface FullNodeEvent extends SignalREvent {
 
 export enum SignalREvents {
   BlockConnected = 'BlockConnected',
-  TransactionReceived = 'TransactionReceived',
   WalletGeneralInfo = 'WalletGeneralInfo',
-  StakingInfo = 'StakingInfo',
   FullNodeEvent = 'FullNodeEvent',
   WalletProcessedTransactionOfInterestEvent = 'WalletProcessedTransactionOfInterestEvent'
 }
