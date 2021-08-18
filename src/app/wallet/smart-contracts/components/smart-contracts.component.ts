@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { ClipboardService } from 'ngx-clipboard';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { SmartContractsServiceBase, ContractTransactionItem } from '@/shared/services/smart-contracts.service';
+import { SmartContractsServiceBase, ContractTransactionItem } from '@shared/services/smart-contracts.service';
 import { GlobalService } from '@shared/services/global.service';
 import { TransactionComponent, Mode } from './modals/transaction/transaction.component';
 import { ModalService } from '@shared/services/modal.service';
@@ -21,9 +21,7 @@ export class SmartContractsComponent implements OnInit, OnDestroy {
   addressChangedSubject: Subject<string>;
   balance: number;
   selectedAddress: string;
-
-  private history: ContractTransactionItem[];
-
+  history: ContractTransactionItem[];
   coinUnit: string;
   unsubscribe: Subject<void> = new Subject();
 
@@ -34,13 +32,14 @@ export class SmartContractsComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private genericModalService: ModalService,
     private currentAccountService: CurrentAccountService,
-    public walletService: WalletService) {
+    private walletService: WalletService) {
 
     this.coinUnit = this.globalService.getCoinUnit();
     this.selectedAddress = this.currentAccountService.address;
   }
 
   ngOnInit(): void {
+    this.walletService.getSmartContractAddressBalance().subscribe(balance => this.balance = balance);
     this.walletService.getSmartContractHistory().subscribe(history => this.history = history);
   }
 

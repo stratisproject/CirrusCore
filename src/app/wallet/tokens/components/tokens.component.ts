@@ -28,6 +28,7 @@ import { AddTokenComponent } from './add-token/add-token.component';
 import { ProgressComponent } from './progress/progress.component';
 import { SendTokenComponent } from './send-token/send-token.component';
 import { CurrentAccountService } from '@shared/services/current-account.service';
+import { WalletService } from '@shared/services/wallet.service';
 
 @Component({
   selector: 'app-tokens',
@@ -60,7 +61,8 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     private modalService: NgbModal,
     private globalService: GlobalService,
     private currentAccountService: CurrentAccountService,
-    private loggerService: LoggerService) {
+    private loggerService: LoggerService,
+    private walletService: WalletService) {
 
     this.walletName = this.globalService.getWalletName();
 
@@ -69,15 +71,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     this.coinUnit = this.globalService.getCoinUnit();
     this.selectedAddress = this.currentAccountService.address;
 
-    this.smartContractsService.GetAddressBalance(this.selectedAddress)
-      .pipe(
-        catchError(error => {
-          this.showApiError(`Error retrieving balance. ${String(error)}`);
-          return of(0);
-        }),
-        take(1)
-      )
-      .subscribe(balance => this.balance = balance);
+    this.walletService.getSmartContractAddressBalance().subscribe(balance => this.balance = balance);
 
     // Update requested token balances
     this.tokenBalanceRefreshRequested$

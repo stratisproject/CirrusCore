@@ -20,8 +20,8 @@ import { WalletResync } from '@shared/models/wallet-rescan';
 import { NodeService } from '@shared/services/node-service';
 import { TransactionInfo } from '@shared/models/transaction-info';
 import { ExtPubKeyImport } from '@shared/models/extpubkey-import';
-import { SmartContractsServiceBase, ContractTransactionItem } from '@shared/services/smart-contracts.service';
 import { ModalService } from '@shared/services/modal.service';
+import { ContractTransactionItem } from '@shared/services/smart-contracts.service';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +37,7 @@ export class WalletService extends RestApi {
   public isSyncing: boolean;
   public ibdMode: boolean;
 
+  private smartContractAddressBalance = new BehaviorSubject<number>(0);
   private smartContractHistorySubject = new BehaviorSubject<ContractTransactionItem[]>([]);
 
   public get loading(): Observable<boolean> {
@@ -59,8 +60,7 @@ export class WalletService extends RestApi {
     errorService: ErrorService,
     loggerService: LoggerService,
     signalRService: SignalRService,
-    private genericModalService: ModalService,
-    private smartContractsService: SmartContractsServiceBase) {
+    private genericModalService: ModalService) {
     super(globalService, http, errorService, loggerService);
 
     globalService.currentWallet.subscribe(wallet => {
@@ -303,11 +303,13 @@ export class WalletService extends RestApi {
       this.walletUpdatedSubjects[this.currentWallet.walletName] = new BehaviorSubject<WalletBalance>(null);
 
       // Initialise the wallet
-      this.getWalletBalance(this.currentWallet).toPromise().then(data => {
-        if (data.balances.length > 0 && data.balances[this.currentWallet.account]) {
-          this.updateWalletForCurrentAddress(data.balances[this.currentWallet.account]);
-        }
-      });
+      this.getWalletBalance(this.currentWallet)
+        .toPromise()
+        .then(data => {
+          if (data.balances.length > 0 && data.balances[this.currentWallet.account]) {
+            this.updateWalletForCurrentAddress(data.balances[this.currentWallet.account]);
+          }
+        });
     }
     return this.walletUpdatedSubjects[this.currentWallet.walletName];
   }
@@ -315,11 +317,8 @@ export class WalletService extends RestApi {
   private getWalletHistorySubject(): BehaviorSubject<TransactionInfo[]> {
     if (!this.walletHistorySubjects[this.currentWallet.walletName]) {
       this.walletHistorySubjects[this.currentWallet.walletName] = new BehaviorSubject<TransactionInfo[]>([]);
-
-      // Get initial Wallet History
-      //this.paginateHistory(40);
-      this.getHistory();
     }
+
     return this.walletHistorySubjects[this.currentWallet.walletName];
   }
 
@@ -358,12 +357,11 @@ export class WalletService extends RestApi {
 
     if (this.accountsEnabled) {
 
-      if (null != this.currentAccountService.address && (null == newBalance.currentAddress || newBalance.currentAddress.address !== this.currentAccountService.address)) {
-
+      if (this.currentAccountService.address != null && (null == newBalance.currentAddress || newBalance.currentAddress.address !== this.currentAccountService.address)) {
         newBalance.setCurrentAccountAddress(this.currentAccountService.address);
 
-        this.clearWalletHistory();
         //this.paginateHistory();
+        this.clearWalletHistory();
         this.getHistory();
         this.updateSmartContractHistory();
 
@@ -381,6 +379,7 @@ export class WalletService extends RestApi {
       if (!this.rescanInProgress && !this.isSyncing) {
         this.walletActivitySubject.next(true);
       }
+
       //this.paginateHistory();
       this.getHistory();
       this.updateSmartContractHistory();
@@ -405,19 +404,31 @@ export class WalletService extends RestApi {
     }
   }
 
+  public getSmartContractAddressBalance(): Observable<number> {
+    return this.smartContractAddressBalance.asObservable();
+  }
+
   public getSmartContractHistory(): Observable<ContractTransactionItem[]> {
     return this.smartContractHistorySubject.asObservable();
   }
 
   private updateSmartContractHistory(): void {
 
-    // TODO: FIX Update address balance
-    var balance = this.smartContractsService.GetAddressBalance(this.currentAccountService.address)
+    // Update address balance
+    this.loadingSubject.next(true);
+
+    const params = new HttpParams().set('address', this.currentAccountService.address);
+    this.get('smartcontractwallet/address-balance', params)
       .pipe(
-        catchError(error => {
-          //this.showApiError(`Error retrieving balance. ${String(error)}`);
-          return of(0);
-        }), take(1));
+        map((response) => {
+          return response;
+        }),
+        catchError(err => this.handleHttpError(err))
+      ).toPromise()
+      .then(balance => {
+        this.smartContractAddressBalance.next(balance);
+        this.loadingSubject.next(false);
+      });
 
     // Update history
     let extra = Object.assign({}, {}) as { [key: string]: any };

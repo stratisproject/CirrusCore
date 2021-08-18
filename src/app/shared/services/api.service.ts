@@ -201,9 +201,7 @@ export class ApiService extends RestApi implements IApiService {
     * Get the balance of the active smart contract address.
     */
   public getAddressBalance(address: string): Observable<any> {
-
     const params = new HttpParams().set('address', address);
-
     return this.get('smartcontractwallet/address-balance', params).pipe(
       catchError(err => this.handleHttpError(err))
     );
