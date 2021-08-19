@@ -346,9 +346,9 @@ export class WalletService extends RestApi {
     return this.smartContractHistorySubject.asObservable();
   }
 
+  // Update the wallet and smart contract address balance
   private updateSmartContractHistory(): void {
 
-    // Update th wallet and smart contract address balance
     this.loadingSubject.next(true);
 
     const params = new HttpParams().set('address', this.currentAccountService.address);
