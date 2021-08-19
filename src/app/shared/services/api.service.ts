@@ -13,7 +13,6 @@ import { LocalExecutionResult } from '@shared/models/local-execution-result';
 import { TokenBalanceRequest } from '../../wallet/tokens/models/token-balance-request';
 import { RestApi } from '@shared/services/rest-api';
 import { IApiService } from '@shared/services/interfaces/services.i';
-import { WalletHistory } from '@shared/services/interfaces/api.i';
 import { ErrorService } from '@shared/services/error-service';
 import { LoggerService } from '@shared/services/logger.service';
 
