@@ -18,6 +18,7 @@ export class DashboardComponent implements OnInit {
 
   public wallet: Observable<WalletBalance>;
   public transactionCount: Observable<number>;
+  public isLoading: Observable<boolean>;
 
   constructor(
     private walletService: WalletService,
@@ -26,7 +27,8 @@ export class DashboardComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.wallet = this.walletService.wallet();
+    this.isLoading = this.walletService.loading;
+    this.wallet = this.walletService.walletBalance();
     this.transactionCount = this.walletService.walletHistory().pipe(map(items => items ? items.length : 0));
   }
 

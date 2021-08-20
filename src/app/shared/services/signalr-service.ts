@@ -26,9 +26,9 @@ export interface SignalRMessageHandler {
 export class SignalRService extends RestApi implements ISignalRService {
 
   constructor(http: HttpClient,
-              globalService: GlobalService,
-              errorService: ErrorService,
-              loggerService: LoggerService) {
+    globalService: GlobalService,
+    errorService: ErrorService,
+    loggerService: LoggerService) {
     super(globalService, http, errorService, loggerService);
     this.connectToSignalR();
   }
@@ -65,13 +65,13 @@ export class SignalRService extends RestApi implements ISignalRService {
         .build();
 
       this.connection.on('receiveEvent',
-                         (message) => {
-                           try {
-                             this.executeMessageReceivedHandlers(message);
-                           } catch (e) {
-                             this.errorService.handleError(e, true);
-                           }
-                         });
+        (message) => {
+          try {
+            this.executeMessageReceivedHandlers(message);
+          } catch (e) {
+            this.errorService.handleError(e, true);
+          }
+        });
 
       this.connection.onclose((error: Error) => {
         this.onConnectionFailed.emit(error);

@@ -31,7 +31,6 @@ export class GlobalService {
 
   public currentWallet: Observable<WalletInfo> = new BehaviorSubject<WalletInfo>(null);
 
-
   public getApplicationVersion(): string {
     return this.applicationVersion;
   }
