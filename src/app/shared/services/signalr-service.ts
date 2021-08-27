@@ -45,6 +45,10 @@ export class SignalRService extends RestApi implements ISignalRService {
   public onConnectionFailed: EventEmitter<Error> = new EventEmitter<Error>();
 
   public registerOnMessageEventHandler<TMessage>(messageType: string, onEventMessageReceivedHandler: (message: TMessage) => void): void {
+    var handler = this.onMessageReceivedHandlers.find(h => h.messageType === messageType);
+    if (handler != null)
+      return;
+
     this.onMessageReceivedHandlers.push({
       messageType: messageType,
       onEventMessageDelegate: onEventMessageReceivedHandler

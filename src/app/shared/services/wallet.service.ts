@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { SignalRService } from '@shared/services/signalr-service';
 import { WalletInfo } from '@shared/models/wallet-info';
 import { TransactionsHistoryItem, WalletBalance, WalletHistory, WalletNamesData } from '@shared/services/interfaces/api.i';
-import { SignalREvent, SignalREvents, } from '@shared/services/interfaces/signalr-events.i';
+import { WalletProcessedTransactionOfInterestEvent, SignalREvents, } from '@shared/services/interfaces/signalr-events.i';
 import { catchError, map, flatMap, tap } from 'rxjs/operators';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { RestApi } from '@shared/services/rest-api';
@@ -67,8 +67,9 @@ export class WalletService extends RestApi {
     });
 
     // Listen for any transactions that pertains to this wallet.
-    signalRService.registerOnMessageEventHandler<SignalREvent>(SignalREvents.WalletProcessedTransactionOfInterestEvent,
-      () => {
+    signalRService.registerOnMessageEventHandler<WalletProcessedTransactionOfInterestEvent>(SignalREvents.WalletProcessedTransactionOfInterestEvent,
+      (message) => {
+        LoggerService.info("", message.source);
         this.updateWalletForCurrentAddress();
       });
 
@@ -200,28 +201,14 @@ export class WalletService extends RestApi {
 
   private applyHistory(history: TransactionsHistoryItem[]): void {
     const subject = this.getWalletHistorySubject();
-    const existingItems = subject.value;
     const newItems = [];
 
-    // Determine whether or not each item already exists in the cached set.
     history.forEach(item => {
-      const index = existingItems.findIndex(existing => existing.id === item.id);
-
-      // If it does not exist, add it.
-      if (index === -1) {
-        const mapped = TransactionInfo.mapFromTransactionsHistoryItem(item);
-        newItems.push(mapped);
-      }
-      else {
-        if (item.confirmedInBlock && !existingItems[index].transactionConfirmedInBlock) {
-          existingItems.filter(existing => existing.id === item.id).forEach(existing => {
-            existing.transactionConfirmedInBlock = item.confirmedInBlock;
-          });
-        }
-      }
+      const mapped = TransactionInfo.mapFromTransactionsHistoryItem(item);
+      newItems.push(mapped);
     });
-    const set = existingItems.concat(newItems);
-    subject.next(set.sort((a, b) => b.timestamp - a.timestamp));
+
+    subject.next(newItems.sort((a, b) => b.timestamp - a.timestamp));
   }
 
   public broadcastTransaction(transactionHex: string): Observable<string> {
@@ -264,9 +251,6 @@ export class WalletService extends RestApi {
         return this.post('wallet/send-transaction', new TransactionSending(buildTransactionResponse.hex)).pipe(
           map(() => {
             return new TransactionResponse(transaction, buildTransactionResponse.fee, buildTransactionResponse.isSideChain);
-          }),
-          tap(() => {
-            this.updateWalletForCurrentAddress();
           })
         );
       }),

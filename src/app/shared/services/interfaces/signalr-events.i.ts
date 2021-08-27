@@ -17,6 +17,10 @@ export interface FullNodeEvent extends SignalREvent {
   state: string;
 }
 
+export interface WalletProcessedTransactionOfInterestEvent extends SignalREvent {
+  source: string;
+}
+
 export enum SignalREvents {
   BlockConnected = 'BlockConnected',
   WalletGeneralInfo = 'WalletGeneralInfo',
