@@ -295,24 +295,9 @@ export class WalletService extends RestApi {
       return;
     }
 
-    const walletBalanceSubject = this.getWalletBalanceSubject();
-
-    const updatedWalletBalance = new WalletBalance(walletBalanceSubject.value, walletBalanceSubject.value ? walletBalanceSubject.value.currentAddress : null);
-
-    if (this.accountsEnabled) {
-      if (
-        updatedWalletBalance.currentAddress == null ||
-        updatedWalletBalance.currentAddress.address !== this.currentAccountService.address) {
-
-        updatedWalletBalance.setCurrentAccountAddress(this.currentAccountService.address);
-      }
-    }
-
     this.clearWalletHistory();
     this.getHistory();
     this.updateSmartContractHistory();
-
-    walletBalanceSubject.next(updatedWalletBalance);
   }
 
   public clearWalletHistory(): void {
