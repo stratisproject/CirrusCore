@@ -1,5 +1,3 @@
-import { LoggerService } from "@shared/services/logger.service";
-
 export interface WalletNamesData {
   walletNames: Array<string>;
 }
@@ -25,10 +23,6 @@ export class WalletBalance {
   constructor(balance?: WalletBalance, currentAddress?: Address) {
     if (balance) {
       Object.assign(this, balance);
-    }
-
-    if (currentAddress) {
-      this.setCurrentAccountAddress(currentAddress.address);
     }
   }
 
@@ -66,23 +60,6 @@ export class WalletBalance {
   public addresses: Address[];
 
   public currentAddress: Address;
-
-  public setCurrentAccountAddress(address: string): WalletBalance {
-
-    if (this.addresses) {
-      this.currentAddress = this.addresses.find(a => a.address === address);
-    }
-
-    if (this.currentAddress) {
-      this._useAddress = true;
-    } else {
-      LoggerService.error({
-        name: 'Address not found',
-        message: `The address ${address} was not found.`
-      });
-    }
-    return this;
-  }
 
   public get hasBalance(): boolean {
     return (this.amountConfirmed + this.amountUnconfirmed) > 0;
