@@ -20,7 +20,6 @@ import { WalletResync } from '@shared/models/wallet-rescan';
 import { NodeService } from '@shared/services/node-service';
 import { TransactionInfo } from '@shared/models/transaction-info';
 import { ExtPubKeyImport } from '@shared/models/extpubkey-import';
-import { ModalService } from '@shared/services/modal.service';
 import { ContractTransactionItem } from '@shared/services/smart-contracts.service';
 
 @Injectable({
@@ -50,8 +49,7 @@ export class WalletService extends RestApi {
     http: HttpClient,
     errorService: ErrorService,
     loggerService: LoggerService,
-    signalRService: SignalRService,
-    private genericModalService: ModalService) {
+    signalRService: SignalRService) {
     super(globalService, http, errorService, loggerService);
 
     globalService.currentWallet.subscribe(wallet => {
@@ -151,7 +149,6 @@ export class WalletService extends RestApi {
 
       feeEstimation.sender = this.currentAccountService.address;
       feeEstimation.shuffleOutputs = false;
-
       return this.post('smartcontracts/estimate-fee', feeEstimation).pipe(
         catchError(err => this.handleHttpError(err))
       );

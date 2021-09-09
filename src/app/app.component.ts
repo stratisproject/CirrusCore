@@ -9,7 +9,6 @@ import { NodeService } from '@shared/services/node-service';
 import { FullNodeEventModel } from '@shared/services/interfaces/api.i';
 import { ApiService } from '@shared/services/api.service';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -77,7 +76,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private getStatusThroughApi(): void {
 
     console.log("Getting status from API.");
-    
+
     let retry = 0;
 
     const stream$ = this.apiService.getNodeStatus(true).pipe(
@@ -98,11 +97,10 @@ export class AppComponent implements OnInit, OnDestroy {
         this.subscriptions.push(this.statusIntervalSubscription = this.apiService.getNodeStatusInterval(true)
           .subscribe(
             response => {
-              if(response) {
+              if (response) {
                 const statusResponse = response.featuresData.filter(x => x.namespace === 'Stratis.Bitcoin.Base.BaseFeature');
-                const lastFeatureResponse = response.featuresData.find(x => x.namespace === this.lastFeatureNamespace);
-                if (statusResponse.length > 0 && statusResponse[0].state === 'Initialized'
-                  && lastFeatureResponse && lastFeatureResponse.state === 'Initialized') {
+                const lastFeatureResponse = response.featuresData.find(x => x.namespace === 'Stratis.Bitcoin.Features.SignalR.SignalRFeature' || x.namespace === this.lastFeatureNamespace);
+                if (statusResponse.length > 0 && statusResponse[0].state === 'Initialized' && lastFeatureResponse && lastFeatureResponse.state === 'Initialized') {
                   this.loading = false;
                   this.statusIntervalSubscription.unsubscribe();
                   this.router.navigate(['login']);

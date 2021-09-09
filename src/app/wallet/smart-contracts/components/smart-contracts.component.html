@@ -87,7 +87,11 @@
                 <td>
                   <sc-balance [balance]="item.gasFee" [coinUnit]="coinUnit"></sc-balance>
                 </td>
-                <td>&nbsp;</td>
+                <td>
+                  <div *ngIf="item.type === 4 && item.to"><button class="btn btn-stratis-green btn-block"
+                      (click)="openContractPage(item)">View</button>
+                  </div>
+                </td>
               </tr>
 
             </tbody>
