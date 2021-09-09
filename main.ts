@@ -16,6 +16,7 @@ const applicationName = 'Cirrus Core';
 const args = process.argv.slice(1);
 const serve = args.some(val => val === '--serve' || val === '-serve');
 const testnet = args.some(val => val === '--testnet' || val === '-testnet');
+const devmode = args.some(val => val === '--devmode' || val === '-devmode');
 let nodaemon = args.some(val => val === '--nodaemon' || val === '-nodaemon');
 const devtools = args.some(val => val === '--devtools' || val === '-devtools');
 
@@ -25,7 +26,7 @@ if (os.platform() === 'darwin') {
 
 // Set default API port according to network
 let apiPortDefault;
-if (testnet) {
+if (testnet || devmode) {
   apiPortDefault = 38223;
 } else {
   apiPortDefault = 37223;

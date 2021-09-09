@@ -1,13 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { SmartContractsServiceBase, ContractTransactionItem } from '@shared/services/smart-contracts.service';
-import { GlobalService } from '@shared/services/global.service';
-import { TransactionComponent, Mode } from './modals/transaction/transaction.component';
-import { ModalService } from '@shared/services/modal.service';
 import { CurrentAccountService } from '@shared/services/current-account.service';
+import { ErrorService } from '@shared/services/error-service';
+import { GlobalService } from '@shared/services/global.service';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { LoggerService } from '@shared/services/logger.service';
+import { ModalService } from '@shared/services/modal.service';
+import { RestApi } from '@shared/services/rest-api';
+import { SmartContractsServiceBase, ContractTransactionItem } from '@shared/services/smart-contracts.service';
+import { TransactionComponent, Mode } from './modals/transaction/transaction.component';
 import { WalletService } from '@shared/services/wallet.service';
 
 @Component({
@@ -16,25 +21,34 @@ import { WalletService } from '@shared/services/wallet.service';
   styleUrls: ['./smart-contracts.component.css']
 })
 
-export class SmartContractsComponent implements OnInit, OnDestroy {
+export class SmartContractsComponent extends RestApi implements OnInit, OnDestroy {
 
   addressChangedSubject: Subject<string>;
   balance: number;
+  globalService: GlobalService;
   selectedAddress: string;
   history: ContractTransactionItem[];
   coinUnit: string;
   unsubscribe: Subject<void> = new Subject();
 
+  initializedContracts: string[] = [];
+
   constructor(
-    private globalService: GlobalService,
-    private smartContractsService: SmartContractsServiceBase,
     private clipboardService: ClipboardService,
-    private modalService: NgbModal,
-    private genericModalService: ModalService,
     private currentAccountService: CurrentAccountService,
+    errorService: ErrorService,
+    private genericModalService: ModalService,
+    globalService: GlobalService,
+    http: HttpClient,
+    loggerService: LoggerService,
+    private modalService: NgbModal,
+    private smartContractsService: SmartContractsServiceBase,
     private walletService: WalletService) {
 
-    this.coinUnit = this.globalService.getCoinUnit();
+    super(globalService, http, errorService, loggerService);
+
+    this.globalService = globalService;
+    this.coinUnit = globalService.getCoinUnit();
     this.selectedAddress = this.currentAccountService.address;
   }
 
@@ -75,7 +89,6 @@ export class SmartContractsComponent implements OnInit, OnDestroy {
   }
 
   txHashClicked(contract: ContractTransactionItem): void {
-    console.log('txhash clicked');
     this.smartContractsService
       .GetReceipt(contract.hash)
       .toPromise()
@@ -87,4 +100,32 @@ export class SmartContractsComponent implements OnInit, OnDestroy {
           this.showApiError(`Error retrieving receipt. ${String(error)}`);
         });
   }
+
+  openContractPage(contract: ContractTransactionItem): void {
+
+    if (this.initializedContracts.find(c => c == contract.to) == null) {
+
+      const walletLoad = new AddContract(contract.to);
+
+      this
+        .post('swagger/contracts', walletLoad)
+        .pipe(catchError(err => this.handleHttpError(err)))
+        .toPromise()
+        .then(() => {
+          this.initializedContracts.push(contract.to);
+        });;
+    }
+
+    const { shell } = require('electron');
+    console.log(`http://localhost:${this.globalService.getApiPort()}/swagger/index.html?urls.primaryName=Contract%20${contract.to}`);
+    shell.openExternal(`http://localhost:${this.globalService.getApiPort()}/swagger/index.html?urls.primaryName=Contract%20${contract.to}`);
+  }
+}
+
+class AddContract {
+  constructor(address: string) {
+    this.address = address;
+  }
+
+  public address: string;
 }
