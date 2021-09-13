@@ -62,6 +62,23 @@
                 }
               ]
             },
+            "privatenet": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.privatenet.ts"
+                }
+              ]
+            },
             "production": {
               "optimization": true,
               "outputHashing": "all",
@@ -92,6 +109,9 @@
             },
             "web": {
               "browserTarget": "cirrus-core:build:web"
+            },
+            "privatenet": {
+              "browserTarget": "cirrus-core:build:privatenet"
             },
             "production": {
               "browserTarget": "cirrus-core:build:production"

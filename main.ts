@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain, Menu, nativeImage, Tray, screen } from 'electron';
+import { AppConfig } from './src/environments/environment';
 import * as path from 'path';
 import * as url from 'url';
 import * as os from 'os';
@@ -14,13 +15,18 @@ var daemonName = 'Stratis.CirrusD';
 var applicationName = 'Cirrus Core';
 
 const args = process.argv.slice(1);
+
+if (AppConfig.privatenet) {
+  args.push('-devmode');
+}
+
 const serve = args.some(val => val === '--serve' || val === '-serve');
 const testnet = args.some(val => val === '--testnet' || val === '-testnet');
-const devmode = args.some(val => val === '--devmode' || val === '-devmode');
+const privatenet = args.some(val => val === '--devmode' || val === '-devmode');
 
-if (devmode) {
+if (privatenet) {
   daemonName = 'Stratis.CirrusMinerD';
-  applicationName = 'Cirrus Core - Developer Mode';
+  applicationName = 'Cirrus Core - Private Net';
 }
 
 let nodaemon = args.some(val => val === '--nodaemon' || val === '-nodaemon');
@@ -32,7 +38,7 @@ if (os.platform() === 'darwin') {
 
 // Set default API port according to network
 let apiPortDefault;
-if (testnet || devmode) {
+if (testnet || privatenet) {
   apiPortDefault = 38223;
 } else {
   apiPortDefault = 37223;

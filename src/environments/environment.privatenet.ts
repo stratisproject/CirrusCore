@@ -1,5 +1,5 @@
 export const AppConfig = {
   production: true,
-  privatenet: false,
+  privatenet: true,
   environment: 'PROD'
 };

@@ -1,7 +1,7 @@
 {
   "name": "cirrus-core",
   "description": "Cirrus Core Wallet",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "author": {
     "name": "Stratis Group Ltd.",
     "email": "support@stratisplatform.com"
@@ -32,6 +32,7 @@
     "cirrustest": "npm run && npm-run-all -p ng:serve \"electron:serve:testnet -- {@}\" --",
     "build": "npm run electron:serve-tsc && ng build --base-href ./",
     "build:dev": "npm run build -- -c dev",
+    "build:privatenet": "npm run build -- -c privatenet",
     "build:prod": "npm run build -- -c production",
     "build:styling": "node-sass --output-style expanded --source-map true --precision 6 ./src/scss/bootstrap.scss ./src/styles.css",
     "electron:serve-tsc": "tsc -p tsconfig.serve.json",
