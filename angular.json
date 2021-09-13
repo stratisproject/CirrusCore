@@ -10,6 +10,16 @@
       "architect": {
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
+          "fileReplacements": [
+            {
+              "replace": "src/environments/environment.ts",
+              "with": "src/environments/environment.privatenet.ts"
+            },
+            {
+              "replace": "./main.privatenet.ts",
+              "with": "./main.ts"
+            }
+          ],
           "options": {
             "outputPath": "dist",
             "index": "src/index.html",
