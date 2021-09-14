@@ -14,13 +14,17 @@ var daemonName = 'Stratis.CirrusD';
 var applicationName = 'Cirrus Core';
 
 const args = process.argv.slice(1);
+
+// Temporay until we figure out how to do this via the build.
+args.push('-devmode');
+
 const serve = args.some(val => val === '--serve' || val === '-serve');
 const testnet = args.some(val => val === '--testnet' || val === '-testnet');
 const devmode = args.some(val => val === '--devmode' || val === '-devmode');
 
 if (devmode) {
   daemonName = 'Stratis.CirrusMinerD';
-  applicationName = 'Cirrus Core - Developer Mode';
+  applicationName = 'Cirrus Core - Private Net';
 }
 
 let nodaemon = args.some(val => val === '--nodaemon' || val === '-nodaemon');
