@@ -20,7 +20,7 @@ args.push('-devmode=miner');
 
 const serve = args.some(val => val === '--serve' || val === '-serve');
 const testnet = args.some(val => val === '--testnet' || val === '-testnet');
-const devmode = args.some(val => val === '--devmode' || val === '-devmode');
+const devmode = args.some(val => val === '--devmode=miner' || val === '-devmode=miner');
 
 if (devmode) {
   daemonName = 'Stratis.CirrusMinerD';
