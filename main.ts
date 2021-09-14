@@ -16,7 +16,7 @@ var applicationName = 'Cirrus Core';
 const args = process.argv.slice(1);
 
 // Temporay until we figure out how to do this via the build.
-args.push('-devmode');
+args.push('-devmode=miner');
 
 const serve = args.some(val => val === '--serve' || val === '-serve');
 const testnet = args.some(val => val === '--testnet' || val === '-testnet');
