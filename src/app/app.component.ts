@@ -25,10 +25,8 @@ export class AppComponent implements OnInit, OnDestroy {
   public currentState: string;
   private subscriptions: Subscription[] = [];
 
-  private statusIntervalSubscription: Subscription;
   private readonly MaxRetryCount = 30;
   private readonly TryDelayMilliseconds = 2000;
-  private lastFeatureNamespace = 'Stratis.Features.Diagnostic.DiagnosticFeature';
   public errorMessage: string;
 
   ngOnInit(): void {
