@@ -30,10 +30,12 @@ export class ApiService extends RestApi implements IApiService {
     super(globalService, http, errorService, loggerService);
   }
 
-  public getNodeStatus(silent?: boolean): Observable<NodeStatus> {
-    return this.get<NodeStatus>('node/status').pipe(
-      catchError(err => this.handleHttpError(err, silent))
-    );
+  public getNodeStatus(silent: boolean, publishEvent: boolean): Observable<NodeStatus> {
+    let url = 'node/status';
+    if (publishEvent)
+      url = 'node/status?publish=true';
+
+    return this.get<NodeStatus>(url).pipe(catchError(err => this.handleHttpError(err, silent)));
   }
 
   public getNodeStatusInterval(silent?: boolean): Observable<NodeStatus> {

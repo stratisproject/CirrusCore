@@ -54,9 +54,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   private buildDecryptForm(): void {
     this.openWalletForm = this.fb.group({
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      'selectWallet': [{value: '', disabled: this.isDecrypting}, Validators.required],
+      'selectWallet': [{ value: '', disabled: this.isDecrypting }, Validators.required],
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      'password': [{value: '', disabled: this.isDecrypting}, Validators.required]
+      'password': [{ value: '', disabled: this.isDecrypting }, Validators.required]
     });
 
     this.subscriptions.push(this.openWalletForm.valueChanges
@@ -128,19 +128,17 @@ export class LoginComponent implements OnInit, OnDestroy {
         () => {
           this.isDecrypting = false;
         }
-      )
-    ;
+      );
   }
 
   private getCurrentNetwork(): void {
-    this.apiService.getNodeStatus()
+    this.apiService.getNodeStatus(false, false)
       .subscribe(
         response => {
           this.globalService.setCoinUnit(response.coinTicker);
           this.globalService.setNetwork(response.network);
         }
-      )
-    ;
+      );
   }
 
   public ngOnDestroy(): void {
