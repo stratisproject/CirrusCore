@@ -25,18 +25,20 @@ export class AppComponent implements OnInit, OnDestroy {
   public currentState: string;
   private subscriptions: Subscription[] = [];
 
-  private statusIntervalSubscription: Subscription;
   private readonly MaxRetryCount = 30;
   private readonly TryDelayMilliseconds = 2000;
-  private lastFeatureNamespace = 'Stratis.Features.Diagnostic.DiagnosticFeature';
   public errorMessage: string;
 
   ngOnInit(): void {
     this.setTitle();
     this.fullNodeEvent = this.nodeService.FullNodeEvent();
-    // Temporary workaround: use API as fallback
-    setTimeout(() => this.checkResponse(), 5000);
+
+    // Start the subscription.
     this.startFullNodeEventSubscription();
+
+    // Ask the full node for its state, this is to check if the full node hasnt't completed initialization yet.
+    // The node will reply with a signalR event, which if started will then navigate to the login page.
+    this.checkFullNodeStatus();
   }
 
   ngOnDestroy(): void {
@@ -65,21 +67,12 @@ export class AppComponent implements OnInit, OnDestroy {
     ));
   }
 
-  private checkResponse() {
-    // Use API as a fallback. Needed when the SignalR handshake has been completed after node initialization, at that point we wont get any FullNodeEvent messages anymore.
-    // TO-DO: ask the node for its status through SignalR.
-    if (!this.currentState) {
-      this.getStatusThroughApi();
-    }
-  }
-
-  private getStatusThroughApi(): void {
-
-    console.log("Getting status from API.");
+  private checkFullNodeStatus() {
+    console.log("Getting initial status from API.");
 
     let retry = 0;
 
-    const stream$ = this.apiService.getNodeStatus(true).pipe(
+    this.apiService.getNodeStatus(true, true).pipe(
       retryWhen(errors =>
         errors.pipe(delay(this.TryDelayMilliseconds)).pipe(
           tap(errorStatus => {
@@ -91,31 +84,6 @@ export class AppComponent implements OnInit, OnDestroy {
         )
       )
     );
-
-    this.subscriptions.push(stream$.subscribe(
-      () => {
-        this.subscriptions.push(this.statusIntervalSubscription = this.apiService.getNodeStatusInterval(true)
-          .subscribe(
-            response => {
-              if (response) {
-                const statusResponse = response.featuresData.filter(x => x.namespace === 'Stratis.Bitcoin.Base.BaseFeature');
-                const lastFeatureResponse = response.featuresData.find(x => x.namespace === 'Stratis.Bitcoin.Features.SignalR.SignalRFeature' || x.namespace === this.lastFeatureNamespace);
-                if (statusResponse.length > 0 && statusResponse[0].state === 'Initialized' && lastFeatureResponse && lastFeatureResponse.state === 'Initialized') {
-                  this.loading = false;
-                  this.statusIntervalSubscription.unsubscribe();
-                  this.router.navigate(['login']);
-                }
-              }
-            }
-          )
-        );
-      }, error => {
-        this.errorMessage = error.message;
-        console.log('Failed to start wallet');
-        this.loading = false;
-        this.loadingFailed = true;
-      }
-    ));
   }
 
   private setTitle(): void {

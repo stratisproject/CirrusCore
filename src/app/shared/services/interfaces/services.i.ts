@@ -14,7 +14,7 @@ export interface ISignalRService {
 
 export interface IApiService {
 
-  getNodeStatus(silent?: boolean): Observable<NodeStatus>;
+  getNodeStatus(silent: boolean, publishEvent: boolean): Observable<NodeStatus>;
 
   getNodeStatusInterval(silent?: boolean): Observable<NodeStatus>;
 
