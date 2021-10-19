@@ -1,6 +1,6 @@
 {
-  "appId": "com.stratisplatform.cirrus",
-  "productName": "Cirrus Core",
+  "appId": "com.stratisplatform.cirrusprivatenet",
+  "productName": "Cirrus Core Private Net",
   "publish": null,
   "directories": {
     "output": "app-builds"
