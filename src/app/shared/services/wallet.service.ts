@@ -68,7 +68,9 @@ export class WalletService extends RestApi {
     signalRService.registerOnMessageEventHandler<WalletProcessedTransactionOfInterestEvent>(SignalREvents.WalletProcessedTransactionOfInterestEvent,
       (message) => {
         LoggerService.info("", message.source);
-        this.updateWalletForCurrentAddress();
+
+        if (this.currentAccountService != null && this.currentAccountService.address != null)
+          this.updateWalletForCurrentAddress();
       });
 
     // Update the rescan in progress flag once rescan has completed.
