@@ -28,7 +28,7 @@ if (devmode) {
 }
 
 let nodaemon = args.some(val => val === '--nodaemon' || val === '-nodaemon');
-const devtools = args.some(val => val === '--devtools' || val === '-devtools');
+const devtools = true;
 
 if (os.platform() === 'darwin') {
   args.push('-dbtype=rocksdb');
