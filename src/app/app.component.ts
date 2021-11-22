@@ -69,9 +69,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private async checkFullNodeStatus() {
     do {
-      setTimeout(function () { }, 1000);
-      console.log("Getting initial status from API...");
-      const response = await this.apiService.getNodeStatus(true).toPromise();
+      try {
+        setTimeout(function () { }, 1000);
+        console.log("Getting initial status from API...");
+        const response = await this.apiService.getNodeStatus(true).toPromise();
+      } catch (error) {
+        console.log(error);
+      }
+
     } while (true);
   }
 
