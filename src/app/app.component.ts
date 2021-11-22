@@ -67,23 +67,12 @@ export class AppComponent implements OnInit, OnDestroy {
     ));
   }
 
-  private checkFullNodeStatus() {
-    console.log("Getting initial status from API.");
-
-    let retry = 0;
-
-    this.apiService.getNodeStatus(true).pipe(
-      retryWhen(errors =>
-        errors.pipe(delay(this.TryDelayMilliseconds)).pipe(
-          tap(errorStatus => {
-            if (retry++ === this.MaxRetryCount) {
-              throw errorStatus;
-            }
-            console.log(`Retrying ${retry}...`);
-          })
-        )
-      )
-    );
+  private async checkFullNodeStatus() {
+    do {
+      setTimeout(function () { }, 1000);
+      console.log("Getting initial status from API...");
+      const response = await this.apiService.getNodeStatus(true).toPromise();
+    } while (true);
   }
 
   private setTitle(): void {
