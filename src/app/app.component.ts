@@ -72,7 +72,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     let retry = 0;
 
-    this.apiService.getNodeStatus(true, true).pipe(
+    this.apiService.getNodeStatus(true).pipe(
       retryWhen(errors =>
         errors.pipe(delay(this.TryDelayMilliseconds)).pipe(
           tap(errorStatus => {

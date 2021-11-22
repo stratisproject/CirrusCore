@@ -132,7 +132,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   private getCurrentNetwork(): void {
-    this.apiService.getNodeStatus(false, false)
+    this.apiService.getNodeStatus(false)
       .subscribe(
         response => {
           this.globalService.setCoinUnit(response.coinTicker);
