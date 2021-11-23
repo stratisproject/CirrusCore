@@ -17,12 +17,12 @@ import { ApiService } from '@shared/services/api.service';
 export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
-    public apiService: ApiService,
+    apiService: ApiService,
     private globalService: GlobalService,
     private titleService: Title,
     private electronService: ElectronService,
     private nodeService: NodeService) {
-
+    this.apiservice = apiService;
   }
 
   public fullNodeEvent: Observable<FullNodeEventModel>;
@@ -32,6 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public currentState: string;
   private subscriptions: Subscription[] = [];
   public errorMessage: string;
+  apiservice: ApiService;
 
   ngOnInit(): void {
     this.setTitle();
