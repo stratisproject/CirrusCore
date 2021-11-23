@@ -22,7 +22,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private electronService: ElectronService,
     private nodeService: NodeService) {
-    this.apiservice = apiService;
+    this.apiService = apiService;
   }
 
   public fullNodeEvent: Observable<FullNodeEventModel>;
@@ -32,7 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public currentState: string;
   private subscriptions: Subscription[] = [];
   public errorMessage: string;
-  apiservice: ApiService;
+  public apiService: ApiService;
 
   ngOnInit(): void {
     this.setTitle();
@@ -46,18 +46,22 @@ export class AppComponent implements OnInit, OnDestroy {
 
     console.log("Getting initial status from API, delay 5 seconds...");
 
-    setTimeout(function () {
-      try {
-        console.log("Getting initial status from API...");
-        this.apiService.getNodeStatus(true);
-      } catch (error) {
-        console.log(error);
-      }
-    }, 5000);
+    setTimeout(
+      () => this.callNodeStatus(this.apiService)
+      , 5000);
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
+  private callNodeStatus(apiService: ApiService) {
+    try {
+      console.log("Getting initial status from API...");
+      apiService.getNodeStatus(true).toPromise();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   private startFullNodeEventSubscription(): void {
