@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Observable, Subscription } from 'rxjs';
-import { retryWhen, delay, tap } from 'rxjs/operators';
 import { ElectronService } from '@shared/services/electron.service';
 import { GlobalService } from '@shared/services/global.service';
 import { NodeService } from '@shared/services/node-service';
@@ -16,7 +15,15 @@ import { ApiService } from '@shared/services/api.service';
 })
 
 export class AppComponent implements OnInit, OnDestroy {
-  constructor(private router: Router, private apiService: ApiService, private globalService: GlobalService, private titleService: Title, private electronService: ElectronService, private nodeService: NodeService) { }
+  constructor(
+    private router: Router,
+    public apiService: ApiService,
+    private globalService: GlobalService,
+    private titleService: Title,
+    private electronService: ElectronService,
+    private nodeService: NodeService) {
+
+  }
 
   public fullNodeEvent: Observable<FullNodeEventModel>;
   public loading = true;
@@ -24,9 +31,6 @@ export class AppComponent implements OnInit, OnDestroy {
   public currentMessage: string;
   public currentState: string;
   private subscriptions: Subscription[] = [];
-
-  private readonly MaxRetryCount = 30;
-  private readonly TryDelayMilliseconds = 2000;
   public errorMessage: string;
 
   ngOnInit(): void {
@@ -41,14 +45,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
     console.log("Getting initial status from API, delay 5 seconds...");
 
-    setTimeout(function () {  
+    setTimeout(function () {
       try {
         console.log("Getting initial status from API...");
-        this.apiService.getNodeStatus(true).toPromise();
+        this.apiService.getNodeStatus(true);
       } catch (error) {
         console.log(error);
-      }      
-    }, 5000);   
+      }
+    }, 5000);
   }
 
   ngOnDestroy(): void {
