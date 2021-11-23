@@ -38,7 +38,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Ask the full node for its state, this is to check if the full node hasnt't completed initialization yet.
     // The node will reply with a signalR event, which if started will then navigate to the login page.
-    this.checkFullNodeStatus();
+
+    console.log("Getting initial status from API, delay 5 seconds...");
+
+    setTimeout(function () {  
+      try {
+        console.log("Getting initial status from API...");
+        this.apiService.getNodeStatus(true).toPromise();
+      } catch (error) {
+        console.log(error);
+      }      
+    }, 5000);   
   }
 
   ngOnDestroy(): void {
@@ -65,22 +75,6 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       }
     ));
-  }
-
-  private async checkFullNodeStatus() {
-    do {
-      if (this.loading) {
-        try {
-          setTimeout(function () { }, 1000);
-          console.log("Getting initial status from API...");
-          const response = await this.apiService.getNodeStatus(true).toPromise();
-        } catch (error) {
-          console.log(error);
-        }
-      }
-      else
-        break;
-    } while (true);
   }
 
   private setTitle(): void {
