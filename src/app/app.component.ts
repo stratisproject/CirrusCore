@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Observable, Subscription } from 'rxjs';
-import { retryWhen, delay, tap } from 'rxjs/operators';
 import { ElectronService } from '@shared/services/electron.service';
 import { GlobalService } from '@shared/services/global.service';
 import { NodeService } from '@shared/services/node-service';
@@ -16,7 +15,15 @@ import { ApiService } from '@shared/services/api.service';
 })
 
 export class AppComponent implements OnInit, OnDestroy {
-  constructor(private router: Router, private apiService: ApiService, private globalService: GlobalService, private titleService: Title, private electronService: ElectronService, private nodeService: NodeService) { }
+  constructor(
+    private router: Router,
+    apiService: ApiService,
+    private globalService: GlobalService,
+    private titleService: Title,
+    private electronService: ElectronService,
+    private nodeService: NodeService) {
+    this.apiService = apiService;
+  }
 
   public fullNodeEvent: Observable<FullNodeEventModel>;
   public loading = true;
@@ -24,10 +31,8 @@ export class AppComponent implements OnInit, OnDestroy {
   public currentMessage: string;
   public currentState: string;
   private subscriptions: Subscription[] = [];
-
-  private readonly MaxRetryCount = 30;
-  private readonly TryDelayMilliseconds = 2000;
   public errorMessage: string;
+  public apiService: ApiService;
 
   ngOnInit(): void {
     this.setTitle();
@@ -38,11 +43,25 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Ask the full node for its state, this is to check if the full node hasnt't completed initialization yet.
     // The node will reply with a signalR event, which if started will then navigate to the login page.
-    this.checkFullNodeStatus();
+
+    console.log("Getting initial status from API, delay 5 seconds...");
+
+    setTimeout(
+      () => this.callNodeStatus(this.apiService)
+      , 5000);
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
+  private callNodeStatus(apiService: ApiService) {
+    try {
+      console.log("Getting initial status from API...");
+      apiService.getNodeStatus(true).toPromise();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   private startFullNodeEventSubscription(): void {
@@ -65,25 +84,6 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       }
     ));
-  }
-
-  private checkFullNodeStatus() {
-    console.log("Getting initial status from API.");
-
-    let retry = 0;
-
-    this.apiService.getNodeStatus(true, true).pipe(
-      retryWhen(errors =>
-        errors.pipe(delay(this.TryDelayMilliseconds)).pipe(
-          tap(errorStatus => {
-            if (retry++ === this.MaxRetryCount) {
-              throw errorStatus;
-            }
-            console.log(`Retrying ${retry}...`);
-          })
-        )
-      )
-    );
   }
 
   private setTitle(): void {
