@@ -32,6 +32,7 @@ export class ConsolidateWalletComponent implements OnInit {
   public consolidateWalletForm: FormGroup;
   public consolidateWalletFormErrors: any = {};
   public isConsolidating = false;
+  public isConsolidatingComplete = false;
 
   ngOnInit(): void {
     this.currentWalletName = this.globalService.getWalletName();
@@ -74,6 +75,7 @@ export class ConsolidateWalletComponent implements OnInit {
             //this.activeModal.close('Close clicked');
             // this.openConfirmationModal(transactionResponse);
             this.isConsolidating = false;
+            this.isConsolidatingComplete = true;
           }).catch(error => {
             this.isConsolidating = false;
             this.apiError = error.error.errors[0].message;
