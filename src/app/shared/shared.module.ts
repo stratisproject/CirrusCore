@@ -20,6 +20,8 @@ import { WalletInitializingComponent } from './components/wallet-initializing/wa
 import { WalletInitializingFailedComponent } from './components/wallet-initializing-failed/wallet-initializing-failed.component';
 import { LoggerService } from './services/logger.service';
 import { ElectronService } from './services/electron.service';
+import { StratisSignatureAuthModalComponent } from './components/stratis-signature-auth-modal/stratis-signature-auth-modal.component';
+import { SvgLoaderComponent } from './components/svg-loader/svg-loader.component';
 
 
 @NgModule({
@@ -34,7 +36,9 @@ import { ElectronService } from './services/electron.service';
     LoadingModalComponent,
     ConfirmationModalComponent,
     WalletInitializingComponent,
-    WalletInitializingFailedComponent
+    WalletInitializingFailedComponent,
+    StratisSignatureAuthModalComponent,
+    SvgLoaderComponent
   ],
   providers : [
     ApiService,
@@ -60,7 +64,8 @@ import { ElectronService } from './services/electron.service';
     LoadingModalComponent,
     ConfirmationModalComponent,
     WalletInitializingComponent,
-    WalletInitializingFailedComponent
+    WalletInitializingFailedComponent,
+    SvgLoaderComponent
   ]
 })
 

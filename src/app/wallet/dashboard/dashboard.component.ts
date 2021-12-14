@@ -1,3 +1,4 @@
+import { StratisSignatureAuthModalComponent } from '@shared/components/stratis-signature-auth-modal/stratis-signature-auth-modal.component';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GlobalService } from '@shared/services/global.service';
@@ -38,5 +39,9 @@ export class DashboardComponent implements OnInit {
 
   public openReceiveDialog(): void {
     this.modalService.open(ReceiveComponent, { backdrop: 'static', keyboard: false });
+  }
+
+  public openSsasDialog(): void {
+    this.modalService.open(StratisSignatureAuthModalComponent, { backdrop: 'static', keyboard: false })
   }
 }
