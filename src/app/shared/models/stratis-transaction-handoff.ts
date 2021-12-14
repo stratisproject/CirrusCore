@@ -1,4 +1,4 @@
-export class TransactionShortcut {
+export class StratisTransactionHandoff {
   private _callback: string;
   private _amount: number;
   private _contractAddress: string;
@@ -35,21 +35,21 @@ export class TransactionShortcut {
     this._parameters = [];
 
     try {
-      const shortcut = JSON.parse(value);
-      const to = shortcut?.to;
+      const handoff = JSON.parse(value);
+      const to = handoff?.to;
       if (!to) this._errors.push('Invalid contract address.');
 
-      const methodName = shortcut?.method;
+      const methodName = handoff?.method;
       if (!methodName) this._errors.push('Invalid method name.');
 
-      const parameters = shortcut?.parameters || [];
+      const parameters = handoff?.parameters || [];
 
       this._contractAddress = to;
       this._methodName = methodName;
       // Don't care if this is missing
-      this._callback = shortcut?.callback;
+      this._callback = handoff?.callback;
       // This can be 0, as long as it parses we're good.
-      this._amount = parseFloat(shortcut?.amount);
+      this._amount = parseFloat(handoff?.amount);
       this._parameters = parameters.map(param => param.value);
     } catch {
       this._errors.push('Unexpected error.');

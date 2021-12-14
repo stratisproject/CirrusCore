@@ -1,3 +1,4 @@
+import { StratisSignatureAuthCallback } from './../../models/stratis-signature-auth-callback';
 import { CurrentAccountService } from '@shared/services/current-account.service';
 import { take, switchMap, catchError, filter } from 'rxjs/operators';
 import { IntegrationsService } from '@shared/services/integrations.service';
@@ -107,14 +108,10 @@ export class StratisSignatureAuthModalComponent implements OnDestroy {
           return of();
         }),
         filter(signature => !!signature),
-        switchMap(signature => {
-          const payload = {
-            signature,
-            publicKey: externalAddress
-          };
-
+        switchMap((signature: string) => {
           // Submit callback to origin
-          return this.integrationsService.stratisSignatureAuthCallback(this.request.callback, payload);
+          const request = new StratisSignatureAuthCallback(signature, externalAddress);
+          return this.integrationsService.stratisSignatureAuthCallback(this.request.callback, request.payload);
         }),
         take(1))
       .subscribe(_ => {

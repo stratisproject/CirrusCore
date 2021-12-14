@@ -19,18 +19,18 @@
           <hr>
           <div class="form-group">
             <div class="d-flex justify-content-between align-items-center">
-              <label for="transactionShortcut">Transaction Shortcut <span class="text-light">(optional)</span></label>
-              <button type="button" class="btn btn-sm btn-outline-stratis-green d-flex align-items-center" aria-label="Reset Shortcut"
-                      (click)="resetCallModeShortcutTransaction()" *ngIf="transactionShortcut?.value">
+              <label for="transactionHandoff">Transaction Handoff <span class="text-light">(optional)</span></label>
+              <button type="button" class="btn btn-sm btn-outline-stratis-green d-flex align-items-center" aria-label="Reset Handoff"
+                      (click)="resetTransactionHandoff()" *ngIf="transactionHandoff?.value">
                 Reset <i class="lnr lnr-cross-circle ml-1"></i>
               </button>
             </div>
 
             <div class="clearfix mb-2">
-              <input *ngIf="!transactionShortcut?.value;" class="form-control" name="transactionShortcut" id="transactionShortcut" formControlName="transactionShortcut" type="text" />
-              <div *ngIf="shortcutCallback" class="text-light">From: {{shortcutCallback}}</div>
-              <div *ngIf="shortcutErrors.length > 0">
-                <p class="mb-0 text-danger" *ngFor="let error of shortcutErrors">{{error}}</p>
+              <input *ngIf="!transactionHandoff?.value;" class="form-control" name="transactionHandoff" id="transactionHandoff" formControlName="transactionHandoff" type="text" />
+              <div *ngIf="transactionHandoffCallback" class="text-light">From: {{transactionHandoffCallback}}</div>
+              <div *ngIf="transactionHandoffErrors.length > 0">
+                <p class="mb-0 text-danger" *ngFor="let error of transactionHandoffErrors">{{error}}</p>
               </div>
             </div>
           </div>

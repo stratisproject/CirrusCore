@@ -5,7 +5,8 @@ import { GlobalService } from '@shared/services/global.service';
 import { SmartContractsServiceBase } from '@shared/services/smart-contracts.service';
 import { Subscription } from 'rxjs';
 import { IntegrationsService } from '@shared/services/integrations.service';
-import { TransactionShortcut } from '@shared/models/transaction-shortcut';
+import { StratisTransactionHandoff } from '@shared/models/stratis-transaction-handoff';
+import { StratisTransactionHandoffCallback } from '@shared/models/stratis-transaction-handoff-callback';
 
 // Approximate ulong.MaxValue
 const ULONG_MAXVALUE = 1.84e19;
@@ -64,8 +65,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
   decimals: FormControl;
   tokenName: FormControl;
   tokenSymbol: FormControl;
-  transactionShortcut: FormControl;
-  shortcutCallback: string;
+  transactionHandoff: FormControl;
+  transactionHandoffCallback: string;
   coinUnit: string;
   loading: boolean;
   apiError: string;
@@ -77,7 +78,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   gasLimitMaximum = 250000;
   gasPriceMinimum = 1;
   gasPriceMaximum = 10000;
-  shortcutErrors = [];
+  transactionHandoffErrors = [];
   subscription = new Subscription();
 
   get title(): string { return `${this.modeText}`; }
@@ -163,13 +164,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.activeModal.close({ symbol: this.tokenSymbol.value.toUpperCase(), name: this.tokenName.value, transactionHash, decimals: this.decimals.value });
 
-        // If a transaction shortcut was used, fire and forget the provided callback
-        if (this.shortcutCallback) {
-          this.subscription.add(
-            this.integrationsService.transactionShortcutCallback(this.shortcutCallback, {
-              transactionHash: transactionHash.transactionId,
-              walletAddress: this.selectedSenderAddress
-            }).subscribe());
+        // If a transaction handoff was used, fire and forget the provided callback
+        if (this.transactionHandoffCallback) {
+          const request = new StratisTransactionHandoffCallback(transactionHash.transactionId, this.selectedSenderAddress);
+          this.subscription.add(this.integrationsService.stratisTransactionHandoffCallback(this.transactionHandoffCallback, request.payload).subscribe());
         }
       },
         error => {
@@ -275,7 +273,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.tokenName = new FormControl('My token', [Validators.required]);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     this.tokenSymbol = new FormControl('MTK', [Validators.required]);
-    this.transactionShortcut = new FormControl('');
+    this.transactionHandoff = new FormControl('');
 
     if (this.mode === Mode.Call) {
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -290,11 +288,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
         methodName: this.methodName,
         contractAddress: this.contractAddress,
         password: this.password,
-        transactionShortcut: this.transactionShortcut
+        transactionHandoff: this.transactionHandoff
       });
 
-      const shortcutInput = this.transactionForm.get('transactionShortcut');
-      this.subscription.add(shortcutInput.valueChanges.subscribe(value => this.handleTransactionShortcut(value)));
+      const txHandoffInput = this.transactionForm.get('transactionHandoff');
+      this.subscription.add(txHandoffInput.valueChanges.subscribe(value => this.handleTransactionHandoff(value)));
     } else if (this.mode === Mode.Create) {
       this.transactionForm = new FormGroup({
         amount: this.amount,
@@ -322,31 +320,30 @@ export class TransactionComponent implements OnInit, OnDestroy {
     }
   }
 
-  resetCallModeShortcutTransaction() {
-    this.shortcutErrors = [];
-    this.parameters = new FormArray([]);
-    this.shortcutCallback = null;
-    this.transactionForm.reset();
+  resetTransactionHandoff() {
+    this.transactionHandoffErrors = [];
+    this.transactionHandoffCallback = null;
+    this.registerControls();
   }
 
-  private handleTransactionShortcut(value: any) {
+  private handleTransactionHandoff(value: any) {
     if (!value) return;
 
-    const shortcut = new TransactionShortcut(value);
+    const handoff = new StratisTransactionHandoff(value);
 
-    if (shortcut.errors.length === 0) {
-      this.shortcutCallback = shortcut.callback;
-      this.amount.setValue(shortcut.amount),
-      this.contractAddress.setValue(shortcut.contractAddress),
-      this.methodName.setValue(shortcut.methodName),
-      this.parameters.setValue(shortcut.parameters.map(param => {
+    if (handoff.errors.length === 0) {
+      this.transactionHandoffCallback = handoff.callback;
+      this.amount.setValue(handoff.amount),
+      this.contractAddress.setValue(handoff.contractAddress),
+      this.methodName.setValue(handoff.methodName),
+      this.transactionHandoffErrors = [];
+      this.parameters.setValue(handoff.parameters.map(param => {
         this.addParameterClicked();
         const parts = param.split('#');
         return new Parameter(parseInt(parts[0]), parts[1]);
       }));
-      this.shortcutErrors = [];
     } else {
-      this.shortcutErrors = shortcut.errors;
+      this.transactionHandoffErrors = handoff.errors;
     }
   }
 
