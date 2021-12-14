@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RemoveWalletComponent } from './remove-wallet.component';
+import { ConsolidateWalletComponent } from './consolidate-wallet.component';
 
-describe('RemoveWalletComponent', () => {
-  let component: RemoveWalletComponent;
-  let fixture: ComponentFixture<RemoveWalletComponent>;
+describe('ConsolidateWalletComponent', () => {
+  let component: ConsolidateWalletComponent;
+  let fixture: ComponentFixture<ConsolidateWalletComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RemoveWalletComponent ]
+      declarations: [ConsolidateWalletComponent]
     })
       .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RemoveWalletComponent);
+    fixture = TestBed.createComponent(ConsolidateWalletComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

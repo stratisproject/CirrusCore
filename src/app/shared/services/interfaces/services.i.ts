@@ -92,4 +92,6 @@ export interface IApiService {
   getReceiptSilent(hash: string): any;
 
   localCall(localCall: TokenBalanceRequest): Observable<LocalExecutionResult>;
+
+  consolidateWallet(address: string): Observable<any>;
 }
