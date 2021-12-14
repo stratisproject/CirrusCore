@@ -71,12 +71,11 @@ export class ConsolidateWalletComponent implements OnInit {
 
           this.walletService.consolidateWallet(model)
           .then(_ => {
-            // this.estimatedFee = transactionResponse.transactionFee;
-            //this.activeModal.close('Close clicked');
-            // this.openConfirmationModal(transactionResponse);
+            this.consolidateWalletForm.reset();
             this.isConsolidating = false;
             this.isConsolidatingComplete = true;
           }).catch(error => {
+            this.consolidateWalletForm.reset();
             this.isConsolidating = false;
             this.apiError = error.error.errors[0].message;
           });
