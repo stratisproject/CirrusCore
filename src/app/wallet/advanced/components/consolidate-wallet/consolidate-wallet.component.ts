@@ -1,15 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { ConfirmationModalComponent } from '@shared/components/confirmation-modal/confirmation-modal.component';
 import { GlobalService } from '@shared/services/global.service';
 import { WalletService } from '@shared/services/wallet.service';
 import { CurrentAccountService } from '@shared/services/current-account.service';
-import { ApiService } from '@shared/services/api.service';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ConsolidateWalletComponentFormResources } from './consolidate-wallet-form-resources';
 import { FormHelper } from '@shared/forms/form-helper';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { WalletInfo } from '@shared/models/wallet-info';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConsolidateWalletModel } from '@shared/models/consolidate';
 
 @Component({
   selector: 'app-consolidate-wallet',
@@ -20,13 +18,10 @@ import { WalletInfo } from '@shared/models/wallet-info';
 export class ConsolidateWalletComponent implements OnInit {
   constructor(
     public currentAccountService: CurrentAccountService,
-    private apiService: ApiService,
     private globalService: GlobalService,
     private modalService: NgbModal,
-    private router: Router,
     private fb: FormBuilder,
-    public walletService: WalletService,
-    public activeModal: NgbActiveModal) {
+    public walletService: WalletService) {
     this.currentAccountService = currentAccountService;
 
     this.consolidateWalletForm = ConsolidateWalletComponentFormResources.buildConsolidateForm(fb);
@@ -66,17 +61,23 @@ export class ConsolidateWalletComponent implements OnInit {
 
           this.isConsolidating = true;
 
-          this.walletService.consolidateWallet(new WalletInfo(this.currentWalletName), this.consolidateWalletForm.get('password').value, this.currentAccountService.address)
+          var model = new ConsolidateWalletModel(
+            this.currentWalletName, 
+            "account 0", 
+            this.consolidateWalletForm.get('password').value,
+            this.currentAccountService.address, 
+            true);
+
+          this.walletService.consolidateWallet(model)
           .then(_ => {
             // this.estimatedFee = transactionResponse.transactionFee;
-            this.activeModal.close('Close clicked');
+            //this.activeModal.close('Close clicked');
             // this.openConfirmationModal(transactionResponse);
             this.isConsolidating = false;
           }).catch(error => {
             this.isConsolidating = false;
             this.apiError = error.error.errors[0].message;
           });
-
       }}
     });
   }

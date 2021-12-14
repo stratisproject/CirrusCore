@@ -21,6 +21,7 @@ import { NodeService } from '@shared/services/node-service';
 import { TransactionInfo } from '@shared/models/transaction-info';
 import { ExtPubKeyImport } from '@shared/models/extpubkey-import';
 import { ContractTransactionItem } from '@shared/services/smart-contracts.service';
+import { ConsolidateWalletModel } from '@shared/models/consolidate';
 
 @Injectable({
   providedIn: 'root'
@@ -375,19 +376,12 @@ export class WalletService extends RestApi {
       });
   }
 
-  public consolidateWallet(walletInfo: WalletInfo, walletPassword: string, address: string): Promise<any> {
-    return this.performConsolidateWallet(walletInfo, walletPassword, address).toPromise();
+  public consolidateWallet(model: ConsolidateWalletModel): Promise<any> {
+    return this.performConsolidateWallet(model).toPromise();
   }
 
-  public performConsolidateWallet(walletInfo: WalletInfo, walletPassword: string, address: string): Observable<any> {
-    let json = new HttpParams()
-      .set('walletName', walletInfo.walletName)
-      .set('accountName', `account ${walletInfo.account || 0}`)
-      .set('walletPassword', walletPassword)
-      .set('destinationAddress', address)
-      .set('broadcast', `true`);
-
-    return this.post('wallet/consolidate', json).pipe(
+  public performConsolidateWallet(model: ConsolidateWalletModel): Observable<any> {
+    return this.post<string>('wallet/consolidate', model).pipe(
       catchError(err => this.handleHttpError(err))
     );
   }
