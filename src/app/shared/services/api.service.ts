@@ -266,11 +266,4 @@ export class ApiService extends RestApi implements IApiService {
 
     return params;
   }
-
-  public consolidateWallet(address: string): Observable<any> {
-    let json = {};
-    return this.post('wallet/consolidate', json).pipe(
-      catchError(err => this.handleHttpError(err))
-    );
-  }
 }

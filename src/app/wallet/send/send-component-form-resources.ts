@@ -2,6 +2,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { Network } from '@shared/models/network';
 
 export class SendComponentFormResources {
+
   public static sendValidationMessages = {
     'address': {
       'required': 'An address is required.',

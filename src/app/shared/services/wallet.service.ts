@@ -359,7 +359,8 @@ export class WalletService extends RestApi {
 
     this.loadingSubject.next(true);
 
-    this.get<WalletHistory>('smartcontractwallet/history', this.getWalletParams(this.currentWallet, extra))
+    this
+      .get<WalletHistory>('smartcontractwallet/history', this.getWalletParams(this.currentWallet, extra))
       .pipe(map((response) => {
         return response;
       }),
@@ -372,5 +373,22 @@ export class WalletService extends RestApi {
         this.smartContractHistorySubject.next(history);
         this.loadingSubject.next(false);
       });
+  }
+
+  public consolidateWallet(walletInfo: WalletInfo, walletPassword: string, address: string): Promise<any> {
+    return this.performConsolidateWallet(walletInfo, walletPassword, address).toPromise();
+  }
+
+  public performConsolidateWallet(walletInfo: WalletInfo, walletPassword: string, address: string): Observable<any> {
+    let json = new HttpParams()
+      .set('walletName', walletInfo.walletName)
+      .set('accountName', `account ${walletInfo.account || 0}`)
+      .set('walletPassword', walletPassword)
+      .set('destinationAddress', address)
+      .set('broadcast', `true`);
+
+    return this.post('wallet/consolidate', json).pipe(
+      catchError(err => this.handleHttpError(err))
+    );
   }
 }
