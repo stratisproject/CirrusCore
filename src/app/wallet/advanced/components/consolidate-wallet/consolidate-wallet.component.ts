@@ -33,10 +33,11 @@ export class ConsolidateWalletComponent implements OnInit {
   public consolidateWalletFormErrors: any = {};
   public isConsolidating = false;
   public isConsolidatingComplete = false;
-  public currentUtxoCount = 0;
+  public currentUtxoCount: string;
 
   ngOnInit(): void {
     this.currentWalletName = this.globalService.getWalletName();
+    this.currentUtxoCount = "(retrieving)"
     this.walletService.walletHistory().subscribe(_ => { this.getUtxoCount(); });
     this.getUtxoCount();
   }

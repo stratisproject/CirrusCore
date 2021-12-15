@@ -386,10 +386,10 @@ export class WalletService extends RestApi {
     );
   }
 
-  public getWalletStats(): Observable<number> {
+  public getWalletStats(): Observable<any> {
     return this.get<any>('wallet/wallet-stats', this.getWalletParams(this.currentWallet))
       .pipe(map(result => {
-        return result.totalUtxoCount as number;
+        return result.totalUtxoCount;
       }), catchError(err => this.handleHttpError(err)));
   }
 }
