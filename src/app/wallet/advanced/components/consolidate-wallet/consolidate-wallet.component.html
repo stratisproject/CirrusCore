@@ -3,8 +3,8 @@
   <div class="card-body" style="min-height:200px;">
 
     <div class="alert alert-info" role="alert">
-      <p>This will consolidate all unspent transactions (UTXOs) into a single UTXO, greatly improving wallet performance (only 1000 can be consolidated at a time).</p>
-      <p>You currently have <b>{{currentUtxoCount}}</b> UTXOs in your wallet, anything less than 100 is desirable.</p>
+      <p>This will consolidate all unspent transactions (UTXOs) into a single UTXO. You should routinely consolidate your wallet if receiving lots of individual transactions; a UTXO count below 100 is optimal. You may have to consolidate multiple times if your UTXO count exceeds 1000.</p> 
+      <p>Your wallet currently has <b>{{currentUtxoCount}}</b> UTXOs.</p>
     </div>
 
     <div>
