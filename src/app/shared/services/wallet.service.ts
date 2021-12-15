@@ -385,4 +385,11 @@ export class WalletService extends RestApi {
       catchError(err => this.handleHttpError(err))
     );
   }
+
+  public getWalletStats(): Observable<number> {
+    return this.get<any>('wallet/wallet-stats', this.getWalletParams(this.currentWallet))
+      .pipe(map(result => {
+        return result.totalUtxoCount as number;
+      }), catchError(err => this.handleHttpError(err)));
+  }
 }
