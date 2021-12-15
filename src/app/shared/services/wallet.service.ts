@@ -21,6 +21,7 @@ import { NodeService } from '@shared/services/node-service';
 import { TransactionInfo } from '@shared/models/transaction-info';
 import { ExtPubKeyImport } from '@shared/models/extpubkey-import';
 import { ContractTransactionItem } from '@shared/services/smart-contracts.service';
+import { ConsolidateWalletModel } from '@shared/models/consolidate';
 
 @Injectable({
   providedIn: 'root'
@@ -359,7 +360,8 @@ export class WalletService extends RestApi {
 
     this.loadingSubject.next(true);
 
-    this.get<WalletHistory>('smartcontractwallet/history', this.getWalletParams(this.currentWallet, extra))
+    this
+      .get<WalletHistory>('smartcontractwallet/history', this.getWalletParams(this.currentWallet, extra))
       .pipe(map((response) => {
         return response;
       }),
@@ -372,5 +374,22 @@ export class WalletService extends RestApi {
         this.smartContractHistorySubject.next(history);
         this.loadingSubject.next(false);
       });
+  }
+
+  public consolidateWallet(model: ConsolidateWalletModel): Promise<any> {
+    return this.performConsolidateWallet(model).toPromise();
+  }
+
+  public performConsolidateWallet(model: ConsolidateWalletModel): Observable<any> {
+    return this.post<string>('wallet/consolidate', model).pipe(
+      catchError(err => this.handleHttpError(err))
+    );
+  }
+
+  public getWalletStats(): Observable<any> {
+    return this.get<any>('wallet/wallet-stats', this.getWalletParams(this.currentWallet))
+      .pipe(map(result => {
+        return result.totalUtxoCount;
+      }), catchError(err => this.handleHttpError(err)));
   }
 }
