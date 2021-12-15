@@ -52,14 +52,17 @@ export class ConsolidateWalletComponent implements OnInit {
   }
 
   public consolidateWallet(): void {
-    const modal = this.modalService.open(ConfirmationModalComponent, {
-      backdrop: 'static',
-    });
 
+    this.apiError = '';
+    
     FormHelper.ValidateForm(this.consolidateWalletForm, this.consolidateWalletFormErrors, ConsolidateWalletComponentFormResources.consolidateWalletValidationMessages);
 
     if(this.consolidateWalletFormErrors.length > 0)
         return;
+
+    const modal = this.modalService.open(ConfirmationModalComponent, {
+      backdrop: 'static',
+    });
 
     const instance = modal.componentInstance;
 
