@@ -1,0 +1,44 @@
+<!-- MODAL SEND -->
+<div class="modal-header">
+  <h5 class="modal-title">{{ submitting ? 'Authenticating' : 'Authenticate' }}</h5>
+
+  <button type="button" class="close closemodal ml-auto" (click)="activeModal.close('Close click')">
+    <i class="lnr lnr-cross-circle"></i>
+  </button>
+</div>
+
+<div [hidden]="submitting">
+  <div class="modal-body ModalSend pt-0">
+    <form [formGroup]="form" (submit)="submit()">
+      <div class="form-group clearfix">
+        <label for="message">Message</label>
+        <input type="text" class="form-control" formControlName="message" id="message">
+      </div>
+
+      <div *ngIf="request">
+        <h6 class="d-
+        flex align-items-center">
+          <i class="lnr mr-2" [ngClass]="{'text-danger lnr-warning': request.error, 'text-success lnr-checkmark-circle': !request.error}"></i>
+          {{request.error ? request.error : request.origin}}
+        </h6>
+      </div>
+
+      <ng-container *ngIf="request && !request.error">
+        <hr>
+        <div class="form-group clearfix" >
+          <label for="password">Password</label>
+          <input type="password" class="form-control" formControlName="password" id="password">
+        </div>
+      </ng-container>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-outline-light" type="button" (click)="activeModal.close('Close click')">Cancel</button>
+    <button class="btn btn-stratis-green btn-block" type="button" (click)="submit()" [disabled]="!request || request.error">Authenticate</button>
+  </div>
+</div>
+
+<div [hidden]="!submitting" class="Loading col-2 mx-auto unset-left">
+  <app-svg-loader></app-svg-loader>
+</div>

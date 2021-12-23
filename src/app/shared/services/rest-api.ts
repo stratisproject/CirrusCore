@@ -4,6 +4,28 @@ import { GlobalService } from '@shared/services/global.service';
 import { ErrorService } from '@shared/services/error-service';
 import { LoggerService } from '@shared/services/logger.service';
 
+export function getHttpOptions(
+  accept: string,
+  contentType: string,
+  httpParams?: HttpParams,
+): {
+    headers?: HttpHeaders | {
+      [header: string]: string | string[];
+    };
+    params?: HttpParams | {
+      [param: string]: string | string[];
+    };
+  } {
+  return {
+    headers: new HttpHeaders({
+      'Accept': accept,
+      'Content-Type': contentType,
+
+    }),
+    params: httpParams
+  };
+};
+
 export class RestApi {
   protected API_URL: string;
 
@@ -16,35 +38,13 @@ export class RestApi {
     this.API_URL =  apiUrl || `http://${globalService.getDaemonIP()}:${globalService.getApiPort()}/api`;
   }
 
-  protected getHttpOptions(
-    accept: string,
-    contentType: string,
-    httpParams?: HttpParams,
-  ): {
-      headers?: HttpHeaders | {
-        [header: string]: string | string[];
-      };
-      params?: HttpParams | {
-        [param: string]: string | string[];
-      };
-    } {
-    return {
-      headers: new HttpHeaders({
-        'Accept': accept,
-        'Content-Type': contentType,
-
-      }),
-      params: httpParams
-    };
-  }
-
   public get<TResult>(path: string, params?: HttpParams, accept = 'application/json', contentType = 'application/json'): Observable<TResult> {
-    const options = this.getHttpOptions(accept, contentType, params);
+    const options = getHttpOptions(accept, contentType, params);
     return this.httpClient.get(`${this.API_URL}/${path}`, options) as Observable<TResult>;
   }
 
   public delete<TResult>(path: string, params?: HttpParams, accept = 'application/json', contentType = 'application/json'): Observable<TResult> {
-    const options = this.getHttpOptions(accept, contentType, params);
+    const options = getHttpOptions(accept, contentType, params);
     return this.httpClient.delete(`${this.API_URL}/${path}`, options) as Observable<TResult>;
   }
 
@@ -57,7 +57,7 @@ export class RestApi {
   }
 
   protected executeHttp<TResult>(method: string, path: string, body: any, contentType?: string, params?: HttpParams): Observable<TResult> {
-    return this.httpClient[method](`${this.API_URL}/${path}`, body, this.getHttpOptions('application/json', contentType || 'application/json', params)) as Observable<TResult>;
+    return this.httpClient[method](`${this.API_URL}/${path}`, body, getHttpOptions('application/json', contentType || 'application/json', params)) as Observable<TResult>;
   }
 
   protected handleHttpError(error: HttpErrorResponse, silent?: boolean): Observable<any> {
