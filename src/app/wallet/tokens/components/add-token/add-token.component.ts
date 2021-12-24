@@ -1,4 +1,4 @@
-import { TokenType } from './../../../../shared/models/token-type';
+import { TokenType } from '@shared/models/token-type';
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -75,7 +75,7 @@ export class AddTokenComponent implements OnDestroy, Disposable {
         take(1))
       .subscribe(_ => {
         // Old tokens such as MEDI, do not have a decimals property in contract, set 8
-        if (!token.decimals && token.type === 'IStandardToken') {
+        if (!token.decimals && token.type === TokenType.IStandardToken) {
           token.decimals = 8;
         }
 

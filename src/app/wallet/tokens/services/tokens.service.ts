@@ -1,3 +1,4 @@
+import { TokenType } from '@shared/models/token-type';
 import { Injectable } from '@angular/core';
 import { LocalExecutionResult } from '@shared/models/local-execution-result';
 import { ApiService } from '@shared/services/api.service';
@@ -38,7 +39,7 @@ export class TokensService {
   GetAvailableTokens(): Token[] {
     const tokens = [];
     if (!this.globalService.getTestnetEnabled()) {
-      tokens.push(new Token('MEDI', 'CUwkBGkXrQpMnZeWW2SpAv1Vu9zPvjWNFS', 'Mediconnect', 8, 'IStandardToken'));
+      tokens.push(new Token('MEDI', 'CUwkBGkXrQpMnZeWW2SpAv1Vu9zPvjWNFS', 'Mediconnect', 8, TokenType.IStandardToken));
     }
     return tokens;
   }
