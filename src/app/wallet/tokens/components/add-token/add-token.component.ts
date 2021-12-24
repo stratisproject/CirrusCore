@@ -1,14 +1,14 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { TokenType } from './../../../../shared/models/token-type';
+import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalService } from '@shared/services/modal.service';
-import { ReplaySubject, Subscription } from 'rxjs';
-import { finalize, take, takeUntil } from 'rxjs/operators';
-
+import { Observable, of, ReplaySubject } from 'rxjs';
+import { take, switchMap, tap, map } from 'rxjs/operators';
 import { Disposable } from '../../models/disposable';
 import { LocalCallRequest } from '../../models/LocalCallRequest';
 import { Mixin } from '../../models/mixin';
-import { SavedToken, Token } from '../../models/token';
+import { SavedToken } from '../../models/token';
 import { TokensService } from '../../services/tokens.service';
 
 @Component({
@@ -17,123 +17,125 @@ import { TokensService } from '../../services/tokens.service';
   styleUrls: ['./add-token.component.css']
 })
 @Mixin([Disposable])
-export class AddTokenComponent implements OnInit, OnDestroy, Disposable {
-  private subscriptions: Subscription[] = [];
-  @Input() tokens: Token[] = [];
+export class AddTokenComponent implements OnDestroy, Disposable {
   addTokenForm: FormGroup;
-  balance = 0;
-  token: FormControl;
-  address: FormControl;
-  ticker: FormControl;
-  decimals: FormControl;
-  name: FormControl;
   loading: boolean;
   apiError: string;
+  validatedToken: any;
   disposed$ = new ReplaySubject<boolean>();
   dispose: () => void;
+
+  get address(): FormControl {
+    return this.addTokenForm.get('address') as FormControl;
+  }
 
   constructor(
     private tokenService: TokensService,
     private activeModal: NgbActiveModal,
     private genericModalService: ModalService) {
-    this.registerControls();
-    this.subscriptions.push(this.token.valueChanges.subscribe(value => {
-      if (value) {
-        const token = this.tokens.find(t => t.address === this.token.value);
-        if (token) {
-          this.ticker.setValue(token.ticker);
-          this.address.setValue(token.address);
-          this.name.setValue(token.name);
-          this.decimals.setValue(token.decimals);
-        }
-      }
-    }));
-  }
-
-  get customTokenSelected(): boolean {
-    return !!this.addTokenForm && !!this.addTokenForm.get('token').value && this.addTokenForm.get('token').value.toLowerCase() === 'custom';
-  }
-
-  ngOnInit(): void {
-  }
-
-  public ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
-    this.dispose();
+      this.addTokenForm = new FormGroup({
+        address: new FormControl('', [Validators.required])
+      });
   }
 
   closeClicked(): void {
     this.activeModal.close();
   }
 
-  onSubmit(): void {
-    // Check that this token isn't already in the list
+  resetToken(): void {
+    this.address.setValue('');
+    this.validatedToken = null;
+  }
+
+  validateToken(): void {
     const addedTokens = this.tokenService.GetSavedTokens().find(token => token.address === this.address.value);
     if (addedTokens) {
-      this.showApiError(`Token ${String(this.ticker.value)} is already added`);
+      this.showApiError(`This token is already added`);
       return;
     }
 
-    // Sender doesn't matter here, just reuse an easily available address
-    const tickerCall = new LocalCallRequest(this.address.value, this.address.value, 'Symbol');
     this.loading = true;
 
-    // Add the token if valid token contract exists
-    this.tokenService
-      .LocalCall(tickerCall)
+    const token = { address: this.address.value } as any;
+    const localCall = new LocalCallRequest(this.address.value, this.address.value, 'get_Symbol');
+
+    // Using take(1) no need to unsubscribe explicitly
+    this.tokenService.LocalCall(localCall)
       .pipe(
-        take(1),
-        takeUntil(this.disposed$),
-        finalize(() => this.loading = false)
-      )
-      .subscribe(localExecutionResult => {
-        const methodCallResult = localExecutionResult.return;
-
-        if (!methodCallResult) {
-          this.showApiError(`Address is not a valid token contract.`);
-          return;
+        tap(symbol => token.symbol = symbol.return),
+        switchMap(_ => {
+          localCall.methodName = 'get_Decimals';
+          return this.tokenService.LocalCall(localCall).pipe(tap(decimals => token.decimals = decimals.return));
+        }),
+        switchMap(_ => {
+          localCall.methodName = 'get_Name';
+          return this.tokenService.LocalCall(localCall).pipe(tap(name => token.name = name.return));
+        }),
+        switchMap(_ => this.findTokenType$().pipe(tap(tokenType => token.type = tokenType))),
+        take(1))
+      .subscribe(_ => {
+        // Old tokens such as MEDI, do not have a decimals property in contract, set 8
+        if (!token.decimals && token.type === 'IStandardToken') {
+          token.decimals = 8;
         }
 
-        if (typeof (methodCallResult) === 'string' && methodCallResult !== this.ticker.value) {
-          this.showApiError(`Token contract symbol ${methodCallResult} does not match given symbol ${String(this.ticker.value)}.`);
-          return;
-        }
+        token.valid = !!token.name && !!token.symbol && !!token.type && (token.decimals >= 0 && token.decimals <= 18);
 
-        const savedToken = new SavedToken(this.ticker.value, this.address.value, '0', name, this.decimals.value);
-        const result = this.tokenService.AddToken(savedToken);
-
-        if (result.failure) {
-          this.apiError = result.message;
-          return;
-        }
-
-        this.activeModal.close(savedToken);
+        this.validatedToken = token;
+        this.loading = false;
       });
+  }
+
+  onSubmit(): void {
+    if (this.validatedToken?.valid !== true) {
+      this.showApiError('Invalid Token');
+      return;
+    }
+
+    const savedToken = new SavedToken(this.validatedToken.symbol,
+                                      this.validatedToken.address,
+                                      '0',
+                                      this.validatedToken.name,
+                                      this.validatedToken.decimals,
+                                      this.validatedToken.type);
+    const result = this.tokenService.AddToken(savedToken);
+
+    if (result.failure) {
+      this.apiError = result.message;
+      return;
+    }
+
+    this.activeModal.close(savedToken);
   }
 
   showApiError(error: string): void {
     this.genericModalService.openModal('Error', error);
   }
 
-  private registerControls() {
-    const integerValidator = Validators.pattern('^[0-9][0-9]*$');
+  /**
+   * @summary Attempts a local-call TransferTo with 0 tokens only to verify the token is of an IStandardToken or IStandardToken256 type
+   * @returns null or supported interface
+   */
+   private findTokenType$(): Observable<string> {
+    const request = new LocalCallRequest(this.address.value, this.address.value, 'TransferTo', 0);
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    this.token = new FormControl(0, [Validators.required]);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    this.address = new FormControl('', [Validators.required]);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    this.ticker = new FormControl('', [Validators.required]);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    this.name = new FormControl('', [Validators.required]);
-    this.decimals = new FormControl(0, [Validators.min(0), integerValidator, Validators.max(8)]);
+    // Try UInt256 first
+    request.parameters = [`9#${this.address.value}`, '12#0'];
 
-    this.addTokenForm = new FormGroup({
-      token: this.token,
-      address: this.address,
-      ticker: this.ticker,
-      name: this.name,
-      decimals: this.decimals
-    });
+    return this.tokenService.LocalCall(request)
+      .pipe(
+        map(response => response.return === true && !response.errorMessage ? TokenType.IStandardToken256 : ''),
+        switchMap((type: string) => {
+          if (type === TokenType.IStandardToken256) return of(type);
+
+          request.parameters = [`9#${this.address.value}`, '7#0'];
+
+          return this.tokenService.LocalCall(request)
+                .pipe(map(response => response.return === true && !response.errorMessage ? TokenType.IStandardToken : ''));
+        }));
+  }
+
+  ngOnDestroy(): void {
+    this.dispose();
   }
 }

@@ -16,4 +16,5 @@ export class LocalExecutionResult {
   return: any;
   internalTransfers: TransferInfo[];
   logs: Log[];
+  errorMessage?: any;
 }

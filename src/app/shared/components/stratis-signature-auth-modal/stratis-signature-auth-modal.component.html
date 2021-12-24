@@ -9,15 +9,14 @@
 
 <div [hidden]="submitting">
   <div class="modal-body ModalSend pt-0">
-    <form [formGroup]="form" (submit)="submit()">
+    <form [formGroup]="form">
       <div class="form-group clearfix">
         <label for="message">Message</label>
         <input type="text" class="form-control" formControlName="message" id="message">
       </div>
 
       <div *ngIf="request">
-        <h6 class="d-
-        flex align-items-center">
+        <h6 class="d-flex align-items-center">
           <i class="lnr mr-2" [ngClass]="{'text-danger lnr-warning': request.error, 'text-success lnr-checkmark-circle': !request.error}"></i>
           {{request.error ? request.error : request.origin}}
         </h6>

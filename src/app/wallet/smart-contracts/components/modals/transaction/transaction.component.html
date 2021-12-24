@@ -117,26 +117,30 @@
           <div class="form-group col-6 clearfix" data-toggle="tooltip" data-placement="right"
             title="Unique name for your token">
             <label for="tokenName">Token Name</label>
-            <input formControlName="tokenName" id="tokenName" type="text" class="form-control" placeholder="Token Name"
+            <input formControlName="tokenName" id="tokenName" type="text" class="form-control" placeholder="My Token"
               [class.is-invalid]="tokenName.invalid && (tokenName.dirty || tokenName.touched)" maxlength="50">
             <div *ngIf="tokenName.errors" class="invalid-feedback">
               <p *ngIf="tokenName.errors.required">Token name is required</p>
             </div>
           </div>
+
           <div class="form-group col-6 clearfix" data-toggle="tooltip" data-placement="right"
             title="Unique ticker/symbol for your token">
             <label for="tokenName">Token Symbol</label>
             <input formControlName="tokenSymbol" id="tokenName" type="text" class="form-control"
-              placeholder="Token Symbol"
+              placeholder="MTK"
               [class.is-invalid]="tokenSymbol.invalid && (tokenSymbol.dirty || tokenSymbol.touched)" maxlength="5">
             <div *ngIf="tokenSymbol.errors" class="invalid-feedback">
               <p *ngIf="tokenSymbol.errors.required">Token symbol is required</p>
             </div>
           </div>
-          <div class="form-group col-6 clearfix" data-toggle="tooltip" data-placement="right" title="Total coin supply. If decimals is provided, this value will be scaled.">
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-6 clearfix" data-toggle="tooltip" data-placement="right" title="Total coin supply. If decimals is provided, this value will be scaled.">
             <label for="totalSupply">Total Supply</label>
             <input formControlName="totalSupply" id="totalSupply" type="text" class="form-control"
-              placeholder="Total Supply"
+              placeholder="21000000"
               [class.is-invalid]="totalSupply.invalid && (totalSupply.dirty || totalSupply.touched)" min="0">
             <div *ngIf="totalSupply.errors" class="invalid-feedback">
               <p *ngIf="totalSupply.errors.required">Total supply is required</p>
@@ -144,23 +148,30 @@
               <p *ngIf="totalSupply.errors.pattern">Total supply must be an integer</p>
             </div>
           </div>
-          <div class="form-group col-6 clearfix" data-toggle="tooltip" data-placement="right" title="The number of decimal places your token has after the 0 eg. 0.12345 has 5 decimal places">
+
+          <div class="col-6 clearfix" data-toggle="tooltip" data-placement="right" title="The number of decimal places your token has after the 0 eg. 0.12345 has 5 decimal places">
             <label for="totalSupply">Decimal Places</label>
             <input formControlName="decimals" id="decimals" type="number" class="form-control"
-              placeholder="Decimals"
+              placeholder="8"
               [class.is-invalid]="decimals.invalid && (decimals.dirty || decimals.touched)" min="0">
             <div *ngIf="decimals.errors" class="invalid-feedback">
               <p *ngIf="decimals.errors.required">Decimal places is required</p>
               <p *ngIf="decimals.errors.min">Decimal places cannot be negative or zero</p>
-              <p *ngIf="decimals.errors.max">Decimal places must be 8 or less</p>
+              <p *ngIf="decimals.errors.max">Decimal places must be 18 or less</p>
               <p *ngIf="decimals.errors.pattern">Decimal places must be an integer</p>
             </div>
           </div>
+
+          <div class="col-12" *ngIf="totalSupply.value && decimals.value !== null">
+            <span class="text-light">Total: {{totalSupply.value | formatNumber:0}}<ng-container *ngIf="decimals.value > 0">{{'.'.padEnd(decimals.value, '0')}}</ng-container></span>
+          </div>
         </div>
+
         <div *ngIf="transactionForm.errors">
-          <p *ngIf="transactionForm.errors.maxSupplyTooLargeError" class="text-danger">Total supply * 10^(decimal places) cannot exceed 18,400,000,000,000,000,000</p>
+          <p *ngIf="transactionForm.errors.maxSupplyTooLargeError" class="text-danger">Total supply * 10^(decimal places) cannot exceed UInt256 max value</p>
         </div>
       </ng-template>
+
       <div class="mt-2 mb-4 d-flex justify-content-end" *ngIf="mode !== modeEnum.IssueToken">
         <button type="button" class="btn btn-outline-secondary" (click)="addParameterClicked()"><i
             class="lnr lnr-plus-circle"></i>

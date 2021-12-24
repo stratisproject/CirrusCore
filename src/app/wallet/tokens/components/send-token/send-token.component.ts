@@ -5,6 +5,7 @@ import { Mixin } from '../../models/mixin';
 import { Disposable } from '../../models/disposable';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SmartContractsService } from '@shared/services/smart-contracts.service';
+import { TokenType } from '@shared/models/token-type';
 
 @Component({
   selector: 'app-send-token',
@@ -61,6 +62,7 @@ export class SendTokenComponent implements OnInit {
   }
 
   private createModel() {
+    const tokenValueType = this.token.type === TokenType.IStandardToken256 ? '12' : '7';
 
     return {
       amount: 0,
@@ -70,7 +72,7 @@ export class SendTokenComponent implements OnInit {
       gasLimit: this.gasLimit.value,
       parameters: [
         `9#${String(this.recipientAddress.value)}`,
-        `7#${this.token.toScaledAmount(this.tokenAmount.value).toFixed()}`
+        `${tokenValueType}#${this.token.toScaledAmount(this.tokenAmount.value).toFixed()}`
       ],
       methodName: 'TransferTo',
       password: this.password.value,
