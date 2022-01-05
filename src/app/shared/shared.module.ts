@@ -1,3 +1,4 @@
+import { FormatNumberPipe } from './pipes/format-number.pipe';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CoinNotationPipe } from './pipes/coin-notation.pipe';
@@ -30,6 +31,7 @@ import { SvgLoaderComponent } from './components/svg-loader/svg-loader.component
     CoinNotationPipe,
     NumberToStringPipe,
     SecondsToStringPipe,
+    FormatNumberPipe,
     AutoFocusDirective,
     PasswordValidationDirective,
     GenericModalComponent,
@@ -59,6 +61,7 @@ import { SvgLoaderComponent } from './components/svg-loader/svg-loader.component
     CoinNotationPipe,
     NumberToStringPipe,
     SecondsToStringPipe,
+    FormatNumberPipe,
     AutoFocusDirective,
     PasswordValidationDirective,
     LoadingModalComponent,
@@ -69,5 +72,4 @@ import { SvgLoaderComponent } from './components/svg-loader/svg-loader.component
   ]
 })
 
-export class SharedModule {
-}
+export class SharedModule {}
