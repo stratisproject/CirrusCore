@@ -26,7 +26,10 @@ import { SvgLoaderComponent } from './components/svg-loader/svg-loader.component
 
 
 @NgModule({
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ],
   declarations: [
     CoinNotationPipe,
     NumberToStringPipe,
