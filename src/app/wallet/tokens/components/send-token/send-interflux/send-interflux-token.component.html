@@ -14,13 +14,15 @@
 
       <div class="form-group clearfix">
 
-        <div class="form-group clearfix">
+        <div class="form-group clearfix ">
           <input type="checkbox" class="form control form-control-success text-left"
             [class.is-invalid]="tacAgreed.valid" [class.is-valid]="!tacAgreed && tacAgreed.valid"
             formControlName="tacAgreed" id="tacAgreed">
-          I understand that a fee will be added to this transaction. A fee upwards of $350 should be expected and
-          will vary based on the volatility of the Ethereum gas price. Please check the box to accept this fee and
-          responsibility for any funds lost. <div *ngIf="tacAgreed" class="invalid-feedback">
+          <span class="font-weight-bold">
+            I understand that a fee will be added to this transaction. A fee upwards of 350 CRS should be expected and
+            will vary based on the volatility of the Ethereum gas price. Please check the box to accept this fee and
+            responsibility for any funds lost.</span>
+          <div *ngIf="tacAgreed" class="invalid-feedback">
             {{ tacAgreed.errors }}</div>
         </div>
 
