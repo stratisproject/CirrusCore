@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ApiService } from '@shared/services/api.service';
 import { GlobalService } from '@shared/services/global.service';
-import { ModalService } from '@shared/services/modal.service';
 import { CoinNotationPipe } from '@shared/pipes/coin-notation.pipe';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FeeEstimation } from '@shared/models/fee-estimation';
@@ -12,7 +11,7 @@ import { SendConfirmationComponent } from './send-confirmation/send-confirmation
 import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
 import { WalletService } from '@shared/services/wallet.service';
-import { SendComponentFormResources } from './send-component-form-resources';
+import { SendComponentFormResources } from '../send-component-form-resources';
 import { FormHelper } from '@shared/forms/form-helper';
 import { TransactionResponse } from '@shared/models/transaction-response';
 import { CurrentAccountService } from "@shared/services/current-account.service";
@@ -34,7 +33,6 @@ export class SendComponent implements OnInit, OnDestroy {
     public walletService: WalletService,
     private globalService: GlobalService,
     private modalService: NgbModal,
-    private genericModalService: ModalService,
     private currentAccountService: CurrentAccountService,
     public activeModal: NgbActiveModal,
     private fb: FormBuilder) {

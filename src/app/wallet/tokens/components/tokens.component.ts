@@ -307,11 +307,13 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
   sendinterflux(item: SavedToken): void {
 
     const modal = this.modalService.open(SendInterfluxTokenComponent, { backdrop: 'static', keyboard: false });
+
     (<SendInterfluxTokenComponent>modal.componentInstance).walletName = this.walletName;
     (<SendInterfluxTokenComponent>modal.componentInstance).selectedSenderAddress = this.selectedAddress;
     (<SendInterfluxTokenComponent>modal.componentInstance).balance = this.balance;
     (<SendInterfluxTokenComponent>modal.componentInstance).coinUnit = this.coinUnit;
     (<SendInterfluxTokenComponent>modal.componentInstance).token = item;
+
     modal.result.then(value => {
 
       if (!value || !value.callResponse) {
