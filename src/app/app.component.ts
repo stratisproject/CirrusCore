@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Observable, Subscription } from 'rxjs';
+import { retryWhen, delay, tap } from 'rxjs/operators';
 import { ElectronService } from '@shared/services/electron.service';
 import { GlobalService } from '@shared/services/global.service';
 import { NodeService } from '@shared/services/node-service';
@@ -33,34 +34,29 @@ export class AppComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   public errorMessage: string;
   public apiService: ApiService;
+  private statusIntervalSubscription: Subscription;
+
+  private readonly lastFeatureNamespace = 'Stratis.Features.Diagnostic.DiagnosticFeature';
+  private readonly MaxRetryCount = 30;
+  private readonly TryDelayMilliseconds = 2000;
 
   ngOnInit(): void {
     this.setTitle();
     this.fullNodeEvent = this.nodeService.FullNodeEvent();
-
-    // Start the subscription.
+    // Temporary workaround: use API as fallback
+    setTimeout(() => this.checkResponse(), 5000);
     this.startFullNodeEventSubscription();
-
-    // Ask the full node for its state, this is to check if the full node hasnt't completed initialization yet.
-    // The node will reply with a signalR event, which if started will then navigate to the login page.
-
-    console.log("Getting initial status from API, delay 5 seconds...");
-
-    setTimeout(
-      () => this.callNodeStatus(this.apiService)
-      , 5000);
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  private callNodeStatus(apiService: ApiService) {
-    try {
-      console.log("Getting initial status from API...");
-      apiService.getNodeStatus(true).toPromise();
-    } catch (error) {
-      console.log(error);
+  private checkResponse() {
+    // Use API as a fallback. Needed when the SignalR handshake has been completed after node initialization, at that point we wont get any FullNodeEvent messages anymore.
+    // TO-DO: ask the node for its status through SignalR.
+    if (!this.currentState) {
+      this.getStatusThroughApi();
     }
   }
 
@@ -82,6 +78,49 @@ export class AppComponent implements OnInit, OnDestroy {
             this.loadingFailed = true;
           }
         }
+      }
+    ));
+  }
+
+  private getStatusThroughApi(): void {
+    console.log("Getting status from API.");
+    let retry = 0;
+    const stream$ = this.apiService.getNodeStatus(true).pipe(
+      retryWhen(errors =>
+        errors.pipe(delay(this.TryDelayMilliseconds)).pipe(
+          tap(errorStatus => {
+            if (retry++ === this.MaxRetryCount) {
+              throw errorStatus;
+            }
+            console.log(`Retrying ${retry}...`);
+          })
+        )
+      )
+    );
+
+    this.subscriptions.push(stream$.subscribe(
+      () => {
+        this.subscriptions.push(this.statusIntervalSubscription = this.apiService.getNodeStatusInterval(true)
+          .subscribe(
+            response => {
+              if (response) {
+                const statusResponse = response.featuresData.filter(x => x.namespace === 'Stratis.Bitcoin.Base.BaseFeature');
+                const lastFeatureResponse = response.featuresData.find(x => x.namespace === this.lastFeatureNamespace);
+                if (statusResponse.length > 0 && statusResponse[0].state === 'Initialized'
+                  && lastFeatureResponse && lastFeatureResponse.state === 'Initialized') {
+                  this.loading = false;
+                  this.statusIntervalSubscription.unsubscribe();
+                  this.router.navigate(['login']);
+                }
+              }
+            }
+          )
+        );
+      }, error => {
+        this.errorMessage = error.message;
+        console.log('Failed to start wallet');
+        this.loading = false;
+        this.loadingFailed = true;
       }
     ));
   }
