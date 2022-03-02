@@ -1,3 +1,4 @@
+import { FormatNumberPipe } from './pipes/format-number.pipe';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CoinNotationPipe } from './pipes/coin-notation.pipe';
@@ -20,21 +21,29 @@ import { WalletInitializingComponent } from './components/wallet-initializing/wa
 import { WalletInitializingFailedComponent } from './components/wallet-initializing-failed/wallet-initializing-failed.component';
 import { LoggerService } from './services/logger.service';
 import { ElectronService } from './services/electron.service';
+import { StratisSignatureAuthModalComponent } from './components/stratis-signature-auth-modal/stratis-signature-auth-modal.component';
+import { SvgLoaderComponent } from './components/svg-loader/svg-loader.component';
 
 
 @NgModule({
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ],
   declarations: [
     CoinNotationPipe,
     NumberToStringPipe,
     SecondsToStringPipe,
+    FormatNumberPipe,
     AutoFocusDirective,
     PasswordValidationDirective,
     GenericModalComponent,
     LoadingModalComponent,
     ConfirmationModalComponent,
     WalletInitializingComponent,
-    WalletInitializingFailedComponent
+    WalletInitializingFailedComponent,
+    StratisSignatureAuthModalComponent,
+    SvgLoaderComponent
   ],
   providers : [
     ApiService,
@@ -55,14 +64,15 @@ import { ElectronService } from './services/electron.service';
     CoinNotationPipe,
     NumberToStringPipe,
     SecondsToStringPipe,
+    FormatNumberPipe,
     AutoFocusDirective,
     PasswordValidationDirective,
     LoadingModalComponent,
     ConfirmationModalComponent,
     WalletInitializingComponent,
-    WalletInitializingFailedComponent
+    WalletInitializingFailedComponent,
+    SvgLoaderComponent
   ]
 })
 
-export class SharedModule {
-}
+export class SharedModule {}

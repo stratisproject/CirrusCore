@@ -1,10 +1,9 @@
+import { TokenType } from '@shared/models/token-type';
 import { Injectable } from '@angular/core';
 import { LocalExecutionResult } from '@shared/models/local-execution-result';
 import { ApiService } from '@shared/services/api.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import JSONBigNumber from 'json-bignumber';
-import BigNumber from 'bignumber.js';
 import { LocalCallRequest } from '../models/LocalCallRequest';
 import { Result, ResultStatus } from '../models/result';
 import { SavedToken, Token } from '../models/token';
@@ -34,13 +33,13 @@ export class TokensService {
     // Must map to the class here, just casting using getItem will not create the right object instance.
     const savedTokens = this.storage.getItem<SavedToken[]>(this.savedTokens);
     const result = savedTokens ? this.defaultTokens.concat(savedTokens) : this.defaultTokens;
-    return result.map(t => new SavedToken(t.ticker, t.address, null, t.name, t.decimals));
+    return result.map(t => new SavedToken(t.ticker, t.address, null, t.name, t.decimals, t.type));
   }
 
   GetAvailableTokens(): Token[] {
     const tokens = [];
     if (!this.globalService.getTestnetEnabled()) {
-      tokens.push(new Token('MEDI', 'CUwkBGkXrQpMnZeWW2SpAv1Vu9zPvjWNFS', 'Mediconnect', 8));
+      tokens.push(new Token('MEDI', 'CUwkBGkXrQpMnZeWW2SpAv1Vu9zPvjWNFS', 'Mediconnect', 8, TokenType.IStandardToken));
     }
     return tokens;
   }
@@ -80,37 +79,21 @@ export class TokensService {
     return Result.ok(token);
   }
 
-  GetTokenBalance(request: TokenBalanceRequest): Observable<number> {
-    return this.apiService.localCallRaw(request).pipe(
-      map(rawText => {
-        return JSONBigNumber.parse(rawText, function (key, value) {
-          if (key === 'return') {
-            if (BigNumber.isBigNumber(value)) {
-              return value.toFixed();
-            }
-          } else {
-            return value;
+  GetTokenBalance(request: TokenBalanceRequest): Observable<BigInt> {
+    return this.LocalCall(request)
+      .pipe(
+        map((response: LocalExecutionResult) => {
+          const digitsOnlyRegex = new RegExp(/^\d+$/);
+          if (!response.return || !digitsOnlyRegex.test(response.return.toString())) {
+            return BigInt(0);
           }
-        });
-      }),
-      map(localExecutionresult => localExecutionresult.return ? localExecutionresult.return : '0')
-    );
+
+          return BigInt(response.return);
+        })
+      );
   }
 
   LocalCall(request: LocalCallRequest): Observable<LocalExecutionResult> {
-    return this.apiService.localCall(request)
-      .pipe(
-        map(response => {
-          // Temporary workaround for non-camel-cased API response
-          const anyResponse = (<any>response);
-          const result = new LocalExecutionResult();
-          result.gasConsumed = anyResponse.hasOwnProperty('GasConsumed') ? anyResponse.GasConsumed : anyResponse.gasConsumed;
-          result.return = anyResponse.hasOwnProperty('Return') ? anyResponse.Return : anyResponse.return;
-          result.revert = anyResponse.hasOwnProperty('Revert') ? anyResponse.Revert : anyResponse.revert;
-          result.logs = anyResponse.hasOwnProperty('Logs') ? anyResponse.Revert : anyResponse.logs;
-          result.internalTransfers = anyResponse.hasOwnProperty('InternalTransfers') ? anyResponse.Revert : anyResponse.internalTransfers;
-          return result;
-        })
-      );
+    return this.apiService.localCall(request);
   }
 }
