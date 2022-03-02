@@ -104,7 +104,6 @@ export class SendInterfluxTokenComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // Hack the parameters into a format the API expects
     const result = this.createModel();
 
     this.loading = true;
