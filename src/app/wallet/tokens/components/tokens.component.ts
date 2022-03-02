@@ -27,6 +27,7 @@ import { TokensService } from '../services/tokens.service';
 import { AddTokenComponent } from './add-token/add-token.component';
 import { ProgressComponent } from './progress/progress.component';
 import { SendTokenComponent } from './send-token/send-token.component';
+import { SendInterfluxTokenComponent } from './send-token/send-interflux/send-interflux-token.component';
 import { CurrentAccountService } from '@shared/services/current-account.service';
 import { WalletService } from '@shared/services/wallet.service';
 
@@ -239,6 +240,80 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     (<SendTokenComponent>modal.componentInstance).balance = this.balance;
     (<SendTokenComponent>modal.componentInstance).coinUnit = this.coinUnit;
     (<SendTokenComponent>modal.componentInstance).token = item;
+    modal.result.then(value => {
+
+      if (!value || !value.callResponse) {
+        return;
+      }
+
+      // start monitoring token progress
+      const progressModal = this.modalService.open(ProgressComponent, { backdrop: 'static', keyboard: false });
+      (<ProgressComponent>progressModal.componentInstance).loading = true;
+      (<ProgressComponent>progressModal.componentInstance).close.subscribe(() => progressModal.close());
+      (<ProgressComponent>progressModal.componentInstance).title = 'Waiting For Confirmation';
+      // tslint:disable-next-line:max-line-length
+      (<ProgressComponent>progressModal.componentInstance).message = 'Your token transfer transaction has been broadcast and is waiting to be mined. This window will close once the transaction receives one confirmation.';
+      (<ProgressComponent>progressModal.componentInstance).summary = `Send ${String(value.amount)} ${item.name} to ${String(value.recipientAddress)}`;
+
+      const receiptQuery = this.smartContractsService.GetReceiptSilent(value.callResponse.transactionId)
+        .pipe(
+          catchError(() => {
+            // Receipt API returns a 400 if the receipt is not found.
+            this.loggerService.log(`Receipt not found yet`);
+            return of(undefined);
+          })
+        );
+
+      pollWithTimeOut(this.pollingInterval, this.maxTimeout, receiptQuery)
+        .pipe(
+          first(r => !!r),
+          switchMap(result => {
+            // Timeout returns null after completion, use this to throw an error to be handled by the subscriber.
+            if (result === null) {
+              return throwError(`It seems to be taking longer to transfer tokens. Please go to "Smart Contracts" tab
+                to monitor transactions and check the progress of the token transfer.`);
+            }
+
+            return of(result);
+          }),
+          takeUntil(this.disposed$)
+        )
+        .subscribe(
+          receipt => {
+
+            if (receipt.error) {
+              this.showError(receipt.error);
+              this.loggerService.error(new Error(receipt.error));
+            }
+
+            if (receipt.returnValue === 'False') {
+              const sendFailedError = 'Sending tokens failed! Check the amount you are trying to send is correct.';
+              this.showError(sendFailedError);
+              this.loggerService.error(new Error(sendFailedError));
+            }
+
+            progressModal.close('ok');
+            this.tokenBalanceRefreshRequested$.next([item]);
+          },
+          error => {
+            this.showError(error);
+            this.loggerService.error(error);
+            progressModal.close('ok');
+          }
+        );
+    });
+  }
+
+  sendinterflux(item: SavedToken): void {
+
+    const modal = this.modalService.open(SendInterfluxTokenComponent, { backdrop: 'static', keyboard: false });
+
+    (<SendInterfluxTokenComponent>modal.componentInstance).walletName = this.walletName;
+    (<SendInterfluxTokenComponent>modal.componentInstance).selectedSenderAddress = this.selectedAddress;
+    (<SendInterfluxTokenComponent>modal.componentInstance).balance = this.balance;
+    (<SendInterfluxTokenComponent>modal.componentInstance).coinUnit = this.coinUnit;
+    (<SendInterfluxTokenComponent>modal.componentInstance).token = item;
+
     modal.result.then(value => {
 
       if (!value || !value.callResponse) {

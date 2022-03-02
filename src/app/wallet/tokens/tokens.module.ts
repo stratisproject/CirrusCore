@@ -8,6 +8,7 @@ import { SmartContractsModule } from '../smart-contracts/smart-contracts.module'
 import { AddTokenComponent } from './components/add-token/add-token.component';
 import { ProgressComponent } from './components/progress/progress.component';
 import { SendTokenComponent } from './components/send-token/send-token.component';
+import { SendInterfluxTokenComponent } from './components/send-token/send-interflux/send-interflux-token.component';
 import { TokensComponent } from './components/tokens.component';
 import { StorageService } from './services/storage.service';
 import { TokensService } from './services/tokens.service';
@@ -24,6 +25,7 @@ import { SmartContractsService } from '@shared/services/smart-contracts.service'
     TokensComponent,
     AddTokenComponent,
     SendTokenComponent,
+    SendInterfluxTokenComponent,
     ProgressComponent
   ]
 })
