@@ -33,13 +33,13 @@ export class TokensService {
     // Must map to the class here, just casting using getItem will not create the right object instance.
     const savedTokens = this.storage.getItem<SavedToken[]>(this.savedTokens);
     const result = savedTokens ? this.defaultTokens.concat(savedTokens) : this.defaultTokens;
-    return result.map(t => new SavedToken(t.ticker, t.address, null, t.name, t.decimals, t.type));
+    return result.map(t => new SavedToken(t.ticker, t.address, null, t.name, t.decimals, t.type, t.interFluxEnabled));
   }
 
   GetAvailableTokens(): Token[] {
     const tokens = [];
     if (!this.globalService.getTestnetEnabled()) {
-      tokens.push(new Token('MEDI', 'CUwkBGkXrQpMnZeWW2SpAv1Vu9zPvjWNFS', 'Mediconnect', 8, TokenType.IStandardToken));
+      tokens.push(new Token('MEDI', 'CUwkBGkXrQpMnZeWW2SpAv1Vu9zPvjWNFS', 'Mediconnect', 8, TokenType.IStandardToken, false));
     }
     return tokens;
   }
