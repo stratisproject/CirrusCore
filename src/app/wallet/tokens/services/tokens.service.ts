@@ -42,14 +42,20 @@ export class TokensService {
     var interFluxTokens = await this.apiService.supportedInterFluxTokens().toPromise();
 
     interFluxTokens.forEach((token) => {
-      this.loggerService.info(JSON.stringify(token));
       var interFluxToken = new Token(token.tokenName, token.src20Address, token.tokenName, 18, TokenType.IStandardToken256.toString(), true);
       supportedInterFluxTokens.push(interFluxToken);
     });
 
     const savedTokens = this.storage.getItem<SavedToken[]>(this.savedTokens);
     const result = savedTokens ? this.defaultTokens.concat(savedTokens) : this.defaultTokens;
-    return result.concat(supportedInterFluxTokens).map(t => new SavedToken(t.ticker, t.address, null, t.name, t.decimals, t.type, t.interFluxEnabled));
+
+    supportedInterFluxTokens.forEach((interFluxToken) => {
+      var found = result.find(x => x.address === interFluxToken.address);
+      if (found == null)
+        result.push(interFluxToken);
+    });
+
+    return result.map(t => new SavedToken(t.ticker, t.address, null, t.name, t.decimals, t.type, t.interFluxEnabled));
   }
 
   GetAvailableTokens(): Token[] {
@@ -78,6 +84,7 @@ export class TokensService {
     }
 
     tokens.push(token);
+    this.loggerService.info(tokens.length);
     this.storage.setItem(this.savedTokens, tokens);
     return Result.ok(token);
   }
@@ -86,11 +93,13 @@ export class TokensService {
     if (!token) {
       return new Result(ResultStatus.Error, 'Invalid token');
     }
+
     const tokens = await this.GetSavedTokens();
     const index = tokens.map(t => t.address).indexOf(token.address);
     if (index < 0) {
       return new Result(ResultStatus.Error, 'Specified token was not found');
     }
+
     tokens.splice(index, 1);
     this.storage.setItem(this.savedTokens, tokens);
     return Result.ok(token);

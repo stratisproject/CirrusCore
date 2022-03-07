@@ -74,7 +74,7 @@
                     <i class="lnr lnr-file-add"></i>
                   </button>
                 </td>
-                <td class="text-right col-3" scope="col">
+                <td class="text-right col-3 display-inline-block" scope="col">
                   <ng-container *ngIf="item.address">
                     <button *ngIf="item.interFluxEnabled" type="button" class="btn btn-sm btn-stratis-green"
                       style="width: 100px;" (click)="sendinterflux(item)"><i class="icon lnr lnr-arrow-up-circle"></i>
@@ -83,8 +83,8 @@
                     <button type="button" class="btn btn-sm btn-stratis-green" style="width: 100px;"
                       (click)="send(item)"><i class="icon lnr lnr-arrow-up-circle"></i> Send {{ item.name }}
                     </button>&nbsp;
-                    <button type="button" class="btn btn-sm btn-danger" (click)="delete(item)"><i
-                        class="icon lnr lnr-cross-circle"></i>
+                    <button *ngIf="!item.interFluxEnabled" type="button" class="btn btn-sm btn-danger"
+                      (click)="delete(item)"><i class="icon lnr lnr-cross-circle"></i>
                     </button>
                   </ng-container>
                 </td>
