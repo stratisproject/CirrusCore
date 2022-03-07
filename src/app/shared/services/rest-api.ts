@@ -9,13 +9,13 @@ export function getHttpOptions(
   contentType: string,
   httpParams?: HttpParams,
 ): {
-    headers?: HttpHeaders | {
-      [header: string]: string | string[];
-    };
-    params?: HttpParams | {
-      [param: string]: string | string[];
-    };
-  } {
+  headers?: HttpHeaders | {
+    [header: string]: string | string[];
+  };
+  params?: HttpParams | {
+    [param: string]: string | string[];
+  };
+} {
   return {
     headers: new HttpHeaders({
       'Accept': accept,
@@ -35,7 +35,7 @@ export class RestApi {
     protected errorService: ErrorService,
     protected loggerService: LoggerService,
     apiUrl?: string) {
-    this.API_URL =  apiUrl || `http://${globalService.getDaemonIP()}:${globalService.getApiPort()}/api`;
+    this.API_URL = apiUrl || `http://${globalService.getDaemonIP()}:${globalService.getApiPort()}/api`;
   }
 
   public get<TResult>(path: string, params?: HttpParams, accept = 'application/json', contentType = 'application/json'): Observable<TResult> {
