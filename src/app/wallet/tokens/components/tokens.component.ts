@@ -86,6 +86,20 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
       .subscribe();
   }
 
+  async ngOnInit(): Promise<any> {
+    // Clear all the balances to start with
+    const tokens = await this.tokenService.GetSavedTokens();
+    tokens.forEach(t => t.clearBalance());
+    this.tokens = tokens;
+
+    // Refresh them all
+    this.tokenBalanceRefreshRequested$.next(this.tokens);
+  }
+
+  ngOnDestroy(): void {
+    this.dispose();
+  }
+
   private updateTokenBalances(tokens: SavedToken[]) {
     const tokensWithAddresses = tokens.filter(token => !!token.address);
     tokensWithAddresses.forEach(token => this.tokenLoading[token.address] = 'loading');
@@ -108,20 +122,6 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
             }
           }));
     }));
-  }
-
-  ngOnInit(): void {
-    // Clear all the balances to start with
-    const tokens = this.tokenService.GetSavedTokens();
-    tokens.forEach(t => t.clearBalance());
-    this.tokens = tokens;
-
-    // Refresh them all
-    this.tokenBalanceRefreshRequested$.next(this.tokens);
-  }
-
-  ngOnDestroy(): void {
-    this.dispose();
   }
 
   showApiError(error: string): void {
@@ -217,12 +217,14 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     this.genericModalService.openModal('Error', error);
   }
 
-  delete(item: SavedToken): void {
+  async delete(item: SavedToken): Promise<any> {
     const modal = this.modalService.open(ConfirmationModalComponent, { backdrop: 'static', keyboard: false });
+
     (<ConfirmationModalComponent>modal.componentInstance).body = `Are you sure you want to remove "${item.ticker}" token`;
-    modal.result.then(value => {
+
+    modal.result.then(async value => {
       if (!value) { return; }
-      const removeResult = this.tokenService.RemoveToken(item);
+      const removeResult = await this.tokenService.RemoveToken(item);
       if (removeResult.failure) {
         this.showApiError(removeResult.message);
         return;

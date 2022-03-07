@@ -55,8 +55,9 @@ export class AddTokenComponent implements OnDestroy, Disposable {
     this.validatedToken = null;
   }
 
-  validateToken(): void {
-    const addedTokens = this.tokenService.GetSavedTokens().find(token => token.address === this.address.value);
+  async validateToken(): Promise<void> {
+    const result = await this.tokenService.GetSavedTokens();
+    var addedTokens = result.find(token => token.address === this.address.value);
     if (addedTokens) {
       this.showApiError(`This token is already added`);
       return;
@@ -94,13 +95,11 @@ export class AddTokenComponent implements OnDestroy, Disposable {
       });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.validatedToken?.valid !== true) {
       this.showApiError('Invalid Token');
       return;
     }
-
-    this.loggerService.info(this.validatedToken.interFluxEnabled);
 
     const savedToken = new SavedToken(this.validatedToken.symbol,
       this.validatedToken.address,
@@ -110,7 +109,7 @@ export class AddTokenComponent implements OnDestroy, Disposable {
       this.validatedToken.type,
       this.validatedToken.interFluxEnabled);
 
-    const result = this.tokenService.AddToken(savedToken);
+    const result = await this.tokenService.AddToken(savedToken);
 
     if (result.failure) {
       this.apiError = result.message;

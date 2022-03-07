@@ -16,6 +16,7 @@ import { IApiService } from '@shared/services/interfaces/services.i';
 import { ErrorService } from '@shared/services/error-service';
 import { LoggerService } from '@shared/services/logger.service';
 import { getHttpOptions } from './rest-api';
+import { Token } from '../../wallet/tokens/models/token';
 
 @Injectable({
   providedIn: 'root'
@@ -273,5 +274,12 @@ export class ApiService extends RestApi implements IApiService {
     }
 
     return params;
+  }
+
+  public supportedInterFluxTokens(): Observable<any[]> {
+    const params = new HttpParams().set('networkType', this.globalService.getTestnetEnabled() ? '1' : '0');
+    return this.get('SupportedContracts/list', params).pipe(
+      catchError(err => this.handleHttpError(err))
+    );
   }
 }

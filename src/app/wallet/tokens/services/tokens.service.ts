@@ -10,6 +10,7 @@ import { SavedToken, Token } from '../models/token';
 import { TokenBalanceRequest } from '../models/token-balance-request';
 import { StorageService } from './storage.service';
 import { GlobalService } from '@shared/services/global.service';
+import { LoggerService } from '@shared/services/logger.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,11 @@ export class TokensService {
   private savedTokens = 'savedTokens';
   private defaultTokens = [];
 
-  constructor(private apiService: ApiService, private storage: StorageService, private globalService: GlobalService) {
+  constructor(
+    private apiService: ApiService,
+    private storage: StorageService,
+    private globalService: GlobalService,
+    private loggerService: LoggerService) {
     this.savedTokens = `${globalService.getNetwork()}:savedTokens`;
 
     // Upgrade wallets using the old format
@@ -29,11 +34,22 @@ export class TokensService {
     }
   }
 
-  GetSavedTokens(): SavedToken[] {
-    // Must map to the class here, just casting using getItem will not create the right object instance.
+  async GetSavedTokens(): Promise<SavedToken[]> {
+
+    var supportedInterFluxTokens = [];
+
+    // Retrieve the set of supported InterFlux tokens from the Api.
+    var interFluxTokens = await this.apiService.supportedInterFluxTokens().toPromise();
+
+    interFluxTokens.forEach((token) => {
+      this.loggerService.info(JSON.stringify(token));
+      var interFluxToken = new Token(token.tokenName, token.src20Address, token.tokenName, 18, TokenType.IStandardToken256.toString(), true);
+      supportedInterFluxTokens.push(interFluxToken);
+    });
+
     const savedTokens = this.storage.getItem<SavedToken[]>(this.savedTokens);
     const result = savedTokens ? this.defaultTokens.concat(savedTokens) : this.defaultTokens;
-    return result.map(t => new SavedToken(t.ticker, t.address, null, t.name, t.decimals, t.type, t.interFluxEnabled));
+    return result.concat(supportedInterFluxTokens).map(t => new SavedToken(t.ticker, t.address, null, t.name, t.decimals, t.type, t.interFluxEnabled));
   }
 
   GetAvailableTokens(): Token[] {
@@ -49,11 +65,12 @@ export class TokensService {
     return Result.ok(tokens);
   }
 
-  AddToken(token: SavedToken): Result<SavedToken> {
+  async AddToken(token: SavedToken): Promise<Result<SavedToken>> {
     if (!token) {
       return new Result(ResultStatus.Error, 'Invalid token');
     }
-    const tokens = this.GetSavedTokens();
+
+    const tokens = await this.GetSavedTokens();
 
     const index = tokens.map(t => t.address).indexOf(token.address);
     if (index >= 0) {
@@ -65,11 +82,11 @@ export class TokensService {
     return Result.ok(token);
   }
 
-  RemoveToken(token: SavedToken): Result<SavedToken> {
+  async RemoveToken(token: SavedToken): Promise<Result<SavedToken>> {
     if (!token) {
       return new Result(ResultStatus.Error, 'Invalid token');
     }
-    const tokens = this.GetSavedTokens();
+    const tokens = await this.GetSavedTokens();
     const index = tokens.map(t => t.address).indexOf(token.address);
     if (index < 0) {
       return new Result(ResultStatus.Error, 'Specified token was not found');
