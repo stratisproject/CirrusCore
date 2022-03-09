@@ -7,6 +7,7 @@ import { Observable, of, ReplaySubject } from 'rxjs';
 import { take, switchMap, tap, map } from 'rxjs/operators';
 import { Disposable } from '../../models/disposable';
 import { LocalCallRequest } from '../../models/LocalCallRequest';
+import { LoggerService } from '@shared/services/logger.service';
 import { Mixin } from '../../models/mixin';
 import { SavedToken } from '../../models/token';
 import { TokensService } from '../../services/tokens.service';
@@ -29,13 +30,20 @@ export class AddTokenComponent implements OnDestroy, Disposable {
     return this.addTokenForm.get('address') as FormControl;
   }
 
+  get interFluxEnabled(): FormControl {
+    return this.addTokenForm.get('interFluxEnabled') as FormControl;
+  }
+
   constructor(
     private tokenService: TokensService,
     private activeModal: NgbActiveModal,
-    private genericModalService: ModalService) {
-      this.addTokenForm = new FormGroup({
-        address: new FormControl('', [Validators.required])
-      });
+    private genericModalService: ModalService,
+    private loggerService: LoggerService) {
+
+    this.addTokenForm = new FormGroup({
+      address: new FormControl('', [Validators.required]),
+      interFluxEnabled: new FormControl(false)
+    });
   }
 
   closeClicked(): void {
@@ -47,8 +55,9 @@ export class AddTokenComponent implements OnDestroy, Disposable {
     this.validatedToken = null;
   }
 
-  validateToken(): void {
-    const addedTokens = this.tokenService.GetSavedTokens().find(token => token.address === this.address.value);
+  async validateToken(): Promise<void> {
+    const result = await this.tokenService.GetSavedTokens();
+    var addedTokens = result.find(token => token.address === this.address.value);
     if (addedTokens) {
       this.showApiError(`This token is already added`);
       return;
@@ -56,7 +65,7 @@ export class AddTokenComponent implements OnDestroy, Disposable {
 
     this.loading = true;
 
-    const token = { address: this.address.value } as any;
+    const token = { address: this.address.value, interFluxEnabled: this.interFluxEnabled.value } as any;
     const localCall = new LocalCallRequest(this.address.value, this.address.value, 'get_Symbol');
 
     // Using take(1) no need to unsubscribe explicitly
@@ -86,19 +95,21 @@ export class AddTokenComponent implements OnDestroy, Disposable {
       });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.validatedToken?.valid !== true) {
       this.showApiError('Invalid Token');
       return;
     }
 
     const savedToken = new SavedToken(this.validatedToken.symbol,
-                                      this.validatedToken.address,
-                                      '0',
-                                      this.validatedToken.name,
-                                      this.validatedToken.decimals,
-                                      this.validatedToken.type);
-    const result = this.tokenService.AddToken(savedToken);
+      this.validatedToken.address,
+      '0',
+      this.validatedToken.name,
+      this.validatedToken.decimals,
+      this.validatedToken.type,
+      this.validatedToken.interFluxEnabled);
+
+    const result = await this.tokenService.AddToken(savedToken);
 
     if (result.failure) {
       this.apiError = result.message;
@@ -116,7 +127,7 @@ export class AddTokenComponent implements OnDestroy, Disposable {
    * @summary Attempts a local-call TransferTo with 0 tokens only to verify the token is of an IStandardToken or IStandardToken256 type
    * @returns null or supported interface
    */
-   private findTokenType$(): Observable<string> {
+  private findTokenType$(): Observable<string> {
     const request = new LocalCallRequest(this.address.value, this.address.value, 'TransferTo', 0);
 
     // Try UInt256 first
@@ -131,7 +142,7 @@ export class AddTokenComponent implements OnDestroy, Disposable {
           request.parameters = [`9#${this.address.value}`, '7#0'];
 
           return this.tokenService.LocalCall(request)
-                .pipe(map(response => response.return === true && !response.errorMessage ? TokenType.IStandardToken : ''));
+            .pipe(map(response => response.return === true && !response.errorMessage ? TokenType.IStandardToken : ''));
         }));
   }
 
