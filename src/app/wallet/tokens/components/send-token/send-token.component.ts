@@ -39,7 +39,7 @@ export class SendTokenComponent implements OnInit {
   loading: boolean;
   apiError: string;
 
-  recommendedGasLimit = 15000;
+  recommendedGasLimit = 250000;
   gasCallLimitMinimum = 10000;
   gasCreateLimitMinimum = 12000;
   gasLimitMaximum = 250000;
