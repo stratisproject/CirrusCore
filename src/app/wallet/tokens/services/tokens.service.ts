@@ -42,7 +42,7 @@ export class TokensService {
     var interFluxTokens = await this.apiService.supportedInterFluxTokens().toPromise();
 
     interFluxTokens.forEach((token) => {
-      var interFluxToken = new Token(token.tokenName, token.src20Address, token.tokenName, 18, TokenType.IStandardToken256.toString(), true);
+      var interFluxToken = new Token(token.tokenName, token.src20Address, token.tokenName, token.decimals, TokenType.IStandardToken256.toString(), true);
       supportedInterFluxTokens.push(interFluxToken);
     });
 
