@@ -42,10 +42,8 @@ export class TokensService {
     var interFluxTokens = await this.apiService.supportedInterFluxTokens().toPromise();
 
     interFluxTokens.forEach((token) => {
-      if (token.tokenName != 'USDC') {
-        var interFluxToken = new Token(token.tokenName, token.src20Address, token.tokenName, token.decimals, TokenType.IStandardToken256.toString(), true);
-        supportedInterFluxTokens.push(interFluxToken);
-      }
+      var interFluxToken = new Token(token.tokenName, token.src20Address, token.tokenName, token.decimals, TokenType.IStandardToken256.toString(), true);
+      supportedInterFluxTokens.push(interFluxToken);
     });
 
     const savedTokens = this.storage.getItem<SavedToken[]>(this.savedTokens);
