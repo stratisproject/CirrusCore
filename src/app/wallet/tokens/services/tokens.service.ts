@@ -16,15 +16,14 @@ import { LoggerService } from '@shared/services/logger.service';
   providedIn: 'root'
 })
 export class TokensService {
-  private savedTokens = 'savedTokens';
-  private defaultTokens = [];
+  private savedTokensKey = 'savedTokens';
 
   constructor(
     private apiService: ApiService,
     private storage: StorageService,
     private globalService: GlobalService,
     private loggerService: LoggerService) {
-    this.savedTokens = `${globalService.getNetwork()}:savedTokens`;
+    this.savedTokensKey = `${globalService.getNetwork()}:savedTokens`;
 
     // Upgrade wallets using the old format
     const oldTokens = this.storage.getItem<SavedToken[]>('savedTokens');
@@ -46,11 +45,12 @@ export class TokensService {
       supportedInterFluxTokens.push(interFluxToken);
     });
 
-    const savedTokens = this.storage.getItem<SavedToken[]>(this.savedTokens);
-    const result = savedTokens ? this.defaultTokens.concat(savedTokens) : this.defaultTokens;
+    const savedTokens = this.storage.getItem<SavedToken[]>(this.savedTokensKey);
+    const defaultTokens = [];
+    const result = savedTokens ? defaultTokens.concat(savedTokens) : defaultTokens;
 
     supportedInterFluxTokens.forEach((interFluxToken) => {
-      var found = result.find(x => x.address === interFluxToken.address);
+      var found = result.find(x => x.address == interFluxToken.address);
       if (found == null)
         result.push(interFluxToken);
     });
@@ -67,7 +67,7 @@ export class TokensService {
   }
 
   UpdateTokens(tokens: SavedToken[]): Result<SavedToken[]> {
-    this.storage.setItem(this.savedTokens, tokens);
+    this.storage.setItem(this.savedTokensKey, tokens);
     return Result.ok(tokens);
   }
 
@@ -85,7 +85,8 @@ export class TokensService {
 
     tokens.push(token);
     this.loggerService.info(tokens.length);
-    this.storage.setItem(this.savedTokens, tokens);
+    this.storage.setItem(this.savedTokensKey, tokens);
+
     return Result.ok(token);
   }
 
@@ -101,7 +102,7 @@ export class TokensService {
     }
 
     tokens.splice(index, 1);
-    this.storage.setItem(this.savedTokens, tokens);
+    this.storage.setItem(this.savedTokensKey, tokens);
     return Result.ok(token);
   }
 
