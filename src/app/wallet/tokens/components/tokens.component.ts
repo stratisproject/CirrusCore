@@ -1,3 +1,4 @@
+import { TokenType } from '@shared/models/token-type';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationModalComponent } from '@shared/components/confirmation-modal/confirmation-modal.component';
@@ -13,8 +14,7 @@ import {
   Subject,
   throwError,
 } from 'rxjs';
-import { catchError, first, switchMap, takeUntil, tap, take } from 'rxjs/operators';
-
+import { catchError, first, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { Mode, TransactionComponent } from '../../smart-contracts/components/modals/transaction/transaction.component';
 import { SmartContractsServiceBase } from '@shared/services/smart-contracts.service';
 import { Disposable } from '../models/disposable';
@@ -27,6 +27,7 @@ import { TokensService } from '../services/tokens.service';
 import { AddTokenComponent } from './add-token/add-token.component';
 import { ProgressComponent } from './progress/progress.component';
 import { SendTokenComponent } from './send-token/send-token.component';
+import { SendInterfluxTokenComponent } from './send-token/send-interflux/send-interflux-token.component';
 import { CurrentAccountService } from '@shared/services/current-account.service';
 import { WalletService } from '@shared/services/wallet.service';
 
@@ -46,7 +47,6 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
   selectedAddress: string;
   walletName: string;
   tokens$: Observable<SavedToken[]>;
-  availableTokens: Token[] = [];
   private pollingInterval = 5 * 1000; // polling milliseconds
   maxTimeout = 1.5 * 60 * 1000; // wait for about 1.5 minutes
   tokens: SavedToken[] = [];
@@ -65,12 +65,8 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     private walletService: WalletService) {
 
     this.walletName = this.globalService.getWalletName();
-
-    this.availableTokens = this.tokenService.GetAvailableTokens();
-    this.availableTokens.push(new Token('Custom', 'custom', 'custom'));
     this.coinUnit = this.globalService.getCoinUnit();
     this.selectedAddress = this.currentAccountService.address;
-
     this.walletService.getSmartContractAddressBalance().subscribe(balance => this.balance = balance);
 
     // Update requested token balances
@@ -90,35 +86,9 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
       .subscribe();
   }
 
-  private updateTokenBalances(tokens: SavedToken[]) {
-    const tokensWithAddresses = tokens.filter(token => !!token.address);
-    tokensWithAddresses.forEach(token => this.tokenLoading[token.address] = 'loading');
-    return forkJoin(tokensWithAddresses.map(token => {
-      return this.tokenService
-        .GetTokenBalance(new TokenBalanceRequest(token.address, this.selectedAddress))
-        .pipe(catchError(error => {
-          this.loggerService.error(error);
-          this.loggerService.log(`Error getting token balance for token address ${token.address}`);
-          return of(null);
-        }),
-          tap(balance => {
-            if (balance === null) {
-              token.clearBalance();
-              this.tokenLoading[token.address] = 'error';
-              return;
-            }
-
-            this.tokenLoading[token.address] = 'loaded';
-            if (balance !== token.balance) {
-              token.setBalance(balance);
-            }
-          }));
-    }));
-  }
-
-  ngOnInit(): void {
+  async ngOnInit(): Promise<any> {
     // Clear all the balances to start with
-    const tokens = this.tokenService.GetSavedTokens();
+    const tokens = await this.tokenService.GetSavedTokens();
     tokens.forEach(t => t.clearBalance());
     this.tokens = tokens;
 
@@ -128,6 +98,30 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
 
   ngOnDestroy(): void {
     this.dispose();
+  }
+
+  private updateTokenBalances(tokens: SavedToken[]) {
+    const tokensWithAddresses = tokens.filter(token => !!token.address);
+    tokensWithAddresses.forEach(token => this.tokenLoading[token.address] = 'loading');
+    return forkJoin(tokensWithAddresses.map(token => {
+      return this.tokenService
+        .GetTokenBalance(new TokenBalanceRequest(token.address, this.selectedAddress))
+        .pipe(
+          catchError(error => {
+            this.loggerService.error(error);
+            this.loggerService.log(`Error getting token balance for token address ${token.address}`);
+            token.clearBalance();
+            this.tokenLoading[token.address] = 'error';
+            return of(BigInt(0));
+          }),
+          tap((balance: BigInt) => {
+            this.tokenLoading[token.address] = 'loaded';
+
+            if (balance.toString() !== token.balance) {
+              token.setBalance(balance.toString());
+            }
+          }));
+    }));
   }
 
   showApiError(error: string): void {
@@ -148,7 +142,6 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
 
   addToken(): void {
     const modal = this.modalService.open(AddTokenComponent, { backdrop: 'static', keyboard: false });
-    (<AddTokenComponent>modal.componentInstance).tokens = this.availableTokens;
     modal.result.then(value => {
       if (value) {
 
@@ -205,7 +198,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
         .subscribe(
           receipt => {
             const newTokenAddress = receipt['newContractAddress'];
-            const token = new SavedToken(value.symbol, newTokenAddress, "0", value.name, value.decimals);
+            const token = new SavedToken(value.symbol, newTokenAddress, "0", value.name, value.decimals, TokenType.IStandardToken256, false);
             this.tokenService.AddToken(token);
             progressModal.close('ok');
             this.tokens.push(token);
@@ -224,12 +217,14 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     this.genericModalService.openModal('Error', error);
   }
 
-  delete(item: SavedToken): void {
+  async delete(item: SavedToken): Promise<any> {
     const modal = this.modalService.open(ConfirmationModalComponent, { backdrop: 'static', keyboard: false });
+
     (<ConfirmationModalComponent>modal.componentInstance).body = `Are you sure you want to remove "${item.ticker}" token`;
-    modal.result.then(value => {
+
+    modal.result.then(async value => {
       if (!value) { return; }
-      const removeResult = this.tokenService.RemoveToken(item);
+      const removeResult = await this.tokenService.RemoveToken(item);
       if (removeResult.failure) {
         this.showApiError(removeResult.message);
         return;
@@ -247,6 +242,80 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
     (<SendTokenComponent>modal.componentInstance).balance = this.balance;
     (<SendTokenComponent>modal.componentInstance).coinUnit = this.coinUnit;
     (<SendTokenComponent>modal.componentInstance).token = item;
+    modal.result.then(value => {
+
+      if (!value || !value.callResponse) {
+        return;
+      }
+
+      // start monitoring token progress
+      const progressModal = this.modalService.open(ProgressComponent, { backdrop: 'static', keyboard: false });
+      (<ProgressComponent>progressModal.componentInstance).loading = true;
+      (<ProgressComponent>progressModal.componentInstance).close.subscribe(() => progressModal.close());
+      (<ProgressComponent>progressModal.componentInstance).title = 'Waiting For Confirmation';
+      // tslint:disable-next-line:max-line-length
+      (<ProgressComponent>progressModal.componentInstance).message = 'Your token transfer transaction has been broadcast and is waiting to be mined. This window will close once the transaction receives one confirmation.';
+      (<ProgressComponent>progressModal.componentInstance).summary = `Send ${String(value.amount)} ${item.name} to ${String(value.recipientAddress)}`;
+
+      const receiptQuery = this.smartContractsService.GetReceiptSilent(value.callResponse.transactionId)
+        .pipe(
+          catchError(() => {
+            // Receipt API returns a 400 if the receipt is not found.
+            this.loggerService.log(`Receipt not found yet`);
+            return of(undefined);
+          })
+        );
+
+      pollWithTimeOut(this.pollingInterval, this.maxTimeout, receiptQuery)
+        .pipe(
+          first(r => !!r),
+          switchMap(result => {
+            // Timeout returns null after completion, use this to throw an error to be handled by the subscriber.
+            if (result === null) {
+              return throwError(`It seems to be taking longer to transfer tokens. Please go to "Smart Contracts" tab
+                to monitor transactions and check the progress of the token transfer.`);
+            }
+
+            return of(result);
+          }),
+          takeUntil(this.disposed$)
+        )
+        .subscribe(
+          receipt => {
+
+            if (receipt.error) {
+              this.showError(receipt.error);
+              this.loggerService.error(new Error(receipt.error));
+            }
+
+            if (receipt.returnValue === 'False') {
+              const sendFailedError = 'Sending tokens failed! Check the amount you are trying to send is correct.';
+              this.showError(sendFailedError);
+              this.loggerService.error(new Error(sendFailedError));
+            }
+
+            progressModal.close('ok');
+            this.tokenBalanceRefreshRequested$.next([item]);
+          },
+          error => {
+            this.showError(error);
+            this.loggerService.error(error);
+            progressModal.close('ok');
+          }
+        );
+    });
+  }
+
+  sendinterflux(item: SavedToken): void {
+
+    const modal = this.modalService.open(SendInterfluxTokenComponent, { backdrop: 'static', keyboard: false });
+
+    (<SendInterfluxTokenComponent>modal.componentInstance).walletName = this.walletName;
+    (<SendInterfluxTokenComponent>modal.componentInstance).selectedSenderAddress = this.selectedAddress;
+    (<SendInterfluxTokenComponent>modal.componentInstance).balance = this.balance;
+    (<SendInterfluxTokenComponent>modal.componentInstance).coinUnit = this.coinUnit;
+    (<SendInterfluxTokenComponent>modal.componentInstance).token = item;
+
     modal.result.then(value => {
 
       if (!value || !value.callResponse) {

@@ -52,35 +52,39 @@
             <thead>
               <tr class="d-flex">
                 <th class="text-center col-1" scope="col">Ticker</th>
-                <th class="text-left col-2" scope="col">Name</th>
-                <th class="text-left col-2" scope="col">Balance</th>
-                <th class="text-left col-5" scope="col">Contract Address</th>
-                <th class="text-right col-2" scope="col">&nbsp;</th>
+                <th class="text-left col-1" scope="col">Name</th>
+                <th class="text-left col-3" scope="col">Balance</th>
+                <th class="text-left col-4" scope="col">Contract Address</th>
+                <th class="text-right col-3" scope="col">&nbsp;</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let item of tokens" class="d-flex">
                 <td class="text-center col-1" scope="col"><span class="badge badge-info">{{item.ticker}}</span></td>
-                <td class="text-left col-2" scope="col">{{ item.name }}</td>
-                <td class="text-left col-2" scope="col">
+                <td class="text-left col-1" scope="col">{{ item.name }}</td>
+                <td class="text-left col-3" scope="col">
                   {{ !item.hasBalance() && tokenLoading[item.address] === 'loading' ? 'Loading...' : item.balance }}
                 </td>
-                <td class="text-left col-5" scope="col">
-                  <span placement="top" ngbTooltip="{{ tooltipText }}" tooltipClass="status-tooltip">{{ item.address }}</span>
-                  <button type="button" class="btn btn-outline-secondary d-inline-block ml-2 btn-sm"
-                  placement="top" ngbTooltip="{{ tooltipText }}" tooltipClass="status-tooltip"
-                    (click)="copyTokenAddress(item.address)"
-                    *ngIf="item.address">
+                <td class="text-left col-4" scope="col">
+                  <span placement="top" ngbTooltip="{{ tooltipText }}" tooltipClass="status-tooltip">{{ item.address
+                    }}</span>
+                  <button type="button" class="btn btn-outline-secondary d-inline-block ml-2 btn-sm" placement="top"
+                    ngbTooltip="{{ tooltipText }}" tooltipClass="status-tooltip"
+                    (click)="copyTokenAddress(item.address)" *ngIf="item.address">
                     <i class="lnr lnr-file-add"></i>
                   </button>
                 </td>
-                <td class="text-right col-2" scope="col">
+                <td class="text-right col-3 display-inline-block" scope="col">
                   <ng-container *ngIf="item.address">
-                    <button type="button" class="btn btn-sm btn-stratis-green" (click)="send(item)"><i
-                        class="icon lnr lnr-arrow-up-circle"></i> Send
+                    <button *ngIf="item.interFluxEnabled" type="button" class="btn btn-sm btn-stratis-green"
+                      style="width: 100px;" (click)="sendinterflux(item)"><i class="icon lnr lnr-arrow-up-circle"></i>
+                      InterFlux
                     </button>&nbsp;
-                    <button type="button" class="btn btn-sm btn-danger" (click)="delete(item)"><i
-                        class="icon lnr lnr-cross-circle"></i>
+                    <button type="button" class="btn btn-sm btn-stratis-green" style="width: 100px;"
+                      (click)="send(item)"><i class="icon lnr lnr-arrow-up-circle"></i> Send {{ item.name }}
+                    </button>&nbsp;
+                    <button *ngIf="!item.interFluxEnabled" type="button" class="btn btn-sm btn-danger"
+                      (click)="delete(item)"><i class="icon lnr lnr-cross-circle"></i>
                     </button>
                   </ng-container>
                 </td>

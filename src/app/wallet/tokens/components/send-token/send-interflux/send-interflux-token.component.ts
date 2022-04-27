@@ -1,19 +1,24 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { SavedToken } from '../../models/token';
+import { SavedToken } from '../../../models/token';
 import { FormControl, FormArray, Validators, FormGroup } from '@angular/forms';
-import { Mixin } from '../../models/mixin';
-import { Disposable } from '../../models/disposable';
+import { Mixin } from '../../../models/mixin';
+import { Disposable } from '../../../models/disposable';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SmartContractsService } from '@shared/services/smart-contracts.service';
 import { TokenType } from '@shared/models/token-type';
 
+import { Recipient } from '@shared/models/transaction';
+import { GlobalService } from '@shared/services/global.service';
+import { SendComponentFormResources } from '../../../../send-component-form-resources';
+
 @Component({
   selector: 'app-send-token',
-  templateUrl: './send-token.component.html',
-  styleUrls: ['./send-token.component.css']
+  templateUrl: './send-interflux-token.component.html',
+  styleUrls: ['./send-interflux-token.component.css']
 })
+
 @Mixin([Disposable])
-export class SendTokenComponent implements OnInit {
+export class SendInterfluxTokenComponent implements OnInit {
 
   @Input()
   selectedSenderAddress: string;
@@ -26,18 +31,19 @@ export class SendTokenComponent implements OnInit {
 
   balance = 0;
 
-  title: string;
-
-  parameters: FormArray;
+  apiError: string;
+  coinUnit: string;
+  contractAddress: FormControl;
   feeAmount: FormControl;
   gasPrice: FormControl;
   gasLimit: FormControl;
-  contractAddress: FormControl;
-  recipientAddress: FormControl;
-  password: FormControl;
-  coinUnit: string;
   loading: boolean;
-  apiError: string;
+  private multisigAddress: string;
+  parameters: FormArray;
+  password: FormControl;
+  recipientAddress: FormControl;
+  tacAgreed: FormControl;
+  title: string;
 
   recommendedGasLimit = 250000;
   gasCallLimitMinimum = 10000;
@@ -48,13 +54,26 @@ export class SendTokenComponent implements OnInit {
   transactionForm: FormGroup;
   tokenAmount: FormControl;
 
-  constructor(private activeModal: NgbActiveModal, private smartContractsService: SmartContractsService) { }
+  private readonly multiSigInterFluxFee = "350";
+
+  constructor(
+    private activeModal: NgbActiveModal,
+    private globalService: GlobalService,
+    private smartContractsService: SmartContractsService) { }
 
   ngOnInit(): void {
-    this.title = 'Send token ' + this.token.ticker;
+    this.title = 'Send token ' + this.token.ticker + ' via Interflux';
     this.registerControls();
     this.contractAddress.setValue(this.token.address);
     this.contractAddress.disable();
+
+    const testnetEnabled = this.globalService.getTestnetEnabled();
+
+    if (testnetEnabled) {
+      this.multisigAddress = SendComponentFormResources.cirrusTestNetworks[0].federationAddress;
+    } else {
+      this.multisigAddress = SendComponentFormResources.cirrusNetworks[0].federationAddress;
+    }
   }
 
   closeClicked(): void {
@@ -65,24 +84,26 @@ export class SendTokenComponent implements OnInit {
     const tokenValueType = this.token.type === TokenType.IStandardToken256 ? '12' : '7';
 
     return {
-      amount: 0,
+      walletName: this.walletName,
+      password: this.password.value,
+      accountName: 'account 0',
       contractAddress: this.token.address,
+      methodName: 'BurnWithMetadata',
+      amount: 0,
       feeAmount: this.feeAmount.value,
+      sender: this.selectedSenderAddress,
       gasPrice: this.gasPrice.value,
       gasLimit: this.gasLimit.value,
+      recipients: [new Recipient(this.multisigAddress, this.multiSigInterFluxFee)],
       parameters: [
-        `9#${String(this.recipientAddress.value)}`,
-        `${tokenValueType}#${this.token.toScaledAmount(this.tokenAmount.value).toFixed()}`
+        `${tokenValueType}#${this.token.toScaledAmount(this.tokenAmount.value).toFixed()}`,
+        `4#${String(this.recipientAddress.value)}`
       ],
-      methodName: 'TransferTo',
-      password: this.password.value,
-      walletName: this.walletName,
-      sender: this.selectedSenderAddress
+      isInteropFeeForMultisig: true
     };
   }
 
   onSubmit(): void {
-    // Hack the parameters into a format the API expects
     const result = this.createModel();
 
     this.loading = true;
@@ -119,32 +140,41 @@ export class SendTokenComponent implements OnInit {
     const gasPriceTooLowValidator = control => Number(control.value) < this.gasPriceMinimum ? { gasPriceTooLowError: true } : null;
     const gasPriceTooHighValidator = control => Number(control.value) > this.gasPriceMaximum ? { gasPriceTooHighError: true } : null;
     const gasLimitMaximumValidator = control => Number(control.value) > this.gasLimitMaximum ? { gasLimitTooHighError: true } : null;
+
     // tslint:disable-next-line:max-line-length
     const gasCallLimitMinimumValidator = control => Number(control.value) < this.gasCallLimitMinimum ? { gasCallLimitTooLowError: true } : null;
-
     const integerValidator = Validators.pattern('^[0-9][0-9]*$');
-
     const decimalPlaceValidator = Validators.pattern('^[0-9]+(\.[0-9]{0,' + this.token.decimals + '})?$');
-
     const gasLimitValidator = (gasCallLimitMinimumValidator);
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
+    this.tacAgreed = new FormControl(0, [Validators.requiredTrue]);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.tokenAmount = new FormControl(0, [Validators.required, Validators.min(0), Validators.max(Number(this.token.balance)), decimalPlaceValidator]);
+
     // eslint-disable-next-line @typescript-eslint/unbound-method
     this.feeAmount = new FormControl(0.001, [Validators.required, amountValidator, Validators.min(0)]);
+
     // tslint:disable-next-line:max-line-length
     // eslint-disable-next-line @typescript-eslint/unbound-method
     this.gasPrice = new FormControl(100, [Validators.required, integerValidator, Validators.pattern('^[+]?([0-9]{0,})*[.]?([0-9]{0,2})?$'), gasPriceTooLowValidator, gasPriceTooHighValidator, Validators.min(0)]);
+
     // tslint:disable-next-line:max-line-length
     // eslint-disable-next-line @typescript-eslint/unbound-method
     this.gasLimit = new FormControl(this.recommendedGasLimit, [Validators.required, integerValidator, Validators.pattern('^[+]?([0-9]{0,})*[.]?([0-9]{0,2})?$'), gasLimitValidator, gasLimitMaximumValidator, Validators.min(0)]);
+
     this.parameters = new FormArray([]);
+
     // eslint-disable-next-line @typescript-eslint/unbound-method
     this.password = new FormControl('', [Validators.required, Validators.nullValidator]);
+
     // eslint-disable-next-line @typescript-eslint/unbound-method
     this.contractAddress = new FormControl('', [Validators.required, Validators.nullValidator]);
+
     // eslint-disable-next-line @typescript-eslint/unbound-method
     this.recipientAddress = new FormControl('', [Validators.required, Validators.nullValidator]);
+
     this.transactionForm = new FormGroup({
       feeAmount: this.feeAmount,
       gasPrice: this.gasPrice,
@@ -153,7 +183,8 @@ export class SendTokenComponent implements OnInit {
       tokenAmount: this.tokenAmount,
       contractAddress: this.contractAddress,
       recipientAddress: this.recipientAddress,
-      password: this.password
+      password: this.password,
+      tacAgreed: this.tacAgreed
     });
   }
 }

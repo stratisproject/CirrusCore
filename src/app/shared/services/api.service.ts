@@ -15,6 +15,8 @@ import { RestApi } from '@shared/services/rest-api';
 import { IApiService } from '@shared/services/interfaces/services.i';
 import { ErrorService } from '@shared/services/error-service';
 import { LoggerService } from '@shared/services/logger.service';
+import { getHttpOptions } from './rest-api';
+import { Token } from '../../wallet/tokens/models/token';
 
 @Injectable({
   providedIn: 'root'
@@ -160,6 +162,13 @@ export class ApiService extends RestApi implements IApiService {
     );
   }
 
+  /** Sign Message */
+  public signMessage(request: any): Observable<string> {
+    return this.post('wallet/signmessage', request).pipe(
+      catchError(err => this.handleHttpError(err))
+    );
+  }
+
   /**
    * Send shutdown signal to the daemon
    */
@@ -248,7 +257,7 @@ export class ApiService extends RestApi implements IApiService {
   // Returns local call data as raw text so we can parse it correctly later
   public localCallRaw(localCall: TokenBalanceRequest): Observable<string> {
     return this.httpClient.post(`${this.API_URL}/smartcontracts/local-call`, localCall, {
-      ...this.getHttpOptions('application/json', 'application/json'),
+      ...getHttpOptions('application/json', 'application/json'),
       responseType: 'text'
     }).pipe(
       catchError(err => this.handleHttpError(err))
@@ -265,5 +274,12 @@ export class ApiService extends RestApi implements IApiService {
     }
 
     return params;
+  }
+
+  public supportedInterFluxTokens(): Observable<any[]> {
+    const params = new HttpParams().set('networkType', this.globalService.getTestnetEnabled() ? '1' : '0');
+    return this.get('SupportedContracts/list', params).pipe(
+      catchError(err => this.handleHttpError(err))
+    );
   }
 }
