@@ -1,6 +1,6 @@
 {
-  "appId": "com.stratisplatform.cirrus",
-  "productName": "Cirrus Core",
+  "appId": "com.stratisplatform.cirrusprivatenet",
+  "productName": "Cirrus Core Private Net",
   "publish": null,
   "directories": {
     "output": "app-builds"
@@ -50,7 +50,7 @@
     "perMachine": true,
     "allowToChangeInstallationDirectory": true,
     "deleteAppDataOnUninstall": true,
-    "guid": "622dc6e9-66ba-465e-a6b5-ad9af17a056f",
+    "guid": "bb451882-0d73-4975-9cce-65b9f0114d27",
     "createDesktopShortcut": true,
     "createStartMenuShortcut": true,
     "license": "src/assets/images/license_en.txt"
