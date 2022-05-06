@@ -54,7 +54,7 @@ export class SendInterfluxTokenComponent implements OnInit {
   transactionForm: FormGroup;
   tokenAmount: FormControl;
 
-  private readonly multiSigInterFluxFee = "350";
+  private readonly multiSigInterFluxFee = "190";
 
   constructor(
     private activeModal: NgbActiveModal,
