@@ -39,6 +39,7 @@ export class SendInterfluxTokenComponent implements OnInit {
   contractAddress: FormControl;
   feeAmount: FormControl;
   interFluxFee: FormControl;
+  interFluxFeeLabel: string;
   gasPrice: FormControl;
   gasLimit: FormControl;
   loading: boolean;
@@ -209,6 +210,7 @@ export class SendInterfluxTokenComponent implements OnInit {
 
   private async updateInterFluxFee(): Promise<any> {
     var result = await this.apiService.getInterFluxFee().toPromise()
-    this.interFluxFee.setValue(result.conversionFee);
+    this.interFluxFee.setValue(result.conversionFee.toFixed(2));
+    this.interFluxFeeLabel = result.conversionFee;
   }
 }
