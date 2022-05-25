@@ -210,7 +210,14 @@ export class SendInterfluxTokenComponent implements OnInit {
 
   private async updateInterFluxFee(): Promise<any> {
     var result = await this.apiService.getInterFluxFee().toPromise()
-    this.interFluxFee.setValue(result.conversionFee.toFixed(2));
-    this.interFluxFeeLabel = result.conversionFee;
+    if (result == null) {
+      this.interFluxFee.setValue('');
+      this.interFluxFeeLabel = '[Could not be determined]';
+    }
+    else {
+      var adjustedFee = ((result.conversionFee * 0.1) + result.conversionFee).toFixed(2);
+      this.interFluxFee.setValue(adjustedFee);
+      this.interFluxFeeLabel = adjustedFee;
+    }
   }
 }
