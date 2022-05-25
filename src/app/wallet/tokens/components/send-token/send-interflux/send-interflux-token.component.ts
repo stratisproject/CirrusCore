@@ -209,7 +209,6 @@ export class SendInterfluxTokenComponent implements OnInit {
 
   private async updateInterFluxFee(): Promise<any> {
     var result = await this.apiService.getInterFluxFee().toPromise()
-    this.loggerService.info(result);
-    this.interFluxFee.setValue(result);
+    this.interFluxFee.setValue(result.conversionFee);
   }
 }

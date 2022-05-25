@@ -284,19 +284,10 @@ export class ApiService extends RestApi implements IApiService {
   }
 
   public getInterFluxFee(): Observable<any> {
-    return new Observable(function subscriber(observer) {
-      observer.next(100);
-      observer.complete();
-
-      return () => {
-        // teardown logic
-      };
-    });
-
-    // return this.get('externalapi/estimateconversionfee').pipe(
-    //   catchError(err => this.handleHttpError(err))
-    // );
+    return this
+      .getExternalJSON('https://cirrushelperapi.azurewebsites.net/estimateconversionfee')
+      .pipe(
+        catchError(err => this.handleHttpError(err))
+      );
   }
-
-
 }

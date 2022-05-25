@@ -43,6 +43,11 @@ export class RestApi {
     return this.httpClient.get(`${this.API_URL}/${path}`, options) as Observable<TResult>;
   }
 
+  public getExternalJSON<TResult>(url: string, params?: HttpParams, accept = 'application/json', contentType = 'application/json'): Observable<any> {
+    const options = getHttpOptions(accept, contentType, params);
+    return this.httpClient.get(`${url}`, options) as Observable<TResult>;
+  }
+
   public delete<TResult>(path: string, params?: HttpParams, accept = 'application/json', contentType = 'application/json'): Observable<TResult> {
     const options = getHttpOptions(accept, contentType, params);
     return this.httpClient.delete(`${this.API_URL}/${path}`, options) as Observable<TResult>;
