@@ -40,6 +40,7 @@ export class SendInterfluxTokenComponent implements OnInit {
   feeAmount: FormControl;
   interFluxFee: FormControl;
   interFluxFeeLabel: string;
+  interFluxFeeCountDown: number = 30;
   gasPrice: FormControl;
   gasLimit: FormControl;
   loading: boolean;
@@ -90,10 +91,21 @@ export class SendInterfluxTokenComponent implements OnInit {
         takeUntil(this.disposed$)
       )
       .subscribe();
+
+    interval(1000)
+      .pipe(
+        switchMap(() => this.UpdateCountDownLabel()),
+        takeUntil(this.disposed$)
+      )
+      .subscribe();
   }
 
   closeClicked(): void {
     this.activeModal.close();
+  }
+
+  private async UpdateCountDownLabel(): Promise<any> {
+    this.interFluxFeeCountDown -= 1;
   }
 
   private createModel() {
@@ -219,5 +231,7 @@ export class SendInterfluxTokenComponent implements OnInit {
       this.interFluxFee.setValue(adjustedFee);
       this.interFluxFeeLabel = adjustedFee;
     }
+
+    this.interFluxFeeCountDown = 30;
   }
 }
