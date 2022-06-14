@@ -185,7 +185,7 @@ export class SendInterfluxTokenComponent implements OnInit {
     this.feeAmount = new FormControl(0.001, [Validators.required, amountValidator, Validators.min(0)]);
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    this.interFluxFee = new FormControl(0, [Validators.required, amountValidator, Validators.min(1), Validators.max(Number(this.token.balance))]);
+    this.interFluxFee = new FormControl(0, [Validators.required, amountValidator, Validators.min(1), Validators.max(Number(this.balance))]);
 
     // tslint:disable-next-line:max-line-length
     // eslint-disable-next-line @typescript-eslint/unbound-method

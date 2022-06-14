@@ -120,25 +120,6 @@ export class SendComponent implements OnInit, OnDestroy {
     }
   }
 
-  // NB: This is not currently used
-  public getMaxBalance(): void {
-    let balanceResponse;
-    const walletRequest = new WalletInfoRequest(this.globalService.getWalletName(), 0, this.sendForm.get('fee').value);
-    this.apiService.getMaximumBalance(walletRequest)
-      .pipe(tap(
-        response => {
-          balanceResponse = response;
-        },
-        error => {
-          this.apiError = error.error.errors[0].message;
-        },
-        () => {
-          this.sendForm.patchValue({ amount: +new CoinNotationPipe().transform(balanceResponse.maxSpendableAmount) });
-          this.estimatedFee = balanceResponse.fee;
-        }
-      )).toPromise();
-  }
-
   public estimateFee(form: FormGroup, isSideChain: boolean): void {
 
     const transaction = new FeeEstimation(
