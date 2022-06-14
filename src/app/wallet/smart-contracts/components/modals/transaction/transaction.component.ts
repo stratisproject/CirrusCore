@@ -70,7 +70,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   apiError: string;
 
   gasCallLimitMinimum = 10000;
-  gasCallRecommendedLimit = 125000;
+  gasCallRecommendedLimit = 250000;
   gasCreateLimitMinimum = 12000;
   gasCreateTokenLimitMinimum = 20000;
   gasLimitMaximum = 250000;
@@ -248,7 +248,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (this.mode === Mode.Create) {
       // tslint:disable-next-line:max-line-length
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      this.gasLimit = new FormControl(this.gasCreateLimitMinimum, [Validators.required, integerValidator, Validators.pattern('^[+]?([0-9]{0,})*[.]?([0-9]{0,2})?$'), gasLimitValidator, gasLimitMaximumValidator, Validators.min(0)]);
+      this.gasLimit = new FormControl(this.gasCallRecommendedLimit, [Validators.required, integerValidator, Validators.pattern('^[+]?([0-9]{0,})*[.]?([0-9]{0,2})?$'), gasLimitValidator, gasLimitMaximumValidator, Validators.min(0)]);
     }
 
     if (this.mode === Mode.IssueToken) {
@@ -335,9 +335,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (handoff.errors.length === 0) {
       this.transactionHandoffCallback = handoff.callback;
       this.amount.setValue(handoff.amount),
-      this.contractAddress.setValue(handoff.contractAddress),
-      this.methodName.setValue(handoff.methodName),
-      this.transactionHandoffErrors = [];
+        this.contractAddress.setValue(handoff.contractAddress),
+        this.methodName.setValue(handoff.methodName),
+        this.transactionHandoffErrors = [];
       this.parameters.setValue(handoff.parameters.map(param => {
         this.addParameterClicked();
         const parts = param.split('#');
