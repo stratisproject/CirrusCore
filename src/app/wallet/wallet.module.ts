@@ -23,6 +23,7 @@ import { AccountSelectedGuard } from '@shared/guards/account-selected.guard';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { RemoveWalletComponent } from './advanced/components/remove-wallet/remove-wallet.component';
 import { ConsolidateWalletComponent } from './advanced/components/consolidate-wallet/consolidate-wallet.component';
+import { RewindNodeComponent } from './advanced/components/rewind/rewind-node.component';
 
 @NgModule({
   imports: [
@@ -50,7 +51,8 @@ import { ConsolidateWalletComponent } from './advanced/components/consolidate-wa
     ResyncComponent,
     TransactionsComponent,
     RemoveWalletComponent,
-    ConsolidateWalletComponent
+    ConsolidateWalletComponent,
+    RewindNodeComponent
   ],
   providers: [
     AccountSelectedGuard

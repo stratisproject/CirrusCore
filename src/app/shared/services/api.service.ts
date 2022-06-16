@@ -16,7 +16,6 @@ import { IApiService } from '@shared/services/interfaces/services.i';
 import { ErrorService } from '@shared/services/error-service';
 import { LoggerService } from '@shared/services/logger.service';
 import { getHttpOptions } from './rest-api';
-import { Token } from '../../wallet/tokens/models/token';
 
 @Injectable({
   providedIn: 'root'
@@ -289,5 +288,10 @@ export class ApiService extends RestApi implements IApiService {
       .pipe(
         catchError(err => this.handleHttpError(err))
       );
+  }
+
+  public rewindNode(height: number): any {
+    const params = new HttpParams();
+    return this.put('node/rewind?height=' + height, params);
   }
 }
