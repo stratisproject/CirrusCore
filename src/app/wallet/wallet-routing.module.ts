@@ -8,6 +8,7 @@ import { GenerateAddressesComponent } from './advanced/components/generate-addre
 import { ResyncComponent } from './advanced/components/resync/resync.component';
 import { RemoveWalletComponent } from './advanced/components/remove-wallet/remove-wallet.component';
 import { ConsolidateWalletComponent } from './advanced/components/consolidate-wallet/consolidate-wallet.component';
+import { RewindNodeComponent } from './advanced/components/rewind/rewind-node.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HistoryComponent } from './history/history.component';
 import { SmartContractsComponent } from './smart-contracts/components/smart-contracts.component';
@@ -32,6 +33,7 @@ const routes: Routes = [
           { path: 'resync', component: ResyncComponent, canActivate: [AuthenticationGuard] },
           { path: 'remove-wallet', component: RemoveWalletComponent, canActivate: [AuthenticationGuard] },
           { path: 'consolidate-wallet', component: ConsolidateWalletComponent, canActivate: [AuthenticationGuard] },
+          { path: 'rewind-node', component: RewindNodeComponent, canActivate: [AuthenticationGuard] },
         ]
       },
       { path: 'smart-contracts', component: SmartContractsComponent, canActivate: [AccountSelectedGuard, AuthenticationGuard] },
