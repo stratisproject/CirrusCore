@@ -12,7 +12,7 @@
         <div class="form-group mt-3">
           <label for="rewindHeight">Rewind Height:</label>
           <input type="text" class="form-control" id="rewindHeight" [class.is-invalid]="rewindHeightFormErrors.rewindHeight" [class.is-valid]="!rewindHeightFormErrors.rewindHeight && rewindHeightForm.get('rewindHeight').valid" formControlName="rewindHeight" placeholder="Enter the height you wish to rewind to.">
-          <div *ngIf="rewindHeightFormErrors.rewindHeight" class="invalid-feedback">{{ formErrors.rewindHeight }}</div>
+          <div *ngIf="rewindHeightFormErrors.rewindHeight" class="invalid-feedback">{{ rewindHeightFormErrors.rewindHeight }}</div>
         </div>
 
         <div>
