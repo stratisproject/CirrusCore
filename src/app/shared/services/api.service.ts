@@ -276,7 +276,7 @@ export class ApiService extends RestApi implements IApiService {
   }
 
   public supportedInterFluxTokens(): Observable<any[]> {
-    const params = new HttpParams().set('networkType', this.globalService.getTestnetEnabled() ? '1' : '0');
+    const params = new HttpParams().set('networkType', '2');
     return this.get('SupportedContracts/list', params).pipe(
       catchError(err => this.handleHttpError(err))
     );
