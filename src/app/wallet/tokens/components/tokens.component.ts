@@ -47,7 +47,7 @@ export class TokensComponent implements OnInit, OnDestroy, Disposable {
   selectedAddress: string;
   walletName: string;
   tokens$: Observable<SavedToken[]>;
-  private pollingInterval = 5 * 1000; // polling milliseconds
+  private pollingInterval = 10 * 1000; // polling milliseconds
   maxTimeout = 1.5 * 60 * 1000; // wait for about 1.5 minutes
   tokens: SavedToken[] = [];
   tokenLoading: { [address: string]: string; } = {};

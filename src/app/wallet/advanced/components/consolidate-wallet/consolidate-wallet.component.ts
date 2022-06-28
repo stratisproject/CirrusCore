@@ -20,7 +20,7 @@ export class ConsolidateWalletComponent implements OnInit {
     public currentAccountService: CurrentAccountService,
     private globalService: GlobalService,
     private modalService: NgbModal,
-    private fb: FormBuilder,
+    fb: FormBuilder,
     public walletService: WalletService) {
     this.currentAccountService = currentAccountService;
 

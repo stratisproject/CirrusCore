@@ -1,3 +1,4 @@
+import { ApiService } from '@shared/services/api.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { SavedToken } from '../../../models/token';
 import { FormControl, FormArray, Validators, FormGroup } from '@angular/forms';
@@ -6,10 +7,12 @@ import { Disposable } from '../../../models/disposable';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SmartContractsService } from '@shared/services/smart-contracts.service';
 import { TokenType } from '@shared/models/token-type';
-
 import { Recipient } from '@shared/models/transaction';
 import { GlobalService } from '@shared/services/global.service';
 import { SendComponentFormResources } from '../../../../send-component-form-resources';
+import { LoggerService } from '@shared/services/logger.service';
+import { interval, ReplaySubject, } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-send-token',
@@ -35,6 +38,9 @@ export class SendInterfluxTokenComponent implements OnInit {
   coinUnit: string;
   contractAddress: FormControl;
   feeAmount: FormControl;
+  interFluxFee: FormControl;
+  interFluxFeeLabel: string;
+  interFluxFeeCountDown: number = 30;
   gasPrice: FormControl;
   gasLimit: FormControl;
   loading: boolean;
@@ -45,6 +51,8 @@ export class SendInterfluxTokenComponent implements OnInit {
   tacAgreed: FormControl;
   title: string;
 
+  disposed$ = new ReplaySubject<boolean>();
+  private pollingInterval = 30 * 1000; // 30 seconds
   recommendedGasLimit = 250000;
   gasCallLimitMinimum = 10000;
   gasCreateLimitMinimum = 12000;
@@ -54,14 +62,14 @@ export class SendInterfluxTokenComponent implements OnInit {
   transactionForm: FormGroup;
   tokenAmount: FormControl;
 
-  private readonly multiSigInterFluxFee = "350";
-
   constructor(
     private activeModal: NgbActiveModal,
+    private apiService: ApiService,
     private globalService: GlobalService,
+    private loggerService: LoggerService,
     private smartContractsService: SmartContractsService) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<any> {
     this.title = 'Send token ' + this.token.ticker + ' via Interflux';
     this.registerControls();
     this.contractAddress.setValue(this.token.address);
@@ -74,10 +82,30 @@ export class SendInterfluxTokenComponent implements OnInit {
     } else {
       this.multisigAddress = SendComponentFormResources.cirrusNetworks[0].federationAddress;
     }
+
+    await this.updateInterFluxFee();
+
+    interval(this.pollingInterval)
+      .pipe(
+        switchMap(() => this.updateInterFluxFee()),
+        takeUntil(this.disposed$)
+      )
+      .subscribe();
+
+    interval(1000)
+      .pipe(
+        switchMap(() => this.UpdateCountDownLabel()),
+        takeUntil(this.disposed$)
+      )
+      .subscribe();
   }
 
   closeClicked(): void {
     this.activeModal.close();
+  }
+
+  private async UpdateCountDownLabel(): Promise<any> {
+    this.interFluxFeeCountDown -= 1;
   }
 
   private createModel() {
@@ -94,7 +122,7 @@ export class SendInterfluxTokenComponent implements OnInit {
       sender: this.selectedSenderAddress,
       gasPrice: this.gasPrice.value,
       gasLimit: this.gasLimit.value,
-      recipients: [new Recipient(this.multisigAddress, this.multiSigInterFluxFee)],
+      recipients: [new Recipient(this.multisigAddress, this.interFluxFee.value)],
       parameters: [
         `${tokenValueType}#${this.token.toScaledAmount(this.tokenAmount.value).toFixed()}`,
         `4#${String(this.recipientAddress.value)}`
@@ -156,6 +184,9 @@ export class SendInterfluxTokenComponent implements OnInit {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     this.feeAmount = new FormControl(0.001, [Validators.required, amountValidator, Validators.min(0)]);
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    this.interFluxFee = new FormControl(0, [Validators.required, amountValidator, Validators.min(1), Validators.max(Number(this.balance))]);
+
     // tslint:disable-next-line:max-line-length
     // eslint-disable-next-line @typescript-eslint/unbound-method
     this.gasPrice = new FormControl(100, [Validators.required, integerValidator, Validators.pattern('^[+]?([0-9]{0,})*[.]?([0-9]{0,2})?$'), gasPriceTooLowValidator, gasPriceTooHighValidator, Validators.min(0)]);
@@ -177,6 +208,7 @@ export class SendInterfluxTokenComponent implements OnInit {
 
     this.transactionForm = new FormGroup({
       feeAmount: this.feeAmount,
+      interFluxFee: this.interFluxFee,
       gasPrice: this.gasPrice,
       gasLimit: this.gasLimit,
       parameters: this.parameters,
@@ -186,5 +218,20 @@ export class SendInterfluxTokenComponent implements OnInit {
       password: this.password,
       tacAgreed: this.tacAgreed
     });
+  }
+
+  private async updateInterFluxFee(): Promise<any> {
+    var result = await this.apiService.getInterFluxFee().toPromise()
+    if (result == null) {
+      this.interFluxFee.setValue('');
+      this.interFluxFeeLabel = '[Could not be determined]';
+    }
+    else {
+      var adjustedFee = ((result.conversionFee * 0.1) + result.conversionFee).toFixed(2);
+      this.interFluxFee.setValue(adjustedFee);
+      this.interFluxFeeLabel = adjustedFee;
+    }
+
+    this.interFluxFeeCountDown = 30;
   }
 }

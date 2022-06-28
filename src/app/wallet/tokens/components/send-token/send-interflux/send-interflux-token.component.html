@@ -19,9 +19,12 @@
             [class.is-invalid]="tacAgreed.valid" [class.is-valid]="!tacAgreed && tacAgreed.valid"
             formControlName="tacAgreed" id="tacAgreed">
           <span class="font-weight-bold">
-            I understand that a fee will be added to this transaction. A fee upwards of 350 CRS should be expected and
-            will vary based on the volatility of the Ethereum gas price. Please check the box to accept this fee and
-            responsibility for any funds lost.</span>
+            I understand that a fee of <b><span>{{ interFluxFeeLabel | formatNumber:2 }}</span></b> CRS will be deducted
+            from your
+            balance to
+            fund
+            ETH Gas
+            Fees.</span>
           <div *ngIf="tacAgreed" class="invalid-feedback">
             {{ tacAgreed.errors }}</div>
         </div>
@@ -49,9 +52,13 @@
         </div>
       </div>
 
+      <div class="float-right">Refreshing in <span><strong>{{ interFluxFeeCountDown}}s</strong></span>
+      </div>
+
       <div class="form-group clearfix" data-toggle="tooltip" data-placement="right" title="InterFlux fee to be added.">
-        <label>InterFlux Fee</label>
-        <input value="350" disabled="disabled" class="form-control" />
+        <label for="interFluxFee">InterFlux Fee</label>
+        <input class="form-control" formControlName="interFluxFee" id="interFluxFee" type="number"
+          disabled="disabled" />
       </div>
 
       <div class="row">

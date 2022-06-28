@@ -2,11 +2,9 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ApiService } from '@shared/services/api.service';
 import { GlobalService } from '@shared/services/global.service';
-import { CoinNotationPipe } from '@shared/pipes/coin-notation.pipe';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FeeEstimation } from '@shared/models/fee-estimation';
 import { Transaction } from '@shared/models/transaction';
-import { WalletInfoRequest } from '@shared/models/wallet-info';
 import { SendConfirmationComponent } from './send-confirmation/send-confirmation.component';
 import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
@@ -90,7 +88,7 @@ export class SendComponent implements OnInit, OnDestroy {
       this.sendForm.patchValue({ 'address': this.address });
     }
 
-    this.confirmationText = "Amounts less than 50 Cirrus clear in 25 confirmations<br>Amounts between 50 and 1000 Cirrus clear in 80 confirmations<br>Amounts more than 1000 Cirrus clear in 500 confirmations";
+    this.confirmationText = "Amounts less than 50 Cirrus clear in 30 confirmations<br>Amounts between 50 and 1000 Cirrus clear in 70 confirmations<br>Amounts more than 1000 Cirrus clear in 140 confirmations";
   }
 
   public ngOnDestroy(): void {
@@ -118,25 +116,6 @@ export class SendComponent implements OnInit, OnDestroy {
     if (isValidForFeeEstimate) {
       this.estimateFee(form, isSideChain);
     }
-  }
-
-  // NB: This is not currently used
-  public getMaxBalance(): void {
-    let balanceResponse;
-    const walletRequest = new WalletInfoRequest(this.globalService.getWalletName(), 0, this.sendForm.get('fee').value);
-    this.apiService.getMaximumBalance(walletRequest)
-      .pipe(tap(
-        response => {
-          balanceResponse = response;
-        },
-        error => {
-          this.apiError = error.error.errors[0].message;
-        },
-        () => {
-          this.sendForm.patchValue({ amount: +new CoinNotationPipe().transform(balanceResponse.maxSpendableAmount) });
-          this.estimatedFee = balanceResponse.fee;
-        }
-      )).toPromise();
   }
 
   public estimateFee(form: FormGroup, isSideChain: boolean): void {

@@ -1,0 +1,28 @@
+<div class="card p-4">
+  <div class="card-header">Rewind your node</div>
+  <div class="card-body" style="min-height:200px;">
+    <div class="alert alert-info" role="alert">
+      Rewinding your node will cause it to resync from a given height.
+    </div>
+    <div class="alert alert-warning text-center" *ngIf="walletService.isSyncing || walletService.ibdMode">Please note that your wallet needs to be completely synchronised before attempting a rewind.</div>
+    
+    <div>
+
+      <form class="form-group" [formGroup]="rewindHeightForm">
+        <div class="form-group mt-3">
+          <label for="rewindHeight">Rewind Height:</label>
+          <input type="text" class="form-control" id="rewindHeight" [class.is-invalid]="rewindHeightFormErrors.rewindHeight" [class.is-valid]="!rewindHeightFormErrors.rewindHeight && rewindHeightForm.get('rewindHeight').valid" formControlName="rewindHeight" placeholder="Enter the height you wish to rewind to.">
+          <div *ngIf="rewindHeightFormErrors.rewindHeight" class="invalid-feedback">{{ rewindHeightFormErrors.rewindHeight }}</div>
+        </div>
+
+        <div>
+          <button type="submit" class="btn btn-primary btn-block" [disabled]="!rewindHeightForm.valid || walletService.isSyncing || walletService.ibdMode" (click)="RewindNode()">Rewind</button>
+        </div>
+      </form>
+    </div>
+    
+    <div *ngIf="rewindSet" class="alert alert-info" role="alert">
+      Rewind height set, please restart your node!
+    </div>
+  </div>
+</div>
