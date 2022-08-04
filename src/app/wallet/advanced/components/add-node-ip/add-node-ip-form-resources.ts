@@ -4,7 +4,8 @@ export class AddNodeIPComponentFormResources {
 
   public static addNodeIPValidationMessages = {
     'ipAddress': {
-      'required': 'The IP address is required.'
+      'required': 'The IP address is required.',
+      'pattern': 'This is not a valid IP address.'
     }
   };
 

@@ -32,7 +32,7 @@ export class AddNodeIPComponent implements OnInit {
 
   private registerControls() {
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    this.ipAddress = new FormControl(0, [Validators.required]);
+    this.ipAddress = new FormControl('', [Validators.required, Validators.pattern(/^([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})$/)]);
 
     this.addNodeIPForm = new FormGroup({
       ipAddress: this.ipAddress,
