@@ -54,9 +54,10 @@
                 <th scope="col">Block</th>
                 <th scope="col">Type</th>
                 <th scope="col">Hash</th>
+                <th scope="col">Receipt</th>
                 <th scope="col">Address</th>
                 <th scope="col">Amount</th>
-                <th scope="col">Transaction Fee</th>
+                <th scope="col">Tx Fee</th>
                 <th scope="col">Gas Fee</th>
                 <th scope="col"></th>
               </tr>
@@ -66,17 +67,23 @@
               <tr *ngFor="let item of history">
                 <th scope="row"><strong>#{{item.blockHeight}}</strong></th>
                 <td><span class="badge badge-info">{{item.type | contractType}}</span></td>
+
                 <td>
+                  <span (click)="openTransactionId(item.hash)" style="cursor: pointer;"><u>{{item.hash}}</u></span>
+                </td>
+                <td>
+
                   <ng-container
                     *ngIf="item.blockHeight && (item.type == 3 || item.type == 4); then clickableTxHash; else txHash">
-                  </ng-container>
+                  </ng-container>                  
                   <ng-template #clickableTxHash>
-                    <a href="javascript:void(0);" (click)="txHashClicked(item)">{{item.hash}}</a>
+                     <a href="javascript:void(0);" (click)="txHashClicked(item)">View</a>
                   </ng-template>
                   <ng-template #txHash>
-                    {{ item.hash }}
+                    n/a
                   </ng-template>
                 </td>
+
                 <td><code class="d-inline-block">{{item.to}}</code></td>
                 <td>
                   <sc-balance [balance]="item.amount" [coinUnit]="coinUnit"></sc-balance>

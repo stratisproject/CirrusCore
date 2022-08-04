@@ -5,6 +5,7 @@ import { GlobalService } from '@shared/services/global.service';
 import { TransactionInfo } from '@shared/models/transaction-info';
 import { NodeService } from '@shared/services/node-service';
 import { tap } from 'rxjs/operators';
+import { ElectronService } from '@shared/services/electron.service';
 
 @Component({
   selector: 'transaction-details',
@@ -15,7 +16,11 @@ export class TransactionDetailsComponent implements OnInit, OnDestroy {
 
   @Input() transaction: TransactionInfo;
 
-  constructor(private nodeService: NodeService, private globalService: GlobalService, public activeModal: NgbActiveModal) {
+  constructor(
+    private electronService: ElectronService,
+    private nodeService: NodeService, 
+    private globalService: GlobalService, 
+    public activeModal: NgbActiveModal) {
   }
 
   public copied = false;
@@ -23,9 +28,16 @@ export class TransactionDetailsComponent implements OnInit, OnDestroy {
   public confirmations: number;
   private generalWalletInfoSubscription: Subscription;
   private lastBlockSyncedHeight: number;
+  public transactionIdURL : string;
 
   public ngOnInit(): void {
     this.coinUnit = this.globalService.getCoinUnit();
+
+    if(this.globalService.getTestnetEnabled())
+      this.transactionIdURL = "https://chainz.cryptoid.info/cirrus-test/tx.dws?" + this.transaction.transactionId + ".htm";
+    else
+      this.transactionIdURL = "https://chainz.cryptoid.info/cirrus/tx.dws?" + this.transaction.transactionId + ".htm";
+
     this.subscribeToGeneralWalletInfo();
   }
 
@@ -52,5 +64,9 @@ export class TransactionDetailsComponent implements OnInit, OnDestroy {
     } else {
       this.confirmations = 0;
     }
+  }
+
+  public openTransactionId(url: string): void {
+    this.electronService.shell.openExternal(url);
   }
 }
