@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { CurrentAccountService } from '@shared/services/current-account.service';
 import { ErrorService } from '@shared/services/error-service';
+import { ElectronService } from '@shared/services/electron.service';
 import { GlobalService } from '@shared/services/global.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { LoggerService } from '@shared/services/logger.service';
@@ -36,6 +37,7 @@ export class SmartContractsComponent extends RestApi implements OnInit, OnDestro
   constructor(
     private clipboardService: ClipboardService,
     private currentAccountService: CurrentAccountService,
+    private electronService: ElectronService,
     errorService: ErrorService,
     private genericModalService: ModalService,
     globalService: GlobalService,
@@ -119,6 +121,14 @@ export class SmartContractsComponent extends RestApi implements OnInit, OnDestro
     const { shell } = require('electron');
     console.log(`http://localhost:${this.globalService.getApiPort()}/swagger/index.html?urls.primaryName=Contract%20${contract.to}`);
     shell.openExternal(`http://localhost:${this.globalService.getApiPort()}/swagger/index.html?urls.primaryName=Contract%20${contract.to}`);
+  }
+
+  public openTransactionId(txHash: string): void {
+
+    if(this.globalService.getTestnetEnabled())
+      this.electronService.shell.openExternal("https://chainz.cryptoid.info/cirrus-test/tx.dws?" + txHash + ".htm");
+    else
+      this.electronService.shell.openExternal("https://chainz.cryptoid.info/cirrus/tx.dws?" + txHash + ".htm");
   }
 }
 
