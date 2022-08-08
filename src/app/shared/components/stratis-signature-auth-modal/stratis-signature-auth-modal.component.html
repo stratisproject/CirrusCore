@@ -17,14 +17,15 @@
 
       <div *ngIf="request">
         <h6 class="d-flex align-items-center">
-          <i class="lnr mr-2" [ngClass]="{'text-danger lnr-warning': request.error, 'text-success lnr-checkmark-circle': !request.error}"></i>
+          <i class="lnr mr-2"
+            [ngClass]="{'text-danger lnr-warning': request.error, 'text-success lnr-checkmark-circle': !request.error}"></i>
           {{request.error ? request.error : request.origin}}
         </h6>
       </div>
 
-      <ng-container *ngIf="request && !request.error">
+      <ng-container *ngIf="request">
         <hr>
-        <div class="form-group clearfix" >
+        <div class="form-group clearfix">
           <label for="password">Password</label>
           <input type="password" class="form-control" formControlName="password" id="password">
         </div>
@@ -34,7 +35,8 @@
 
   <div class="modal-footer">
     <button class="btn btn-outline-light" type="button" (click)="activeModal.close('Close click')">Cancel</button>
-    <button class="btn btn-stratis-green btn-block" type="button" (click)="submit()" [disabled]="!request || request.error">Authenticate</button>
+    <button class="btn btn-stratis-green btn-block" type="button" (click)="submit()"
+      [disabled]="!request">Authenticate</button>
   </div>
 </div>
 

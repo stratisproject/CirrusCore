@@ -8,6 +8,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiService } from '@shared/services/api.service';
 import { GlobalService } from '@shared/services/global.service';
+import { LoggerService } from '@shared/services/logger.service';
 
 @Component({
   selector: 'app-stratis-signature-auth-modal',
@@ -101,23 +102,24 @@ export class StratisSignatureAuthModalComponent implements OnDestroy {
     this.subscription.add(
       // Sign Message
       this.apiService.signMessage(signPayload)
-      .pipe(
-        catchError(_ => {
-          this.request.error = "Error signing message.";
+        .pipe(
+          catchError(a => {
+            var errorMessage = a.error ? a.error.errors ? a.error.errors[0] ? ": " + a.error.errors[0].message : "" : "" : "";
+            this.request.error = "Error signing message" + errorMessage;
+            this.submitting = false;
+            return of();
+          }),
+          filter(signature => !!signature),
+          switchMap((signature: string) => {
+            // Submit callback to origin
+            const request = new StratisSignatureAuthCallback(signature, externalAddress);
+            return this.integrationsService.stratisSignatureAuthCallback(this.request.callback, request.payload);
+          }),
+          take(1))
+        .subscribe(_ => {
           this.submitting = false;
-          return of();
-        }),
-        filter(signature => !!signature),
-        switchMap((signature: string) => {
-          // Submit callback to origin
-          const request = new StratisSignatureAuthCallback(signature, externalAddress);
-          return this.integrationsService.stratisSignatureAuthCallback(this.request.callback, request.payload);
-        }),
-        take(1))
-      .subscribe(_ => {
-        this.submitting = false;
-        this.activeModal.close();
-      }))
+          this.activeModal.close();
+        }))
   }
 
   ngOnDestroy() {
