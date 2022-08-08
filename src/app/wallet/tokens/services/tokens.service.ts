@@ -25,12 +25,12 @@ export class TokensService {
     private loggerService: LoggerService) {
     this.savedTokensKey = `${globalService.getNetwork()}:savedTokens`;
 
-    // Upgrade wallets using the old format
-    const oldTokens = this.storage.getItem<SavedToken[]>('savedTokens');
-    if (oldTokens) {
-      this.UpdateTokens(oldTokens);
-      this.storage.removeItem('savedTokens');
-    }
+    // // Upgrade wallets using the old format
+    // const oldTokens = this.storage.getItem<SavedToken[]>('savedTokens');
+    // if (oldTokens) {
+    //   this.UpdateTokens(oldTokens);
+    //   this.storage.removeItem('savedTokens');
+    // }
   }
 
   async GetSavedTokens(): Promise<SavedToken[]> {
@@ -46,7 +46,7 @@ export class TokensService {
     });
 
     const savedTokens = this.storage.getItem<SavedToken[]>(this.savedTokensKey);
-    const defaultTokens = [];
+    const defaultTokens = this.GetAvailableTokens();
     const result = savedTokens ? defaultTokens.concat(savedTokens) : defaultTokens;
 
     supportedInterFluxTokens.forEach((interFluxToken) => {
@@ -60,9 +60,12 @@ export class TokensService {
 
   GetAvailableTokens(): Token[] {
     const tokens = [];
-    if (!this.globalService.getTestnetEnabled()) {
-      tokens.push(new Token('MEDI', 'CUwkBGkXrQpMnZeWW2SpAv1Vu9zPvjWNFS', 'Mediconnect', 8, TokenType.IStandardToken, false));
+    if (this.globalService.getTestnetEnabled()) {
+      tokens.push(new Token('ODX', 'tTTuKbCR2UnsEByXBp1ynBz91J2yz63h1c', 'OpDex', 8, TokenType.IStandardToken256, false));
     }
+    else
+      tokens.push(new Token('ODX', 'CUAQPZkWat7ECSFoGCMPfdnF5rZbSF92zL', 'OpDex', 8, TokenType.IStandardToken256, false));
+
     return tokens;
   }
 
