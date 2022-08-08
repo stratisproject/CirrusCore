@@ -18,22 +18,31 @@ import { LoggerService } from '@shared/services/logger.service';
 export class TokensService {
   private savedTokensKey = 'savedTokens';
 
+  private opDexTestNetContractAddress = "tTTuKbCR2UnsEByXBp1ynBz91J2yz63h1c";
+  private opDexMainNetContractAddress = "CUAQPZkWat7ECSFoGCMPfdnF5rZbSF92zL";
+
   constructor(
     private apiService: ApiService,
     private storage: StorageService,
     private globalService: GlobalService,
     private loggerService: LoggerService) {
     this.savedTokensKey = `${globalService.getNetwork()}:savedTokens`;
-
-    // Upgrade wallets using the old format
-    const oldTokens = this.storage.getItem<SavedToken[]>('savedTokens');
-    if (oldTokens) {
-      this.UpdateTokens(oldTokens);
-      this.storage.removeItem('savedTokens');
-    }
   }
 
   async GetSavedTokens(): Promise<SavedToken[]> {
+
+    // If there are no saved tokens, set the tokens to the default token list.
+    var tokens = this.storage.getItem<SavedToken[]>(this.savedTokensKey);
+    if (tokens == null)
+      tokens = this.GetDefaultTokens();
+    else {
+      // if there are saved tokens add the default tokens to the saved token list, if they dont exist already.
+      this.GetDefaultTokens().forEach((defaultToken) => {
+        var found = tokens.find(x => x.address == defaultToken.address);
+        if (found == null)
+          tokens.push(defaultToken);
+      });
+    }
 
     var supportedInterFluxTokens = [];
 
@@ -41,28 +50,27 @@ export class TokensService {
     var interFluxTokens = await this.apiService.supportedInterFluxTokens().toPromise();
 
     interFluxTokens.forEach((token) => {
-      var interFluxToken = new Token(token.tokenName, token.src20Address, token.tokenName, token.decimals, TokenType.IStandardToken256.toString(), true);
+      var interFluxToken = new Token(token.tokenName, token.src20Address, token.tokenName, token.decimals, TokenType.IStandardToken256.toString(), true, false);
       supportedInterFluxTokens.push(interFluxToken);
     });
 
-    const savedTokens = this.storage.getItem<SavedToken[]>(this.savedTokensKey);
-    const defaultTokens = [];
-    const result = savedTokens ? defaultTokens.concat(savedTokens) : defaultTokens;
-
     supportedInterFluxTokens.forEach((interFluxToken) => {
-      var found = result.find(x => x.address == interFluxToken.address);
+      var found = tokens.find(x => x.address == interFluxToken.address);
       if (found == null)
-        result.push(interFluxToken);
+        tokens.push(interFluxToken);
     });
 
-    return result.map(t => new SavedToken(t.ticker, t.address, null, t.name, t.decimals, t.type, t.interFluxEnabled));
+    return tokens.map(t => new SavedToken(t.ticker, t.address, null, t.name, t.decimals, t.type, t.interFluxEnabled, t.isDefault));
   }
 
-  GetAvailableTokens(): Token[] {
+  GetDefaultTokens(): SavedToken[] {
     const tokens = [];
-    if (!this.globalService.getTestnetEnabled()) {
-      tokens.push(new Token('MEDI', 'CUwkBGkXrQpMnZeWW2SpAv1Vu9zPvjWNFS', 'Mediconnect', 8, TokenType.IStandardToken, false));
+    if (this.globalService.getTestnetEnabled()) {
+      tokens.push(new SavedToken('ODX', this.opDexTestNetContractAddress, null, 'OpDex', 8, TokenType.IStandardToken256, false, true));
     }
+    else
+      tokens.push(new SavedToken('ODX', this.opDexMainNetContractAddress, null, 'OpDex', 8, TokenType.IStandardToken256, false, true));
+
     return tokens;
   }
 

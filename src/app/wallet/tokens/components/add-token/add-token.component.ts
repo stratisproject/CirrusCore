@@ -7,7 +7,6 @@ import { Observable, of, ReplaySubject } from 'rxjs';
 import { take, switchMap, tap, map } from 'rxjs/operators';
 import { Disposable } from '../../models/disposable';
 import { LocalCallRequest } from '../../models/LocalCallRequest';
-import { LoggerService } from '@shared/services/logger.service';
 import { Mixin } from '../../models/mixin';
 import { SavedToken } from '../../models/token';
 import { TokensService } from '../../services/tokens.service';
@@ -37,8 +36,7 @@ export class AddTokenComponent implements OnDestroy, Disposable {
   constructor(
     private tokenService: TokensService,
     private activeModal: NgbActiveModal,
-    private genericModalService: ModalService,
-    private loggerService: LoggerService) {
+    private genericModalService: ModalService) {
 
     this.addTokenForm = new FormGroup({
       address: new FormControl('', [Validators.required]),
@@ -107,7 +105,8 @@ export class AddTokenComponent implements OnDestroy, Disposable {
       this.validatedToken.name,
       this.validatedToken.decimals,
       this.validatedToken.type,
-      this.validatedToken.interFluxEnabled);
+      this.validatedToken.interFluxEnabled,
+      false);
 
     const result = await this.tokenService.AddToken(savedToken);
 

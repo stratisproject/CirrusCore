@@ -1,13 +1,14 @@
 import BigNumber from 'bignumber.js';
 
 export class Token {
-  constructor(ticker: string, address: string, name: string, decimals: number, type: string, interFluxEnabled: boolean) {
+  constructor(ticker: string, address: string, name: string, decimals: number, type: string, interFluxEnabled: boolean, isDefault: boolean) {
     this.ticker = ticker;
     this.address = address;
     this.name = name || this.ticker;
     this.decimals = decimals;
     this.type = type;
     this.interFluxEnabled = interFluxEnabled;
+    this.isDefault = isDefault;
   }
 
   ticker: string;
@@ -16,6 +17,7 @@ export class Token {
   decimals: number;
   type: string;
   interFluxEnabled: boolean;
+  isDefault: boolean;
 }
 
 export class SavedToken extends Token {
@@ -27,8 +29,8 @@ export class SavedToken extends Token {
       : '0.'.padEnd(this.decimals, '0');
   }
 
-  constructor(ticker: string, address: string, balance: string, name: string, decimals: number, type: string, interFluxEnabled: boolean) {
-    super(ticker, address, name, decimals, type, interFluxEnabled);
+  constructor(ticker: string, address: string, balance: string, name: string, decimals: number, type: string, interFluxEnabled: boolean, isDefault: boolean) {
+    super(ticker, address, name, decimals, type, interFluxEnabled, isDefault);
     this.setBalance(balance);
   }
 
