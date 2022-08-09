@@ -66,10 +66,10 @@ export class TokensService {
   GetDefaultTokens(): SavedToken[] {
     const tokens = [];
     if (this.globalService.getTestnetEnabled()) {
-      tokens.push(new SavedToken('ODX', this.opDexTestNetContractAddress, null, 'OpDex', 8, TokenType.IStandardToken256, false, true));
+      tokens.push(new SavedToken('ODX', this.opDexTestNetContractAddress, null, 'OPDEX', 8, TokenType.IStandardToken256, false, true));
     }
     else
-      tokens.push(new SavedToken('ODX', this.opDexMainNetContractAddress, null, 'OpDex', 8, TokenType.IStandardToken256, false, true));
+      tokens.push(new SavedToken('ODX', this.opDexMainNetContractAddress, null, 'OPDEX', 8, TokenType.IStandardToken256, false, true));
 
     return tokens;
   }
