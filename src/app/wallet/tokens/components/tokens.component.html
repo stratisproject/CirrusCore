@@ -97,11 +97,10 @@
                       Send
                     </button>&nbsp;
                   </ng-container>
-                </td>
 
-                <button *ngIf="!item.interFluxEnabled && !item.isDefault" type="button" class="btn btn-sm btn-danger"
-                  (click)="delete(item)"><i class="icon lnr lnr-cross-circle"></i>
-                </button>
+                  <button *ngIf="!item.interFluxEnabled && !item.isDefault" type="button" class="btn btn-sm btn-danger"
+                    (click)="delete(item)"><i class="icon lnr lnr-cross-circle"></i>
+                  </button>
 
                 </td>
               </tr>
