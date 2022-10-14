@@ -15,7 +15,7 @@ export class GlobalService {
     this.setDaemonIP();
   }
 
-  private applicationVersion = '2.0.1';
+  private applicationVersion = '2.0.3';
   private gitCommit = "";
   private testnet = false;
   private cirrusMainApiPort = 37223;
